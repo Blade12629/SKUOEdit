@@ -9,27 +9,19 @@ namespace Assets.Source
 {
     public static class GamePaths
     {
-        public static string Heightmap { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "heightmap.bmp");
-        public static string HeightmapCS { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "heightmap.colorstore");
-        public static string Tilemap { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "tilemap.bmp");
-        public static string TilemapCS { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "tilemap.colorstore");
-        public static string SAA { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "statics.saa");
-        public static string OutputDirectory { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "\\output");
-        public static string InputDirectory { get; set; } = Environment.CurrentDirectory;
+        // TODO: remake paths
+        public static string Heightmap { get; set; } = GetLocalPath("heightmap.bmp");
+        public static string HeightmapCS { get; set; } = GetLocalPath("heightmap.colorstore");
+        public static string Tilemap { get; set; } = GetLocalPath("tilemap.bmp");
+        public static string TilemapCS { get; set; } = GetLocalPath("tilemap.colorstore");
+
         public static int MapIndex { get; set; } = 6;
 
-        public static string TileAtlasUVFile { get; set; }
-        public static string TileAtlasTexFile { get; set; }
+        public static string TileAtlasUVFile { get; set; } = GetLocalPath("TileAtlas.uv");
+        public static string TileAtlasTexFile { get; set; } = GetLocalPath("TileAtlas.tex");
 
-        public static string ArtFile { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "art.mul");
-        public static string ArtIdxFile { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "artidx.mul");
-        
-        public static string TexFile { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "texmaps.mul");
-        public static string TexIdxFile { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "texmapsIdx.mul");
-
-        public static string TileDataFile { get; set; } = System.IO.Path.Combine(Environment.CurrentDirectory, "tiledata.mul");
-
-        public static string MUL_UOP_Directory { get; set; } = Environment.CurrentDirectory;
+        public static string GameClientFiles { get; set; } = GetLocalPath("ClassicUO");
+        // TODO: add path to folder for maps to edit (in/output)
 
         static GamePaths()
         {
@@ -39,23 +31,15 @@ namespace Assets.Source
                 { nameof(HeightmapCS), s => HeightmapCS = s },
                 { nameof(Tilemap), s => Tilemap = s },
                 { nameof(TilemapCS), s => TilemapCS = s },
-                { nameof(SAA), s => SAA = s },
-                { nameof(OutputDirectory), s => OutputDirectory = s },
-                { nameof(InputDirectory), s => InputDirectory = s },
                 { nameof(MapIndex), s =>
                 {
                     if (int.TryParse(s, out int index))
                         MapIndex = index;
                 }},
 
-                { nameof(ArtFile), s => ArtFile = s },
-                { nameof(ArtIdxFile), s => ArtIdxFile = s },
-                { nameof(TexFile), s => TexFile = s },
-                { nameof(TexIdxFile), s => TexIdxFile = s },
-                { nameof(TileDataFile), s => TileDataFile = s },
-                { nameof(MUL_UOP_Directory), s => MUL_UOP_Directory = s },
                 { nameof(TileAtlasUVFile), s => TileAtlasUVFile = s },
                 { nameof(TileAtlasTexFile), s => TileAtlasTexFile = s },
+                { nameof(GameClientFiles), s => GameClientFiles = s },
             };
 
             if (System.IO.File.Exists("config.cfg"))
@@ -72,6 +56,25 @@ namespace Assets.Source
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the path to a file or folder in the <see cref="GetLocalPath()"/>
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        static string GetLocalPath(string file)
+        {
+            return System.IO.Path.Combine(GetLocalPath(), file);
+        }
+
+        /// <summary>
+        /// Gets the local path (i.e. the path where the executable is stored)
+        /// </summary>
+        /// <returns></returns>
+        static string GetLocalPath()
+        {
+            return Environment.CurrentDirectory;
         }
     }
 }

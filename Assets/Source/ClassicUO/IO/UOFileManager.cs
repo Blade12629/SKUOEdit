@@ -54,7 +54,7 @@ namespace ClassicUO.IO
                 return uoFilePath;
             }
 
-            return Path.Combine(GamePaths.MUL_UOP_Directory, file);
+            return Path.Combine(GamePaths.GameClientFiles, file);
         }
 
 

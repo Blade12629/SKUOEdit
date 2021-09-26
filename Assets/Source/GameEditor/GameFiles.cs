@@ -114,7 +114,7 @@ namespace Assets.Source.GameEditor
 
         string GetUOPath(string file)
         {
-            return System.IO.Path.Combine(GamePaths.MUL_UOP_Directory, file);
+            return System.IO.Path.Combine(GamePaths.GameClientFiles, file);
         }
     }
 }
