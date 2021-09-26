@@ -11,6 +11,7 @@ namespace Assets.Source.GameEditor
     {
         public EditorAction CurrentAction { get; set; }
         public float CurrentValue { get; set; }
+        public bool DisableEditorInput { get; set; }
 
         int _terrainLayerMask;
         MapController _mapController;
@@ -26,6 +27,9 @@ namespace Assets.Source.GameEditor
 
         public void Update()
         {
+            if (DisableEditorInput)
+                return;
+
             if (Input.GetMouseButtonDown(0) && CurrentAction != EditorAction.None)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
