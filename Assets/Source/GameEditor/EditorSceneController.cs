@@ -22,6 +22,7 @@ namespace Assets.Source.GameEditor
         public HeightTable Heights { get; private set; }
         public MapController MapController { get; private set; }
         public EditorInput EditorInput { get; private set; }
+        public UI.UIController UI { get; private set; }
 
         [SerializeField] TerrainMesh _mesh;
         [SerializeField] SelectionRenderer _selectionRenderer;
@@ -53,23 +54,24 @@ namespace Assets.Source.GameEditor
             Camera = new CameraController(MapController, _selectionRenderer, _cameraOffsetText);
             GameFiles = new GameFiles();
             EditorInput = new EditorInput(Camera.TerrainLayerMask, MapController);
+            UI = new UI.UIController();
 
             GameFiles.LoadClientFiles();
 
-            yield break;
+            //yield break;
             yield return new WaitForEndOfFrame();
 
             MapController.SetupMapCamera(Camera);
             
-            yield return new WaitForEndOfFrame();
+            //yield return new WaitForEndOfFrame();
             
-            LoadMap();
+            //LoadMap();
 
-            while (!MapController.IsMapBuilt)
-                yield return new WaitForEndOfFrame();
+            //while (!MapController.IsMapBuilt)
+            //    yield return new WaitForEndOfFrame();
 
-            MapController.MoveToPosition(535, 1020, true);
-            MapController.SpawnArea(890, 440, 200, 200, GameFiles.StaticTileMatrix);
+            //MapController.MoveToPosition(535, 1020, true);
+            //MapController.SpawnArea(890, 440, 200, 200, GameFiles.StaticTileMatrix);
         }
 
         void LoadMap()
@@ -89,9 +91,14 @@ namespace Assets.Source.GameEditor
 
         void Update()
         {
+            UI.Update();
             Camera.Update();
-            EditorInput.Update();
-            MapController.Update();
+
+            if (MapController.IsMapBuilt)
+            {
+                EditorInput.Update();
+                MapController.Update();
+            }
 
 #if UNITY_EDITOR
             if (_saveTexAtlas)
