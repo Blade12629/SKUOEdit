@@ -83,13 +83,9 @@ namespace Assets.Source.GameEditor
 
                 UOAtlas.AddNoDraw();
 
-                for (int i = 0; i < 16384; i++)
-                {
-                    UOAtlas.AddTile(i);
-                }
-
                 for (int i = 0; i < 0x4000; i++)
                 {
+                    UOAtlas.AddTile(i);
                     UOAtlas.AddTexture(i);
                 }
             }
