@@ -117,7 +117,7 @@ namespace Assets.Source.Game
 
             float mouseScroll = Input.mouseScrollDelta.y;
 
-            if (mouseScroll != 0f)
+            if (mouseScroll != 0f && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
                 if (mouseScroll < 0)
                     mouseScroll = 1f;
@@ -130,7 +130,7 @@ namespace Assets.Source.Game
                 transform.position = pos;
             }
 
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButton(1) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
                 transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
                 transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);

@@ -23,6 +23,7 @@ namespace Assets.Source.Game
                 return _input;
             }
         }
+        public static event Action OnMapFinishLoading;
 
         static EditorInput _input;
 
@@ -120,6 +121,8 @@ namespace Assets.Source.Game
                 yield return new WaitForEndOfFrame();
 
                 LoadMapMesh();
+
+                OnMapFinishLoading?.Invoke();
             }
         }
 

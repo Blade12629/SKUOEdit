@@ -17,7 +17,9 @@ namespace Assets.Source.UI
         Dictionary<short, RawImage> _tiles;
 
         [SerializeField] GameObject _contentObj;
-        [SerializeField] Outline _outlinePrefab;
+        [SerializeField] GameObject _selectionCell;
+
+        [SerializeField] bool _testClick;
 
         public TileBrowser()
         {
@@ -25,29 +27,77 @@ namespace Assets.Source.UI
             _tiles = new Dictionary<short, RawImage>();
         }
 
+        void Update()
+        {
+            if (_testClick)
+            {
+                _testClick = false;
+
+                RawImage img = _tiles[3];
+                Button button = img.GetComponent<Button>();
+                button.onClick.Invoke();
+            }
+        }
+
         public void AddTile(short tileId)
         {
+            Texture2D imgTex = ClassicUO.IO.Resources.ArtLoader.Instance.GetLandTexture((uint)tileId);
+
+            if (imgTex == null)
+            {
+                _tiles.Add(tileId, null);
+                return;
+            }
+
             GameObject imgObj = new GameObject($"Tile {tileId}", typeof(Button), typeof(RawImage));
-            RawImage img = imgObj.GetComponent<RawImage>();
-            Button button = imgObj.GetComponent<Button>();
-
-            Outline outline = imgObj.AddComponent(_outlinePrefab);
-
-            button.onClick.AddListener(new UnityEngine.Events.UnityAction(() => OnTileClick(tileId)));
             imgObj.transform.SetParent(_contentObj.transform);
+            imgObj.transform.rotation = Quaternion.Euler(180f, 0f, 0f);
 
-            if (_tiles.Count != 0)
-                outline.enabled = false;
+            AddButtonClick(imgObj, tileId);
+
+            RawImage img = imgObj.GetComponent<RawImage>();
+            img.texture = imgTex;
 
             _tiles.Add(tileId, img);
         }
 
+        void AddButtonClick(GameObject obj, short tileId)
+        {
+            Button button = obj.GetComponent<Button>();
+            button.onClick.AddListener(() => OnTileClick(tileId));
+        }
+
+        public void SelectDefault()
+        {
+            if (_tiles.TryGetValue(0, out RawImage img))
+                OnTileClick(0);
+            else
+                OnTileClick(1);
+        }
+
         public void OnTileClick(short id)
         {
-            _tiles[(short)EditorInput.Instance.CurrentTileId].GetComponent<Outline>().enabled = false;
-            _tiles[id].GetComponent<Outline>().enabled = false;
+            if (_tiles.TryGetValue(id, out RawImage newImg))
+                MoveSelectionCell(newImg);
 
             EditorInput.Instance.CurrentTileId = id;
+        }
+
+        void DisableSelectionCell()
+        {
+            if (_selectionCell.activeInHierarchy)
+                _selectionCell.SetActive(false);
+        }
+
+        void MoveSelectionCell(RawImage image)
+        {
+            if (image == null)
+            {
+                DisableSelectionCell();
+                return;
+            }
+
+            _selectionCell.transform.position = image.transform.position;
         }
     }
 }

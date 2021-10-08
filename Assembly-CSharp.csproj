@@ -143,6 +143,7 @@
     <Compile Include="Assets\Source\Textures\GameTextures.cs" />
     <Compile Include="Assets\Source\Textures\TextureAtlas.cs" />
     <Compile Include="Assets\Source\Textures\UOAtlas.cs" />
+    <Compile Include="Assets\Source\UI\TileBrowser.cs" />
     <Reference Include="UnityEngine">
       <HintPath>D:/reposSSD/Unity/2019.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

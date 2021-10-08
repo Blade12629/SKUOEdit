@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Assets.Source.Game;
 using Assets.Source.Textures;
+using Assets.Source.UI;
 
 namespace Assets.Source
 {
@@ -26,15 +27,24 @@ namespace Assets.Source
         void Start()
         {
             GameFiles.LoadClientFiles();
-            
+
+            for (short i = 0; i < ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT; i++)
+            {
+                TileBrowser.Instance.AddTile(i);
+            }
+
             int mapIndex = 3;
             int mapWidth = 2560;
             int mapDepth = 2048;
 
+            GameMap.OnMapFinishLoading += () =>
+            {
+                TileBrowser.Instance.SelectDefault();
+                CameraController.Instance.InitializePosition();
+            };
+
             _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
             _map.Load(GameFiles.GetUOPath($"map{mapIndex}.mul"), mapWidth, mapDepth);
-
-            CameraController.Instance.InitializePosition();
         }
 
         void OnApplicationQuit()

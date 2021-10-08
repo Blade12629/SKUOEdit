@@ -26,62 +26,62 @@ namespace Assets.Source.UI
         {
             EditorInput.Instance.CurrentAction = EditorAction.IncreaseVerticeHeight;
             DisableOutlines();
-            _vertUpLine.gameObject.SetActive(false);
+            _vertUpLine.enabled = true;
         }
 
         public void SetToolVertDown()
         {
             EditorInput.Instance.CurrentAction = EditorAction.DecreaseVerticeHeight;
             DisableOutlines();
-            _vertDownLine.gameObject.SetActive(false);
+            _vertDownLine.enabled = true;
         }
 
         public void SetToolVert()
         {
             EditorInput.Instance.CurrentAction = EditorAction.SetVerticeHeight;
             DisableOutlines();
-            _vertLine.gameObject.SetActive(false);
+            _vertLine.enabled = true;
         }
 
         public void SetToolTileUp()
         {
             EditorInput.Instance.CurrentAction = EditorAction.IncreaseTileHeight;
             DisableOutlines();
-            _tileUpLine.gameObject.SetActive(false);
+            _tileUpLine.enabled = true;
         }
 
         public void SetToolTileDown()
         {
             EditorInput.Instance.CurrentAction = EditorAction.DecreaseTileHeight;
             DisableOutlines();
-            _tileDownLine.gameObject.SetActive(false);
+            _tileDownLine.enabled = true;
         }
 
         public void SetToolTile()
         {
             EditorInput.Instance.CurrentAction = EditorAction.SetTileHeight;
             DisableOutlines();
-            _tileLine.gameObject.SetActive(false);
+            _tileLine.enabled = true;
         }
 
         public void SetToolTileId()
         {
             EditorInput.Instance.CurrentAction = EditorAction.SetTileId;
             DisableOutlines();
-            _tileIdLine.gameObject.SetActive(false);
+            _tileIdLine.enabled = true;
         }
 
         void DisableOutlines()
         {
-            _vertUpLine.gameObject.SetActive(false);
-            _vertDownLine.gameObject.SetActive(false);
-            _vertLine.gameObject.SetActive(false);
+            _vertUpLine.enabled = false;
+            _vertDownLine.enabled = false;
+            _vertLine.enabled = false;
 
-            _tileUpLine.gameObject.SetActive(false);
-            _tileDownLine.gameObject.SetActive(false);
-            _tileLine.gameObject.SetActive(false);
+            _tileUpLine.enabled = false;
+            _tileDownLine.enabled = false;
+            _tileLine.enabled = false;
 
-            _tileIdLine.gameObject.SetActive(false);
+            _tileIdLine.enabled = false;
         }
     }
 }
