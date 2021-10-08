@@ -34,6 +34,8 @@ namespace Assets.Source.Game
 
         public string MapFile { get; private set; }
 
+        public bool IsMapLoaded { get; private set; }
+
         Vertex[] _vertices;
         TileBlock[] _tileBlocks;
 
@@ -53,9 +55,12 @@ namespace Assets.Source.Game
 
             _renderedArea = new Rect(newPos.x, newPos.z, _renderedArea.width, _renderedArea.height);
 
+            if (!IsMapLoaded)
+                return;
+
             for (int i = 0; i < _chunks.Length; i++)
             {
-                MapChunk chunk = _chunks[i];
+                MapChunk chunk = _chunks[i];                
                 Rect chunkRenderedArea = chunk.RenderedArea;
 
                 chunk.MoveToWorld(new Vector3(chunkRenderedArea.x + xDiff, 0, chunkRenderedArea.y + zDiff));
@@ -64,6 +69,8 @@ namespace Assets.Source.Game
 
         public void Destroy()
         {
+            Debug.Log("Destroying GameMap");
+
             Width = 0;
             BlockWidth = 0;
             Depth = 0;
@@ -82,9 +89,10 @@ namespace Assets.Source.Game
             GameObject.Destroy(gameObject);
 
             Instance = null;
+            IsMapLoaded = false;
         }
 
-        public void Load(string file, int width, int depth)
+        public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds)
         {
             MapFile = file;
             Width = width;
@@ -94,6 +102,7 @@ namespace Assets.Source.Game
 
             _chunks = new MapChunk[3 * 3];
 
+            Debug.Log("Initializing minimap");
             Minimap.Instance.Initialize(width, depth);
 
             StartCoroutine(LoadMap());
@@ -105,7 +114,21 @@ namespace Assets.Source.Game
                 Debug.Log("Loading map blocks");
                 yield return new WaitForEndOfFrame();
 
-                LoadMapBlocks();
+                switch (genOption)
+                {
+                    case GenerationOption.Default:
+                        LoadMapBlocks();
+                        break;
+
+                    case GenerationOption.Flatland:
+                        GenerateFlatmap();
+                        break;
+
+                    case GenerationOption.Converted:
+                        ConvertMapFromColors(tileHeights, tileIds);
+                        break;
+                }
+
 
                 Debug.Log("Loading map vertices");
                 yield return new WaitForEndOfFrame();
@@ -117,11 +140,15 @@ namespace Assets.Source.Game
 
                 LoadMinimap();
 
-                Debug.Log("Finished loading map");
+                Debug.Log("Loading map mesh");
                 yield return new WaitForEndOfFrame();
 
                 LoadMapMesh();
 
+                Debug.Log("Finished generating map");
+                yield return new WaitForEndOfFrame();
+
+                IsMapLoaded = true;
                 OnMapFinishLoading?.Invoke();
             }
         }
@@ -132,6 +159,42 @@ namespace Assets.Source.Game
                 MapFile = file;
 
             SaveMapBlocks();
+        }
+
+        public void ConvertMapFromColors(int[] tileHeights, int[] tileIds)
+        {
+            int headerStart = 4096;
+            TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
+
+            for (int xb = 0; xb < BlockWidth; xb++)
+            {
+                int wx = xb * 8;
+
+                for (int zb = 0; zb < BlockDepth; zb++)
+                {
+                    int blockIndex = xb * BlockDepth + zb;
+                    int wz = zb * 8;
+
+                    Tile[] tiles = new Tile[64];
+                    int tileIndex = 0;
+
+                    for (int x = 0; x < 8; x++)
+                    {
+                        for (int z = 0; z < 8; z++)
+                        {
+                            int srcIndex = (wx + x) * Depth + (wz + z);
+                            short tileId = (short)tileIds[srcIndex];
+                            sbyte height = (sbyte)tileHeights[srcIndex];
+
+                            tiles[tileIndex++] = new Tile(tileId, height);
+                        }
+                    }
+
+                    tileBlocks[blockIndex] = new TileBlock(headerStart + blockIndex, tiles);
+                }
+            }
+
+            _tileBlocks = tileBlocks;
         }
 
         public void SetTileHeight(int x, int z, int height)
@@ -159,7 +222,7 @@ namespace Assets.Source.Game
             IncreaseTileHeight(x, z, -height);
         }
 
-        public void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true)
+        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
@@ -171,6 +234,8 @@ namespace Assets.Source.Game
 
             ref Tile tile = ref GetTile(z, x);
             tile.Z = (sbyte)height;
+
+            RefreshUVs(x, z, false);
 
             if (updateChunks)
                 UpdateChunks(x, z);
@@ -236,28 +301,9 @@ namespace Assets.Source.Game
                 return;
 
             ref Tile tileBL = ref GetTile(z, x);
-            ref Tile tileTL = ref GetTile(z + 1, x);
-            ref Tile tileTR = ref GetTile(z + 1, x + 1);
-            ref Tile tileBR = ref GetTile(z, x + 1);
-
             tileBL.TileId = id;
 
-            bool isEvenTile = tileBL.Z == tileTL.Z &&
-                              tileBL.Z == tileTR.Z &&
-                              tileBL.Z == tileBR.Z;
-
-            Vector2[] tileUVs = GetTileUVs(tileBL.TileId, !isEvenTile);
-
-            for (int i = 0; i < 4; i++)
-            {
-                ref Vertex vertex = ref _vertices[vertexIndex + i];
-                ref Vector2 uv = ref tileUVs[i];
-
-                vertex.UvX = uv.x;
-                vertex.UvY = uv.y;
-            }
-
-            UpdateChunks(x, z);
+            RefreshUVs(x, z);
         }
 
         /// <summary>
@@ -300,6 +346,37 @@ namespace Assets.Source.Game
                 // copy area vertice data
                 Array.Copy(_vertices, indexSrc, dest, indexDest, length);
             });
+        }
+
+        void RefreshUVs(int x, int z, bool updateChunks = true)
+        {
+            int vertexIndex = PositionToIndex(x, z, IndexType.Vertice);
+
+            if (vertexIndex < 0 || vertexIndex >= _vertices.Length)
+                return;
+
+            ref Tile tileBL = ref GetTile(z, x);
+            ref Tile tileTL = ref GetTile(z + 1, x);
+            ref Tile tileTR = ref GetTile(z + 1, x + 1);
+            ref Tile tileBR = ref GetTile(z, x + 1);
+
+            bool isEvenTile = tileBL.Z == tileTL.Z &&
+                              tileBL.Z == tileTR.Z &&
+                              tileBL.Z == tileBR.Z;
+
+            Vector2[] tileUVs = GetTileUVs(tileBL.TileId, !isEvenTile);
+
+            for (int i = 0; i < 4; i++)
+            {
+                ref Vertex vertex = ref _vertices[vertexIndex + i];
+                ref Vector2 uv = ref tileUVs[i];
+
+                vertex.UvX = uv.x;
+                vertex.UvY = uv.y;
+            }
+
+            if (updateChunks)
+                UpdateChunks(x, z);
         }
 
         void UpdateChunks(int x, int z)
@@ -371,6 +448,31 @@ namespace Assets.Source.Game
                 ptr += length;
 
                 return (T*)cur;
+            }
+        }
+
+        void SaveMapBlocks()
+        {
+            if (File.Exists(MapFile))
+                File.Delete(MapFile);
+
+            using (FileStream fstream = new FileStream(MapFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (BinaryWriter writer = new BinaryWriter(fstream))
+            {
+                for (int i = 0; i < _tileBlocks.Length; i++)
+                {
+                    ref TileBlock block = ref _tileBlocks[i];
+                    writer.Write(block.Header);
+                    
+                    for (int x = 0; x < block.Tiles.Length; x++)
+                    {
+                        ref Tile tile = ref block.Tiles[x];
+                        writer.Write(tile.TileId);
+                        writer.Write(tile.Z);
+                    }
+                }
+
+                fstream.Flush();
             }
         }
 
@@ -489,12 +591,15 @@ namespace Assets.Source.Game
                 for (int z = 0; z < 3; z++)
                 {
                     int index = x * 3 + z;
+                    int xRender = x * MapChunk.MeshSize;
+                    int zRender = z * MapChunk.MeshSize;
+
+                    if (xRender >= Width || zRender >= Depth)
+                        continue;
 
                     GameObject chunkObj = new GameObject($"Chunk {x}/{z}", typeof(MapChunk), typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
                     MapChunk chunk = chunkObj.GetComponent<MapChunk>();
 
-                    int xRender = x * MapChunk.MeshSize;
-                    int zRender = z * MapChunk.MeshSize;
                     Rect areaToRender = new Rect(xRender, zRender, MapChunk.MeshSize, MapChunk.MeshSize);
 
                     chunk.BuildChunk(areaToRender);
@@ -503,45 +608,22 @@ namespace Assets.Source.Game
                 }
             }
         }
-
-        void SaveMapBlocks()
+        void GenerateFlatmap()
         {
-            int memSizePerBlockWidth = BlockDepth * (sizeof(int) + sizeof(short) + sizeof(sbyte));
-            long totalSize = BlockWidth * memSizePerBlockWidth;
+            int headerStart = 4096;
+            TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
 
-            unsafe
+            Parallel.For(0, tileBlocks.Length, tb =>
             {
-                using (MemoryMappedFile mapMMF = MemoryMappedFile.CreateNew(null, totalSize, MemoryMappedFileAccess.ReadWrite))
-                using (MemoryMappedViewAccessor mapAccessor = mapMMF.CreateViewAccessor())
-                {
-                    byte* mapStart = null;
-                    mapAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref mapStart);
+                Tile[] tiles = new Tile[64];
 
-                    if (mapStart == null)
-                        throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
+                for (int i = 0; i < 64; i++)
+                    tiles[i] = new Tile(3, 0);
 
-                    for (int i = 0; i < _tileBlocks.Length; i++)
-                    {
-                        ref TileBlock block = ref _tileBlocks[i];
-                        WritePtr(ref mapStart, block.Header, 4);
+                tileBlocks[tb] = new TileBlock(headerStart + tb, tiles);
+            });
 
-                        for (int x = 0; x < block.Tiles.Length; x++)
-                        {
-                            ref Tile tile = ref block.Tiles[x];
-                            WritePtr(ref mapStart, tile.TileId, 2);
-                            WritePtr(ref mapStart, tile.Z, 1);
-                        }
-                    }
-                }
-            }
-
-            static unsafe void WritePtr<T>(ref byte* ptr, T value, int length) where T : unmanaged
-            {
-                T* curPtr = (T*)ptr;
-                *curPtr = value;
-
-                ptr += length;
-            }
+            _tileBlocks = tileBlocks;
         }
 
         ref TileBlock GetBlock(int x, int y)
@@ -597,6 +679,13 @@ namespace Assets.Source.Game
         void Update()
         {
             Input.Update();
+        }
+
+        public enum GenerationOption
+        {
+            Default,
+            Flatland,
+            Converted
         }
 
         enum IndexType

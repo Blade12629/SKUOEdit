@@ -69,7 +69,7 @@ namespace Assets.Source.Game
                             break;
 
                         case EditorAction.SetTileId:
-                            GameMap.Instance.SetTileId(x, z, (short)CurrentValue);
+                            GameMap.Instance.SetTileId(x, z, (short)CurrentTileId);
                             break;
                     }
                 }

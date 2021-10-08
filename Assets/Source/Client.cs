@@ -24,6 +24,26 @@ namespace Assets.Source
             Instance = this;
         }
 
+        public void LoadMap(string path, int width, int depth, GameMap.GenerationOption option, int[] tileHeights, int[] tileIds)
+        {
+            if (_map != null)
+            {
+                _map.Destroy();
+                _map = null;
+            }
+
+            _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
+            _map.Load(path, width, depth, option, tileHeights, tileIds);
+        }
+
+        public void SaveMap(string path)
+        {
+            if (_map == null)
+                return;
+
+            _map.Save(path);
+        }
+
         void Start()
         {
             GameFiles.LoadClientFiles();
@@ -33,18 +53,11 @@ namespace Assets.Source
                 TileBrowser.Instance.AddTile(i);
             }
 
-            int mapIndex = 3;
-            int mapWidth = 2560;
-            int mapDepth = 2048;
-
             GameMap.OnMapFinishLoading += () =>
             {
                 TileBrowser.Instance.SelectDefault();
                 CameraController.Instance.InitializePosition();
             };
-
-            _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
-            _map.Load(GameFiles.GetUOPath($"map{mapIndex}.mul"), mapWidth, mapDepth);
         }
 
         void OnApplicationQuit()

@@ -56,6 +56,7 @@ namespace Assets.Source.Game
 
         public void DestroyChunk()
         {
+            Debug.Log($"Destroying chunk {name}");
             GameObject.Destroy(gameObject);
         }
 

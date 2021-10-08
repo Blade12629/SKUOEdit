@@ -31,9 +31,15 @@ namespace Assets.Source.Game
             _terrainLayerMask = 1 << 0;
         }
 
-        public void InitializePosition()
+        public void InitializePosition(Vector3? startPos = null)
         {
-            Vector3 pos = transform.position;
+            Vector3 pos;
+
+            if (startPos.HasValue)
+                pos = startPos.Value;
+            else
+                pos = Vector3.zero;
+
             transform.position = new Vector3(pos.x + _cameraOffset.x, transform.position.y, pos.z + _cameraOffset.z);
 
             Minimap.OnMinimapPositionChange += MoveToWorld;
@@ -50,7 +56,7 @@ namespace Assets.Source.Game
             Vector3 diff = newPos - oldPos;
 
             transform.position = new Vector3(newPos.x + _cameraOffset.x, transform.position.y, newPos.z + _cameraOffset.z);
-            _positionText.text = $"X: {(int)newPos.z}\nY: {(int)newPos.x}";
+            _positionText.text = $"X: {(int)transform.position.z}\nY: {(int)transform.position.x}";
 
             OnCameraMoved?.Invoke(new CameraMovedEventArgs(oldPos, newPos, diff));
         }
