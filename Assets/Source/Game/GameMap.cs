@@ -165,6 +165,9 @@ namespace Assets.Source.Game
             ref Vertex vertex = ref _vertices[index + indexOffset];
             vertex.Y = height * .1f;
 
+            ref Tile tile = ref GetTile(z, x);
+            tile.Z = (sbyte)height;
+
             if (updateChunks)
                 UpdateChunks(x, z);
         }
