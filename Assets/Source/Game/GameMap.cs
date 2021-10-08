@@ -320,7 +320,7 @@ namespace Assets.Source.Game
 
         int PositionToIndex(int x, int z, IndexType indexType)
         {
-            return (x * Depth + z) * (int)indexType;
+            return (x * Width + z) * (int)indexType;
         }
 
         static int PositionToIndex(int x, int z, int depth, IndexType indexType)
@@ -379,18 +379,44 @@ namespace Assets.Source.Game
             Vertex[] vertices = new Vertex[Width * Depth * 4];
             Color[] minimapColors = new Color[Width * Depth];
 
-            Parallel.For(0, Width, x =>
+            Parallel.For(0, Depth, x =>
             {
-                Parallel.For(0, Depth, z =>
+                Parallel.For(0, Width, z =>
                 {
                     ref Tile tileBL = ref GetTile(z, x);
-                    ref Tile tileTL = ref GetTile(z + 1, x);
-                    ref Tile tileTR = ref GetTile(z + 1, x + 1);
-                    ref Tile tileBR = ref GetTile(z, x + 1);
 
-                    bool isEvenTile = tileBL.Z == tileTL.Z &&
-                                      tileBL.Z == tileTR.Z &&
-                                      tileBL.Z == tileBR.Z;
+                    sbyte hTL = 0;
+                    sbyte hTR = 0;
+                    sbyte hBR = 0;
+
+                    if (z < Width - 1)
+                    {
+                        ref Tile tileTL = ref GetTile(z + 1, x);
+                        hTL = tileTL.Z;
+
+                        if (x < Depth - 1)
+                        {
+                            ref Tile tileTR = ref GetTile(z + 1, x + 1);
+                            hTR = tileTR.Z;
+                        }
+                        else
+                            hTR = tileBL.Z;
+                    }
+                    else
+                        hTL = tileBL.Z;
+
+                    if (x < Depth - 1)
+                    {
+                        ref Tile tileBR = ref GetTile(z, x + 1);
+                        hBR = tileBR.Z;
+                    }
+                    else
+                        hBR = tileBL.Z;
+
+
+                    bool isEvenTile = tileBL.Z == hTL &&
+                                      tileBL.Z == hTR &&
+                                      tileBL.Z == hBR;
 
                     int vertexIndex = PositionToIndex(x, z, IndexType.Vertice);
                     Vector2[] uvs = GetTileUVs(tileBL.TileId, !isEvenTile);
@@ -413,21 +439,21 @@ namespace Assets.Source.Game
                                 vertex.X = x;
                                 vertex.Z = z + 1;
 
-                                vertex.Y = tileTL.Z * .1f;
+                                vertex.Y = hTL * .1f;
                                 break;
 
                             case 2:
                                 vertex.X = x + 1;
                                 vertex.Z = z + 1;
 
-                                vertex.Y = tileTR.Z * .1f;
+                                vertex.Y = hTR * .1f;
                                 break;
 
                             case 3:
                                 vertex.X = x + 1;
                                 vertex.Z = z;
 
-                                vertex.Y = tileBR.Z * .1f;
+                                vertex.Y = hBR * .1f;
                                 break;
                         }
 
@@ -444,7 +470,7 @@ namespace Assets.Source.Game
         {
             for (int x = 0; x < Depth; x++)
             {
-                for (int z = 0; z < Depth; z++)
+                for (int z = 0; z < Width; z++)
                 {
                     ref Tile tile = ref GetTile(z, x);
                     Minimap.Instance.SetMapTile(new Vector2(x, z), tile.TileId, false);
@@ -520,7 +546,15 @@ namespace Assets.Source.Game
 
         ref TileBlock GetBlock(int x, int y)
         {
-            return ref _tileBlocks[(x >> 3) * BlockDepth + (y >> 3)];
+            try
+            {
+                return ref _tileBlocks[(x >> 3) * BlockDepth + (y >> 3)];
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+                throw;
+            }
         }
 
         ref Tile GetTile(int x, int y)
