@@ -128,7 +128,10 @@
     <Compile Include="Assets\Source\Game\GameMap.cs" />
     <Compile Include="Assets\Source\Game\MapChunk.cs" />
     <Compile Include="Assets\Source\Game\MemoryManager.cs" />
-    <Compile Include="Assets\Source\Game\Minimap.cs" />
+    <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
+    <Compile Include="Assets\Source\UI\MappingTools.cs" />
+    <Compile Include="Assets\Source\UI\MenuBar.cs" />
+    <Compile Include="Assets\Source\UI\Minimap.cs" />
     <Compile Include="Assets\Source\Game\SelectionRenderer.cs" />
     <Compile Include="Assets\Source\Game\Statics\Item.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />

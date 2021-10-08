@@ -9,6 +9,8 @@ namespace Assets.Source.Game
 {
     public class EditorInput
     {
+        public static EditorInput Instance { get; private set; }
+
         public EditorAction CurrentAction { get; set; }
         public int CurrentValue { get; set; }
         public bool DisableEditorInput { get; set; }
@@ -17,6 +19,7 @@ namespace Assets.Source.Game
 
         public EditorInput()
         {
+            Instance = this;
             _terrainLayerMask = 1 << 0;
 
             CurrentAction = EditorAction.IncreaseTileHeight;
