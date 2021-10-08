@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -26,6 +28,7 @@ namespace Assets.Source.Game
         public static event Action OnMapFinishLoading;
 
         static EditorInput _input;
+        static readonly FileShare FileShareFlags = FileShare.ReadWrite | FileShare.Delete;
 
         public int Width { get; private set; }
         public int BlockWidth { get; private set; }
@@ -81,10 +84,13 @@ namespace Assets.Source.Game
             _tileBlocks = null;
             _renderedArea = default;
 
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i].DestroyChunk();
+            if (_chunks != null)
+            {
+                for (int i = 0; i < _chunks.Length; i++)
+                    _chunks[i].DestroyChunk();
 
-            _chunks = null;
+                _chunks = null;
+            }
 
             GameObject.Destroy(gameObject);
 
@@ -117,7 +123,14 @@ namespace Assets.Source.Game
                 switch (genOption)
                 {
                     case GenerationOption.Default:
-                        LoadMapBlocks();
+                        // TODO: convert uop file to mul inside of temp directory then load mul file
+                        // TODO: convert mul file uop file
+                        if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            LoadUOPMapBlocks(GetMapIndex(MapFile));
+                        }
+                        else 
+                            LoadMapBlocks();
                         break;
 
                     case GenerationOption.Flatland:
@@ -158,7 +171,10 @@ namespace Assets.Source.Game
             if (!string.IsNullOrEmpty(file))
                 MapFile = file;
 
-            SaveMapBlocks();
+            if (file.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
+                SaveUOPMapBlocks(GetMapIndex(file));
+            else
+                SaveMapBlocks();
         }
 
         public void ConvertMapFromColors(int[] tileHeights, int[] tileIds)
@@ -411,6 +427,8 @@ namespace Assets.Source.Game
 
             unsafe
             {
+                File.SetAttributes(MapFile, FileAttributes.Normal);
+
                 using (FileStream mapStream = new FileStream(MapFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 using (MemoryMappedFile mapMMF = MemoryMappedFile.CreateFromFile(mapStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
                 using (MemoryMappedViewAccessor mapAccessor = mapMMF.CreateViewAccessor())
@@ -422,7 +440,6 @@ namespace Assets.Source.Game
                         throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
 
                     int blockIndex = 0;
-                    int memSizePerBlockWidth = BlockDepth * (4 + 2 + 1);
 
                     for (int bx = 0; bx < BlockWidth; bx++)
                     {
@@ -437,6 +454,8 @@ namespace Assets.Source.Game
                             tileBlocks[blockIndex++] = new TileBlock(*header, tiles);
                         }
                     }
+
+                    mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
                 }
             }
 
@@ -449,6 +468,23 @@ namespace Assets.Source.Game
 
                 return (T*)cur;
             }
+        }
+
+        void LoadUOPMapBlocks(int mapIndex = 10)
+        {
+            FileInfo uopFile = new FileInfo(MapFile);
+            FileInfo tempMulFile = new FileInfo(Path.Combine(uopFile.Directory.FullName, $"{uopFile.Name}.mul"));
+
+            DeleteFile(tempMulFile.FullName);
+
+            UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter converter = new UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter();
+            converter.FromUOP(uopFile.FullName, tempMulFile.FullName, mapIndex);
+
+            MapFile = tempMulFile.FullName;
+            LoadMapBlocks();
+            MapFile = uopFile.FullName;
+
+            DeleteFile(tempMulFile.FullName);
         }
 
         void SaveMapBlocks()
@@ -474,6 +510,87 @@ namespace Assets.Source.Game
 
                 fstream.Flush();
             }
+        }
+
+        void SaveUOPMapBlocks(int mapIndex = 10)
+        {
+            FileInfo uopFile = new FileInfo(MapFile);
+            FileInfo tempMulFile = new FileInfo(Path.Combine(uopFile.Directory.FullName, $"{uopFile.Name}.mul"));
+
+            DeleteFile(tempMulFile.FullName);
+
+            MapFile = tempMulFile.FullName;
+            SaveMapBlocks();
+            MapFile = uopFile.FullName;
+
+            BackupFile(uopFile.FullName, 5);
+            UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter.ToUOP(tempMulFile.FullName, uopFile.FullName, mapIndex);
+
+            DeleteFile(tempMulFile.FullName);
+        }
+
+        void BackupFile(string file, int maxBackups)
+        {
+            if (!File.Exists(file))
+                return;
+
+            // count backups
+            for (int i = 0; i < maxBackups; i++)
+            {
+                // we have a backup slot available
+                if (!File.Exists(file + i))
+                {
+                    File.Move(file, file + i);
+                    return;
+                }
+            }
+
+            // we reached max backups, delete oldest backup
+            DeleteFile(file + (maxBackups - 1));
+
+            // move every backup one iteration higher (1 -> 2)
+            for (int i = maxBackups - 2; i > 0; i--)
+                File.Move(file + i, file + (i + 1));
+
+            // move file to iteration 0
+            File.Move(file, file + 0);
+        }
+
+        void DeleteFile(string file)
+        {
+            if (File.Exists(file))
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+        }
+
+        int GetMapIndex(string fileName)
+        {
+            StringBuilder sb = new StringBuilder(2);
+
+            bool wasNumber = false;
+            for (int i = fileName.Length - 1; i >= 0; i--)
+            {
+                char c = fileName[i];
+
+                if (!char.IsNumber(c))
+                {
+                    if (wasNumber)
+                        break;
+                }
+                else
+                {
+                    wasNumber = true;
+
+                    if (sb.Length == 0)
+                        sb.Append(c);
+                    else
+                        sb.Insert(0, c);
+                }
+            }
+
+            return int.Parse(sb.ToString());
         }
 
         void LoadMapVertices()

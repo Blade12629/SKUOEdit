@@ -10,6 +10,8 @@ About Statics:
 # Legal
 This project uses the ClassicUO client code inside of Unity: https://github.com/ClassicUO/ClassicUO/
 
+This project uses the UOFiddler UOP Packerplugin code inside of Unity: https://github.com/polserver/UOFiddler/
+
 This work is released under the GPLv3 license. 
 
 This project does not distribute any copyrighted game assets.

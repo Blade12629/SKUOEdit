@@ -1,4 +1,11 @@
-﻿using System;
+﻿// #############################################
+// ## The code from this file was taken from: ##########################################################################
+// ## https://github.com/polserver/UOFiddler/blob/master/UoFiddler.Plugin.UopPacker/Classes/LegacyMulFileConverter.cs ##
+// ## It may contain changes at some points   ##########################################################################
+// #############################################
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -30,20 +37,20 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         {
             return path == null
                        ? null
-                       : new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read));
+                       : new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite));
         }
 
         private static BinaryWriter OpenOutput(string path)
         {
             return path == null
                        ? null
-                       : new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None));
+                       : new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite));
         }
 
         //
         // MUL -> UOP
         //
-        public static void ToUOP(string inFile, string inFileIdx, string outFile, FileType type, int typeIndex)
+        public static void ToUOP(string inFile, string outFile,  int typeIndex)
         {
             // Same for all UOP files
             const long firstTable = 0x200;
@@ -57,63 +64,36 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             }
 #pragma warning restore 162
 
-            using (BinaryReader reader = OpenInput(inFile))
-            using (BinaryReader readerIdx = OpenInput(inFileIdx))
-            using (BinaryWriter writer = OpenOutput(outFile))
+            using (FileStream readerStream = new FileStream(inFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (FileStream writerStream = new FileStream(outFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
+                BinaryReader reader = new BinaryReader(readerStream);
+                BinaryWriter writer = new BinaryWriter(writerStream);
+
                 List<IdxEntry> idxEntries;
 
-                if (type == FileType.MapLegacyMul)
+                // No IDX file, just group the data into 0xC4000 long chunks
+                int length = (int)reader.BaseStream.Length;
+                idxEntries = new List<IdxEntry>((int)Math.Ceiling((double)length / 0xC4000));
+
+                int position = 0;
+                int id = 0;
+
+                while (position < length)
                 {
-                    // No IDX file, just group the data into 0xC4000 long chunks
-                    int length = (int)reader.BaseStream.Length;
-                    idxEntries = new List<IdxEntry>((int)Math.Ceiling((double)length / 0xC4000));
-
-                    int position = 0;
-                    int id = 0;
-
-                    while (position < length)
+                    IdxEntry e = new IdxEntry
                     {
-                        IdxEntry e = new IdxEntry
-                        {
-                            Id = id++,
-                            Offset = position,
-                            Size = 0xC4000,
-                            Extra = 0
-                        };
+                        Id = id++,
+                        Offset = position,
+                        Size = 0xC4000,
+                        Extra = 0
+                    };
 
-                        idxEntries.Add(e);
+                    idxEntries.Add(e);
 
-                        position += 0xC4000;
-                    }
+                    position += 0xC4000;
                 }
-                else
-                {
-                    int idxEntryCount = (int)(readerIdx.BaseStream.Length / 12);
-                    idxEntries = new List<IdxEntry>(idxEntryCount);
-
-                    for (int i = 0; i < idxEntryCount; ++i)
-                    {
-                        int offset = readerIdx.ReadInt32();
-
-                        if (offset < 0)
-                        {
-                            readerIdx.BaseStream.Seek(8, SeekOrigin.Current); // skip
-                            continue;
-                        }
-
-                        IdxEntry e = new IdxEntry
-                        {
-                            Id = i,
-                            Offset = offset,
-                            Size = readerIdx.ReadInt32(),
-                            Extra = readerIdx.ReadInt32()
-                        };
-
-                        idxEntries.Add(e);
-                    }
-                }
-
+                
                 // File header
                 writer.Write(0x50594D); // MYP
                 writer.Write(5); // version
@@ -134,7 +114,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 int tableCount = (int)Math.Ceiling((double)idxEntries.Count / tableSize);
                 TableEntry[] tableEntries = new TableEntry[tableSize];
 
-                string hashFormat = GetHashFormat(type, typeIndex, out int _);
+                string hashFormat = GetHashFormat(FileType.MapLegacyMul, typeIndex, out int _);
 
                 for (int i = 0; i < tableCount; ++i)
                 {
@@ -160,18 +140,6 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                         tableEntries[tableIdx].Size = data.Length;
                         tableEntries[tableIdx].Identifier = HashLittle2(string.Format(hashFormat, idxEntries[j].Id));
                         tableEntries[tableIdx].Hash = HashAdler32(data);
-
-                        if (type == FileType.GumpartLegacyMul)
-                        {
-                            // Prepend width/height from IDX's extra
-                            int width = idxEntries[j].Extra >> 16 & 0xFFFF;
-                            int height = idxEntries[j].Extra & 0xFFFF;
-
-                            writer.Write(width);
-                            writer.Write(height);
-
-                            tableEntries[tableIdx].Size += 8;
-                        }
 
                         writer.Write(data);
                     }
@@ -220,29 +188,27 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // UOP -> MUL
         //
-        public void FromUOP(string inFile, string outFile, string outFileIdx, FileType type, int typeIndex)
+        public void FromUOP(string inFile, string outFile, int typeIndex)
         {
             Dictionary<ulong, int> chunkIds = new Dictionary<ulong, int>();
 
-            string format = GetHashFormat(type, typeIndex, out int maxId);
+            string format = GetHashFormat(FileType.MapLegacyMul, typeIndex, out int maxId);
 
             for (int i = 0; i < maxId; ++i)
             {
                 chunkIds[HashLittle2(string.Format(format, i))] = i;
             }
 
-            bool[] used = new bool[maxId];
-
-            using (BinaryReader reader = OpenInput(inFile))
-            using (BinaryWriter writer = OpenOutput(outFile))
-            using (BinaryWriter writerIdx = OpenOutput(outFileIdx))
+            using (FileStream readerStream = new FileStream(inFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (FileStream writerStream = new FileStream(outFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
+                BinaryReader reader = new BinaryReader(readerStream);
+                BinaryWriter writer = new BinaryWriter(writerStream);
+
                 if (reader.ReadInt32() != 0x50594D) // MYP
                 {
                     throw new ArgumentException("inFile is not a UOP file.");
                 }
-
-                Stream stream = reader.BaseStream;
 
                 reader.ReadInt32(); // version ?
                 reader.ReadInt32(); // format timestamp? 0xFD23EC43
@@ -251,7 +217,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                 do
                 {
                     // Table header
-                    stream.Seek(nextTable, SeekOrigin.Begin);
+                    readerStream.Seek(nextTable, SeekOrigin.Begin);
                     int entries = reader.ReadInt32();
                     nextTable = reader.ReadInt64();
 
@@ -286,88 +252,23 @@ namespace UoFiddler.Plugin.UopPacker.Classes
                             throw new Exception("Unknown identifier encountered");
                         }
 
-                        stream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
+                        readerStream.Seek(offsets[i].Offset + offsets[i].HeaderLength, SeekOrigin.Begin);
                         byte[] chunkData = reader.ReadBytes(offsets[i].Size);
 
-                        if (type == FileType.MapLegacyMul)
-                        {
-                            // Write this chunk on the right position (no IDX file to point to it)
-                            writer.Seek(chunkId * 0xC4000, SeekOrigin.Begin);
-                            writer.Write(chunkData);
-                        }
-                        else
-                        {
-                            int dataOffset = 0;
-
-                            #region Idx
-                            writerIdx.Seek(chunkId * 12, SeekOrigin.Begin);
-                            writerIdx.Write((uint)writer.BaseStream.Position); // Position
-
-                            switch (type)
-                            {
-                                case FileType.GumpartLegacyMul:
-                                    {
-                                        // Width and height are prepended to the data
-                                        int width = chunkData[0] | chunkData[1] << 8 | chunkData[2] << 16 | chunkData[3] << 24;
-                                        int height = chunkData[4] | chunkData[5] << 8 | chunkData[6] << 16 | chunkData[7] << 24;
-
-                                        writerIdx.Write(chunkData.Length - 8);
-                                        writerIdx.Write(width << 16 | height);
-                                        dataOffset = 8;
-                                        break;
-                                    }
-                                case FileType.SoundLegacyMul:
-                                    {
-                                        // Extra contains the ID of this sound file + 1
-                                        writerIdx.Write(chunkData.Length);
-                                        writerIdx.Write(chunkId + 1);
-                                        break;
-                                    }
-                                case FileType.ArtLegacyMul:
-                                    break;
-                                case FileType.MapLegacyMul:
-                                    break;
-                                default:
-                                    {
-                                        writerIdx.Write(chunkData.Length); // Size
-                                        writerIdx.Write(0); // Extra
-                                        break;
-                                    }
-                            }
-
-                            used[chunkId] = true;
-                            #endregion
-
-                            writer.Write(chunkData, dataOffset, chunkData.Length - dataOffset);
-                        }
+                        // Write this chunk on the right position (no IDX file to point to it)
+                        writer.Seek(chunkId * 0xC4000, SeekOrigin.Begin);
+                        writer.Write(chunkData);
                     }
 
                     // Move to next table
                     if (nextTable != 0)
                     {
-                        stream.Seek(nextTable, SeekOrigin.Begin);
+                        readerStream.Seek(nextTable, SeekOrigin.Begin);
                     }
                 }
                 while (nextTable != 0);
 
-                // Fix idx
-                // TODO: Only go until the last used entry? Does the client mind?
-                if (writerIdx == null)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < used.Length; ++i)
-                {
-                    if (used[i])
-                    {
-                        continue;
-                    }
-
-                    writerIdx.Seek(i * 12, SeekOrigin.Begin);
-                    writerIdx.Write(-1);
-                    writerIdx.Write((long)0);
-                }
+                writerStream.Flush();
             }
         }
 

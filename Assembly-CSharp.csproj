@@ -90,11 +90,13 @@
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Json.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonMapper.cs" />
+    <Compile Include="Assets\Source\Game\LegacyMulConverter\FileType.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileManager.cs" />
     <Compile Include="Assets\Source\Game\VertexMap.cs" />
     <Compile Include="Assets\Source\UI\MappingTools.cs" />
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileLoader.cs" />
+    <Compile Include="Assets\Source\Game\LegacyMulConverter\LegacyMulFileConverter.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiMapLoader.cs" />
     <Compile Include="Assets\Source\Game\GameMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\ArtLoader.cs" />
