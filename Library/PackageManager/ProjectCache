@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637682204416648798
-    m_Hash: 1432519142
+      ticks: 637686116374633094
+    m_Hash: 1141359217
   m_LockFileStatus:
     m_FilePath: D:/reposSSD/SKUOEdit/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637682204609689840
-    m_Hash: 2656176529
+      ticks: 637686116374993115
+    m_Hash: 928683556
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -22,6 +22,58 @@ m_LocalPackages:
 m_ProjectPath: D:/reposSSD/SKUOEdit/Packages
 m_EditorVersion: 2021.1.22f1 (a137e5fb0427)
 m_ResolvedPackages:
+- packageId: com.oddworm.heapexplorer@https://github.com/pschraut/UnityHeapExplorer.git#4.0.0
+  testable: 0
+  isDirectDependency: 1
+  version: 4.0.0
+  source: 5
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.oddworm.heapexplorer@b00fee6b44
+  assetPath: Packages/com.oddworm.heapexplorer
+  name: com.oddworm.heapexplorer
+  displayName: Heap Explorer
+  author:
+    name: Peter Schraut
+    email: 
+    url: http://console-dev.de
+  category: 
+  type: 
+  description: Heap Explorer is a Memory Profiler, Debugger and Analyzer for Unity.
+    You can open it from the main menu 'Window > Analysis > Heap Explorer'.
+  status: 4
+  errors: []
+  versions:
+    all: []
+    compatible: []
+    verified: 
+  dependencies: []
+  resolvedDependencies: []
+  keywords:
+  - profiler
+  - memory
+  - editor
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 0
+  documentationUrl: https://github.com/pschraut/UnityHeapExplorer
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.com/pschraut/UnityHeapExplorer.git
+    revision: 
+    path: 
+  unityLifecycle:
+    version: 
+    nextVersion: 
 - packageId: com.unity.collab-proxy@1.9.0
   testable: 0
   isDirectDependency: 1
@@ -68,6 +120,10 @@ m_ResolvedPackages:
     - 1.7.1
     - 1.8.0
     - 1.9.0
+    - 1.10.2
+    - 1.11.2
+    - 1.12.5
+    - 1.13.5
     - 2.0.0-preview.6
     - 2.0.0-preview.8
     - 2.0.0-preview.15
@@ -80,6 +136,10 @@ m_ResolvedPackages:
     - 2.1.0-preview.6
     compatible:
     - 1.9.0
+    - 1.10.2
+    - 1.11.2
+    - 1.12.5
+    - 1.13.5
     - 2.0.0-preview.6
     - 2.0.0-preview.8
     - 2.0.0-preview.15
@@ -232,6 +292,20 @@ m_ResolvedPackages:
   errors: []
   versions:
     all:
+    - 1.0.2
+    - 1.0.3
+    - 1.0.4
+    - 1.0.9
+    - 1.0.10
+    - 1.0.11
+    - 2.0.0
+    - 2.0.1
+    - 2.0.2
+    - 2.0.3
+    - 2.0.5
+    - 2.0.7
+    - 2.0.8
+    - 2.0.9
     - 2.0.11
     compatible:
     - 2.0.11
@@ -261,7 +335,7 @@ m_ResolvedPackages:
   entitlements:
     isAllowed: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 0
+  datePublishedTicks: 637613656180000000
   documentationUrl: 
   hasRepository: 1
   repository:
@@ -334,6 +408,121 @@ m_ResolvedPackages:
     path: 
   unityLifecycle:
     version: 1.2.4
+    nextVersion: 
+- packageId: com.unity.memoryprofiler@0.4.1-preview.1
+  testable: 0
+  isDirectDependency: 1
+  version: 0.4.1-preview.1
+  source: 1
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.unity.memoryprofiler@0.4.1-preview.1
+  assetPath: Packages/com.unity.memoryprofiler
+  name: com.unity.memoryprofiler
+  displayName: Memory Profiler
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: 
+  description: The Memory Profiler offers a unified solution allowing you to profile
+    both small projects on mobile devices and big AAA projects on high end machines.
+    It provides actionable information about allocations in the engine to allow developers
+    to manage and reduce memory usage.
+  status: 4
+  errors: []
+  versions:
+    all:
+    - 0.1.0-preview.1
+    - 0.1.0-preview.2
+    - 0.1.0-preview.3
+    - 0.1.0-preview.4
+    - 0.1.0-preview.5
+    - 0.1.0-preview.6
+    - 0.1.0-preview.7
+    - 0.1.0-preview.8
+    - 0.1.0-preview.9
+    - 0.2.0-preview.1
+    - 0.2.1-preview.1
+    - 0.2.1-preview.2
+    - 0.2.2-preview.1
+    - 0.2.3-preview.1
+    - 0.2.3-preview.2
+    - 0.2.4-preview.1
+    - 0.2.5-preview.1
+    - 0.2.6-preview.1
+    - 0.2.7-preview.1
+    - 0.2.8-preview.1
+    - 0.2.8-preview.2
+    - 0.2.9-preview.1
+    - 0.2.9-preview.3
+    - 0.2.10-preview.1
+    - 0.4.0-preview.1
+    - 0.4.0-preview.2
+    - 0.4.1-preview.1
+    compatible:
+    - 0.1.0-preview.1
+    - 0.1.0-preview.2
+    - 0.1.0-preview.3
+    - 0.1.0-preview.4
+    - 0.1.0-preview.5
+    - 0.1.0-preview.6
+    - 0.1.0-preview.7
+    - 0.1.0-preview.8
+    - 0.1.0-preview.9
+    - 0.2.0-preview.1
+    - 0.2.1-preview.1
+    - 0.2.1-preview.2
+    - 0.2.2-preview.1
+    - 0.2.3-preview.1
+    - 0.2.3-preview.2
+    - 0.2.4-preview.1
+    - 0.2.5-preview.1
+    - 0.2.6-preview.1
+    - 0.2.7-preview.1
+    - 0.2.8-preview.1
+    - 0.2.8-preview.2
+    - 0.2.9-preview.1
+    - 0.2.9-preview.3
+    - 0.2.10-preview.1
+    - 0.4.0-preview.1
+    - 0.4.0-preview.2
+    - 0.4.1-preview.1
+    verified: 
+  dependencies:
+  - name: com.unity.editorcoroutines
+    version: 1.0.0
+  resolvedDependencies:
+  - name: com.unity.editorcoroutines
+    version: 1.0.0
+  keywords:
+  - profiler
+  - memory
+  - memoryprofiler
+  - snapshot
+  - profiling
+  - tool
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637678390160000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.memoryprofiler.git
+    revision: e65dda79fc14f43e3ac6a3788552824db8962296
+    path: 
+  unityLifecycle:
+    version: 
     nextVersion: 
 - packageId: com.unity.test-framework@1.1.29
   testable: 0
@@ -731,6 +920,101 @@ m_ResolvedPackages:
     path: 
   unityLifecycle:
     version: 1.5.6
+    nextVersion: 
+- packageId: com.unity.toolchain.win-x86_64-linux-x86_64@0.1.21-preview
+  testable: 0
+  isDirectDependency: 1
+  version: 0.1.21-preview
+  source: 1
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.unity.toolchain.win-x86_64-linux-x86_64@0.1.21-preview
+  assetPath: Packages/com.unity.toolchain.win-x86_64-linux-x86_64
+  name: com.unity.toolchain.win-x86_64-linux-x86_64
+  displayName: Toolchain Win Linux x64
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: 
+  description: Cross-compilation toolchain to build player target Linux x86_64 on
+    host Windows x86_64
+  status: 4
+  errors: []
+  versions:
+    all:
+    - 0.1.4-preview
+    - 0.1.5-preview
+    - 0.1.6-preview
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.13-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    - 0.1.16-preview
+    - 0.1.17-preview
+    - 0.1.18-preview
+    - 0.1.19-preview
+    - 0.1.20-preview
+    - 0.1.21-preview
+    compatible:
+    - 0.1.4-preview
+    - 0.1.5-preview
+    - 0.1.6-preview
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.13-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    - 0.1.16-preview
+    - 0.1.17-preview
+    - 0.1.18-preview
+    - 0.1.19-preview
+    - 0.1.20-preview
+    - 0.1.21-preview
+    verified: 
+  dependencies:
+  - name: com.unity.sysroot
+    version: 0.1.19-preview
+  - name: com.unity.sysroot.linux-x86_64
+    version: 0.1.14-preview
+  resolvedDependencies:
+  - name: com.unity.sysroot
+    version: 0.1.19-preview
+  - name: com.unity.sysroot.linux-x86_64
+    version: 0.1.14-preview
+  keywords:
+  - toolchain
+  - windows
+  - linux
+  - cross-compilation
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637619741380000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: git+https://github.com/Unity-Technologies/com.unity.sysroot.git
+    revision: c23b9fb202dceb7b518aa7353d96a3e2eae227c5
+    path: 
+  unityLifecycle:
+    version: 
     nextVersion: 
 - packageId: com.unity.ugui@1.0.0
   testable: 0
@@ -2636,6 +2920,157 @@ m_ResolvedPackages:
   unityLifecycle:
     version: 
     nextVersion: 
+- packageId: com.unity.sysroot@0.1.19-preview
+  testable: 0
+  isDirectDependency: 0
+  version: 0.1.19-preview
+  source: 1
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.unity.sysroot@0.1.19-preview
+  assetPath: Packages/com.unity.sysroot
+  name: com.unity.sysroot
+  displayName: Sysroot Base
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: 
+  description: This is the base sysroot package required by all sysroot and toolchain
+    packages
+  status: 4
+  errors: []
+  versions:
+    all:
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.12-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    - 0.1.16-preview
+    - 0.1.17-preview
+    - 0.1.18-preview
+    - 0.1.19-preview
+    compatible:
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.12-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    - 0.1.16-preview
+    - 0.1.17-preview
+    - 0.1.18-preview
+    - 0.1.19-preview
+    verified: 
+  dependencies: []
+  resolvedDependencies: []
+  keywords:
+  - unity
+  - linux
+  - sysroot
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637497460110000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: git+https://github.com/Unity-Technologies/com.unity.sysroot.git
+    revision: 8717ab9c5b4f758bc542184e1872ed3fcce1e1f9
+    path: 
+  unityLifecycle:
+    version: 
+    nextVersion: 
+- packageId: com.unity.sysroot.linux-x86_64@0.1.14-preview
+  testable: 0
+  isDirectDependency: 0
+  version: 0.1.14-preview
+  source: 1
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.unity.sysroot.linux-x86_64@0.1.14-preview
+  assetPath: Packages/com.unity.sysroot.linux-x86_64
+  name: com.unity.sysroot.linux-x86_64
+  displayName: Sysroot Linux x64
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: 
+  description: Sysroot used to build unity player for linux x86_64
+  status: 4
+  errors: []
+  versions:
+    all:
+    - 0.1.6-preview
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.12-preview
+    - 0.1.13-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    compatible:
+    - 0.1.6-preview
+    - 0.1.7-preview
+    - 0.1.8-preview
+    - 0.1.9-preview
+    - 0.1.10-preview
+    - 0.1.11-preview
+    - 0.1.12-preview
+    - 0.1.13-preview
+    - 0.1.14-preview
+    - 0.1.15-preview
+    verified: 
+  dependencies:
+  - name: com.unity.sysroot
+    version: 0.1.18-preview
+  resolvedDependencies:
+  - name: com.unity.sysroot
+    version: 0.1.19-preview
+  keywords:
+  - unity
+  - linux
+  - sysroot
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637460700410000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: git+https://github.com/Unity-Technologies/com.unity.sysroot.git
+    revision: 0d5e7b07c95f3ae15d6d80931a071b042e97189b
+    path: 
+  unityLifecycle:
+    version: 
+    nextVersion: 
 - packageId: com.unity.ext.nunit@1.0.6
   testable: 0
   isDirectDependency: 0
@@ -2694,4 +3129,65 @@ m_ResolvedPackages:
     path: 
   unityLifecycle:
     version: 1.0.6
+    nextVersion: 
+- packageId: com.unity.editorcoroutines@1.0.0
+  testable: 0
+  isDirectDependency: 0
+  version: 1.0.0
+  source: 1
+  resolvedPath: D:\reposSSD\SKUOEdit\Library\PackageCache\com.unity.editorcoroutines@1.0.0
+  assetPath: Packages/com.unity.editorcoroutines
+  name: com.unity.editorcoroutines
+  displayName: Editor Coroutines
+  author:
+    name: 
+    email: 
+    url: 
+  category: 
+  type: 
+  description: 'The editor coroutines package allows developers to start constructs
+    similar to Unity''s monobehaviour based coroutines within the editor using abitrary
+    objects. '
+  status: 4
+  errors: []
+  versions:
+    all:
+    - 0.0.1-preview.3
+    - 0.0.1-preview.4
+    - 0.0.1-preview.5
+    - 0.0.2-preview.1
+    - 0.1.0-preview.1
+    - 0.1.0-preview.2
+    - 1.0.0
+    compatible:
+    - 1.0.0
+    verified: 1.0.0
+  dependencies: []
+  resolvedDependencies: []
+  keywords:
+  - coroutine
+  - coroutines
+  - editor
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+  hasRegistry: 1
+  hideInEditor: 1
+  entitlements:
+    isAllowed: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 637232611380000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.editorcoroutines.git
+    revision: f67fc9992bbc7a553b17375de53a8b2db136528e
+    path: 
+  unityLifecycle:
+    version: 1.0.0
     nextVersion: 

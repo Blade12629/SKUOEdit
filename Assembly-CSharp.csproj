@@ -56,7 +56,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\SetNeighbours.cs" />
     <Compile Include="Assets\Source\ClassicUO\Client.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Constants.cs" />
@@ -78,8 +77,8 @@
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileManager.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileMul.cs" />
-    <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFilesOverrideMap.cs" />
+    <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Bag.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\CollectionHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Deque.cs" />
@@ -116,36 +115,27 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\ValueStringBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\Adler32.cs" />
-    <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLIBStream.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibHeader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
+    <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLIBStream.cs" />
+    <Compile Include="Assets\Source\Client.cs" />
+    <Compile Include="Assets\Source\Diagnostic\FPSCounter.cs" />
     <Compile Include="Assets\Source\Extensions.cs" />
-    <Compile Include="Assets\Source\GameEditor\EditorInput.cs" />
-    <Compile Include="Assets\Source\GameEditor\EditorSceneController.cs" />
-    <Compile Include="Assets\Source\GameEditor\GameFiles.cs" />
-    <Compile Include="Assets\Source\GameEditor\MapController.cs" />
-    <Compile Include="Assets\Source\GameEditor\Minimap.cs" />
-    <Compile Include="Assets\Source\GameEditor\UI\UIController.cs" />
     <Compile Include="Assets\Source\GamePaths.cs" />
-    <Compile Include="Assets\Source\IO\IDX.cs" />
-    <Compile Include="Assets\Source\IO\MemoryManager.cs" />
-    <Compile Include="Assets\Source\IO\MemoryUOFile.cs" />
-    <Compile Include="Assets\Source\IO\StaticTileMatrix.cs" />
-    <Compile Include="Assets\Source\IO\TileMatrix.cs" />
-    <Compile Include="Assets\Source\Rendering\CameraController.cs" />
-    <Compile Include="Assets\Source\Rendering\ScreenPosition.cs" />
-    <Compile Include="Assets\Source\Rendering\SelectionRenderer.cs" />
-    <Compile Include="Assets\Source\Terrain\HeightTable.cs" />
-    <Compile Include="Assets\Source\Terrain\StaticMesh.cs" />
-    <Compile Include="Assets\Source\Terrain\StaticMeshOriginal.cs" />
-    <Compile Include="Assets\Source\Terrain\TerrainMesh.cs" />
-    <Compile Include="Assets\Source\Terrain\Vertex.cs" />
-    <Compile Include="Assets\Source\Terrain\VertexLayout.cs" />
-    <Compile Include="Assets\Source\Terrain\VertexMap.cs" />
+    <Compile Include="Assets\Source\Game\CameraController.cs" />
+    <Compile Include="Assets\Source\GameFiles.cs" />
+    <Compile Include="Assets\Source\Game\EditorInput.cs" />
+    <Compile Include="Assets\Source\Game\GameMap.cs" />
+    <Compile Include="Assets\Source\Game\MapChunk.cs" />
+    <Compile Include="Assets\Source\Game\MemoryManager.cs" />
+    <Compile Include="Assets\Source\Game\Minimap.cs" />
+    <Compile Include="Assets\Source\Game\SelectionRenderer.cs" />
+    <Compile Include="Assets\Source\Game\Vertex.cs" />
+    <Compile Include="Assets\Source\Game\VertexLayout.cs" />
+    <Compile Include="Assets\Source\Game\VertexMap.cs" />
     <Compile Include="Assets\Source\Textures\GameTextures.cs" />
     <Compile Include="Assets\Source\Textures\TextureAtlas.cs" />
     <Compile Include="Assets\Source\Textures\UOAtlas.cs" />
-    <Compile Include="Assets\TGenData.cs" />
     <Reference Include="UnityEngine">
       <HintPath>D:/reposSSD/Unity/2019.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -722,8 +712,6 @@
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/reposSSD/SKUOEdit/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

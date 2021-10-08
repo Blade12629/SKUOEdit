@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Source
+namespace Assets.SourceRemake
 {
     public static class GamePaths
     {
-        // TODO: remake paths
         public static string Heightmap { get; set; } = GetLocalPath("heightmap.bmp");
         public static string HeightmapCS { get; set; } = GetLocalPath("heightmap.colorstore");
         public static string Tilemap { get; set; } = GetLocalPath("tilemap.bmp");
@@ -21,7 +20,6 @@ namespace Assets.Source
         public static string TileAtlasTexFile { get; set; } = GetLocalPath("TileAtlas.tex");
 
         public static string GameClientFiles { get; set; } = GetLocalPath("ClassicUO");
-        // TODO: add path to folder for maps to edit (in/output)
 
         static GamePaths()
         {
@@ -46,7 +44,7 @@ namespace Assets.Source
             {
                 string[] lines = System.IO.File.ReadAllLines("config.cfg");
 
-                foreach(string line in lines)
+                foreach (string line in lines)
                 {
                     string[] lineSplit = line.Split('=');
 

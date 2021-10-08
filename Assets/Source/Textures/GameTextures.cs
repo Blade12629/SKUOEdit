@@ -1,14 +1,7 @@
-﻿using Assets.Source.IO;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Source.Textures
@@ -402,7 +395,7 @@ namespace Assets.Source.Textures
             Vector2 br = new Vector2(xStart + width, yStart);
 
             if (rotateIsometric)
-            { 
+            {
                 float halfX = bmpWidth / 2f / GameTexture.width;
                 float halfY = bmpHeight / 2f / GameTexture.height;
 

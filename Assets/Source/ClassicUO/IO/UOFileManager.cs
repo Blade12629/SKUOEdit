@@ -36,7 +36,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Assets.Source;
+using Assets.SourceRemake;
+//using Assets.Source;
 //using ClassicUO.Configuration;
 using ClassicUO.Data;
 using ClassicUO.Game;
@@ -56,7 +57,6 @@ namespace ClassicUO.IO
 
             return Path.Combine(GamePaths.GameClientFiles, file);
         }
-
 
         public static void Load()
         {
@@ -85,6 +85,18 @@ namespace ClassicUO.IO
 
             UnityEngine.Debug.Log($"Files loaded in: {stopwatch.ElapsedMilliseconds} ms!");
             stopwatch.Stop();
+        }
+
+        public static void Unload()
+        {
+            AnimDataLoader.Instance.Dispose();
+            ArtLoader.Instance.Dispose();
+            HuesLoader.Instance.Dispose();
+            TileDataLoader.Instance.Dispose();
+            MultiLoader.Instance.Dispose();
+            TexmapsLoader.Instance.Dispose();
+            LightsLoader.Instance.Dispose();
+            MultiMapLoader.Instance.Dispose();
         }
 
         private static void Read_Art_def()

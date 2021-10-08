@@ -22,6 +22,16 @@ public static class Extensions
         return result;
     }
 
+    public static Color ToColor(this ushort hue)
+    {
+        float r = ((hue & 0x7c00) >> 10) * (255 / 31);
+        float g = ((hue & 0x3e0) >> 5) * (255 / 31);
+        float b = (hue & 0x1f) * (255 / 31);
+        float a = 1f;
+
+        return new Color(r / 255f, g / 255f, b / 255f, a);
+    }
+
     public static Vector2 Reverse(this Vector2 v)
     {
         return new Vector2(v.y, v.x);
