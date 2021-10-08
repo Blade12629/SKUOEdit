@@ -3,6 +3,10 @@
 
 Heavy WIP, Currently not useable
 
+About Statics:
+- Statics are not planned to be available anytime soon, for now the editor will be only for the map without statics
+
+
 # Legal
 This project uses the ClassicUO client code inside of Unity: https://github.com/ClassicUO/ClassicUO/
 
