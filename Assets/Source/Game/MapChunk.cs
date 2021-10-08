@@ -22,7 +22,7 @@ namespace Assets.Source.Game
             _collider = GetComponent<MeshCollider>();
 
             MeshRenderer renderer = GetComponent<MeshRenderer>();
-            renderer.material = Client.Instance.DefaultMaterial;
+            renderer.material = new Material(Client.Instance.DefaultMaterial);
             renderer.material.mainTexture = Textures.UOAtlas.AtlasTexture;
 
             _mesh.SetVertexBufferParams(_vertices.Length, VertexLayout.Layout);
