@@ -133,6 +133,7 @@
     <Compile Include="Assets\Source\Game\Statics\Item.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticInfo.cs" />
+    <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
     <Compile Include="Assets\Source\Game\Vertex.cs" />
     <Compile Include="Assets\Source\Game\VertexLayout.cs" />
     <Compile Include="Assets\Source\Game\VertexMap.cs" />
