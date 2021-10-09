@@ -423,6 +423,10 @@ namespace Assets.Source.Game
 
         void LoadMapBlocks()
         {
+            const int sizePerTile = 3;
+            const int sizePerBlock = 64 * 3 + 4;
+
+            long sizePerRow = sizePerBlock * BlockDepth;
             TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
 
             unsafe
@@ -439,21 +443,22 @@ namespace Assets.Source.Game
                     if (mapStart == null)
                         throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
 
-                    int blockIndex = 0;
-
-                    for (int bx = 0; bx < BlockWidth; bx++)
+                    Parallel.For(0, BlockWidth, bx =>
                     {
+                        byte* xblockPtr = mapStart + bx * sizePerRow;
+                        int xblockIndex = bx * BlockDepth;
+
                         for (int bz = 0; bz < BlockDepth; bz++)
                         {
-                            int* header = ReadPtr<int>(ref mapStart, 4);
+                            int header = *ReadPtr<int>(ref xblockPtr, 4);
+
                             Tile[] tiles = new Tile[64];
-
                             for (int i = 0; i < 64; i++)
-                                tiles[i] = new Tile(*ReadPtr<short>(ref mapStart, 2), *ReadPtr<sbyte>(ref mapStart, 1));
+                                tiles[i] = *ReadPtr<Tile>(ref xblockPtr, sizePerTile);
 
-                            tileBlocks[blockIndex++] = new TileBlock(*header, tiles);
+                            tileBlocks[xblockIndex++] = new TileBlock(header, tiles);
                         }
-                    }
+                    });
 
                     mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
                 }
@@ -824,6 +829,7 @@ namespace Assets.Source.Game
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct Tile
         {
             public short TileId { get; set; }

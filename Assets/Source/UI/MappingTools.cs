@@ -11,6 +11,8 @@ namespace Assets.Source.UI
 {
     public class MappingTools : MonoBehaviour
     {
+        public static MappingTools Instance { get; private set; }
+
         [SerializeField] Outline _vertUpLine;
         [SerializeField] Outline _vertDownLine;
         [SerializeField] Outline _vertLine;
@@ -21,6 +23,40 @@ namespace Assets.Source.UI
 
         [SerializeField] Outline _tileIdLine;
 
+        [SerializeField] InputField _heightValueInput;
+        [SerializeField] InputField _tileIdInput;
+        [SerializeField] TileBrowser _tileBrowser;
+        
+        public MappingTools()
+        {
+            Instance = this;
+        }
+
+        public void OnTileIdChanged(string newValue)
+        {
+            if (!int.TryParse(_tileIdInput.text, out int tileId))
+                return;
+
+            _tileBrowser.OnTileClick((short)tileId, true);
+        }
+
+        public void OnHeightValueChanged(string newValue)
+        {
+            if (!int.TryParse(_heightValueInput.text, out int h))
+                return;
+
+            EditorInput.Instance.CurrentValue = h;
+        }
+
+        public void SetTileIdInput(short tileid)
+        {
+            _tileIdInput.SetTextWithoutNotify(tileid.ToString());
+        }
+
+        public void SetHeightValueInput(int height)
+        {
+            _heightValueInput.SetTextWithoutNotify(height.ToString());
+        }
 
         public void SetToolVertUp()
         {

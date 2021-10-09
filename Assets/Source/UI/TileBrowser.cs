@@ -19,24 +19,63 @@ namespace Assets.Source.UI
         [SerializeField] GameObject _contentObj;
         [SerializeField] GameObject _selectionCell;
 
-        [SerializeField] bool _testClick;
+        [SerializeField] ScrollRect _scrollRect;
+        [SerializeField] RectTransform _scrollTransform;
+        [SerializeField] RectTransform _contentTransform;
+
+        void SnapTo(RectTransform target)
+        {
+            // Item is here
+            var itemCenterPositionInScroll = GetWorldPointInWidget(_scrollTransform, GetWidgetWorldPoint(target));
+            // But must be here
+            var targetPositionInScroll = GetWorldPointInWidget(_scrollTransform, GetWidgetWorldPoint(GetComponentInChildren<Mask>(true).rectTransform));
+            // So it has to move this distance
+            var difference = targetPositionInScroll - itemCenterPositionInScroll;
+            difference.z = 0f;
+            //clear axis data that is not enabled in the scrollrect
+            if (!_scrollRect.horizontal)
+            {
+                difference.x = 0f;
+            }
+            if (!_scrollRect.vertical)
+            {
+                difference.y = 0f;
+            }
+
+            var normalizedDifference = new Vector2(
+                difference.x / (_contentTransform.rect.size.x - _scrollTransform.rect.size.x),
+                difference.y / (_contentTransform.rect.size.y - _scrollTransform.rect.size.y));
+
+            var newNormalizedPosition = _scrollRect.normalizedPosition - normalizedDifference;
+            if (_scrollRect.movementType != ScrollRect.MovementType.Unrestricted)
+            {
+                newNormalizedPosition.x = Mathf.Clamp01(newNormalizedPosition.x);
+                newNormalizedPosition.y = Mathf.Clamp01(newNormalizedPosition.y);
+            }
+
+            _scrollRect.normalizedPosition = newNormalizedPosition;
+        }
+
+        Vector3 GetWidgetWorldPoint(RectTransform target)
+        {
+            //pivot position + item size has to be included
+            var pivotOffset = new Vector3(
+                (0.5f - target.pivot.x) * target.rect.size.x,
+                (0.5f - target.pivot.y) * target.rect.size.y,
+                0f);
+            var localPosition = target.localPosition + pivotOffset;
+            return target.parent.TransformPoint(localPosition);
+        }
+
+        Vector3 GetWorldPointInWidget(RectTransform target, Vector3 worldPoint)
+        {
+            return target.InverseTransformPoint(worldPoint);
+        }
 
         public TileBrowser()
         {
             Instance = this;
             _tiles = new Dictionary<short, RawImage>();
-        }
-
-        void Update()
-        {
-            if (_testClick)
-            {
-                _testClick = false;
-
-                RawImage img = _tiles[3];
-                Button button = img.GetComponent<Button>();
-                button.onClick.Invoke();
-            }
         }
 
         public void AddTile(short tileId)
@@ -75,12 +114,22 @@ namespace Assets.Source.UI
                 OnTileClick(1);
         }
 
-        public void OnTileClick(short id)
+        public void OnTileClick(short id, bool snapTo = false)
         {
             if (_tiles.TryGetValue(id, out RawImage newImg))
-                MoveSelectionCell(newImg);
+            {
+                if (snapTo)
+                    SnapTo(newImg.rectTransform);
 
-            EditorInput.Instance.CurrentTileId = id;
+                MoveSelectionCell(newImg);
+            }
+
+            if (EditorInput.Instance != null)
+                EditorInput.Instance.CurrentTileId = id;
+            
+            if (MappingTools.Instance != null)
+                MappingTools.Instance.SetTileIdInput(id);
+
         }
 
         void DisableSelectionCell()

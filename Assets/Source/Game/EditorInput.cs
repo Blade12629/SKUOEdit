@@ -25,6 +25,8 @@ namespace Assets.Source.Game
 
             CurrentAction = EditorAction.IncreaseTileHeight;
             CurrentValue = 1;
+
+            UI.MappingTools.Instance.SetHeightValueInput(CurrentValue);
         }
 
         public void Update()
