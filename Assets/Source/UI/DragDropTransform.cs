@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class DragDropTransform : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public sealed class DragDropTransform : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public bool DisallowDragging { get => _disallowDragging; set => _disallowDragging = value; }
 

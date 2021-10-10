@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class GenerateFlatlandMapPanel : MonoBehaviour
+    public sealed class GenerateFlatlandMapPanel : MonoBehaviour
     {
         [SerializeField] InputField _widthInput;
         [SerializeField] InputField _depthInput;

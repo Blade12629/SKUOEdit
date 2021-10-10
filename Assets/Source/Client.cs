@@ -10,7 +10,7 @@ using Assets.Source.UI;
 
 namespace Assets.Source
 {
-    public class Client : MonoBehaviour
+    public sealed class Client : MonoBehaviour
     {
         public static Client Instance { get; private set; }
 

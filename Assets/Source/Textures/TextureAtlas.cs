@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Source.Textures
 {
-    public unsafe class TextureAtlas
+    public sealed unsafe class TextureAtlas
     {
         public Texture2D Texture { get; private set; }
 
