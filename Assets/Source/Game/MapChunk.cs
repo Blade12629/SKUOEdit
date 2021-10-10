@@ -24,7 +24,7 @@ namespace Assets.Source.Game
 
             _renderer = GetComponent<MeshRenderer>();
             _renderer.material = new Material(Client.Instance.DefaultMaterial);
-            _renderer.material.mainTexture = Textures.UOAtlas.AtlasTexture;
+            _renderer.material.mainTexture = Textures.GameTextures.GameTexture;
 
             _mesh.SetVertexBufferParams(_vertices.Length, VertexLayout.Layout);
             RefreshChunk();

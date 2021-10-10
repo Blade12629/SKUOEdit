@@ -112,7 +112,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\FindState.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultEncoder.cs" />
     <Compile Include="Assets\Source\Input.cs" />
-    <Compile Include="Assets\Source\Textures\UOAtlas.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\FileSystemHelper.cs" />
     <Compile Include="Assets\Source\Game\EditorInput.cs" />

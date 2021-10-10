@@ -845,16 +845,16 @@ namespace Assets.Source.Game
 
                 if (landData.TexID > 0)
                 {
-                    artUVs = UOAtlas.GetUVsTexture(landData.TexID);
+                    artUVs = GameTextures.GetUVsTexture(landData.TexID);
                 }
                 else
                 {
-                    artUVs = UOAtlas.AddNoDraw();
+                    artUVs = GameTextures.AddNoDraw();
                 }
             }
             else
             {
-                artUVs = UOAtlas.GetUVsTile(tileId);
+                artUVs = GameTextures.GetUVsTile(tileId);
             }
 
             return artUVs;

@@ -27,18 +27,17 @@ namespace Assets.Source
             }
             else
             {
-                UOAtlas.Initialize(true);
-
-                UOAtlas.AddNoDraw();
+                GameTextures.Initialize(true);
+                GameTextures.AddNoDraw();
 
                 for (int i = 0; i < 0x4000; i++)
                 {
-                    UOAtlas.AddTile(i);
-                    UOAtlas.AddTexture(i);
+                    GameTextures.AddTile(i);
+                    GameTextures.AddTexture(i);
                 }
             }
 
-            UOAtlas.ApplyChanges();
+            GameTextures.ApplyChanges();
 
             Debug.Log("--- Loaded Client Files ---");
         }

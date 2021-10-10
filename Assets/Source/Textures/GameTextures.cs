@@ -19,6 +19,8 @@ namespace Assets.Source.Textures
         static float _baseY;
         static int _currentMaxWidth;
 
+        static readonly int _textureIdOffset = 100000;
+
         public static void Initialize(bool drawTransparent)
         {
             GameTexture = new Texture2D(6000, 6000);
@@ -47,106 +49,44 @@ namespace Assets.Source.Textures
             }
         }
 
-        public static void Export(string folder)
+        public static Vector2[] AddNoDraw()
         {
-            using (FileStream uvstream = new FileStream(Path.Combine(folder, "tileatlas.uvs"), FileMode.Create, FileAccess.Write, FileShare.Write))
+            if (UVs.TryGetValue(int.MaxValue, out Vector2[] oldUvs))
+                return oldUvs;
+
+            if (_y + 44 >= _height)
             {
-                using (BinaryWriter w = new BinaryWriter(uvstream))
+                _y = 0;
+                _x += _currentMaxWidth;
+                _currentMaxWidth = 0;
+            }
+
+            Vector2[] uvs = CalculateUVs(_x, _y, 44, 44, false);
+            UnityEngine.Color color = new UnityEngine.Color(0, 0, 0, 1);
+
+            for (int x = 0; x < 44; x++)
+            {
+                for (int y = 0; y < 44; y++)
                 {
-                    w.Write(_x);
-                    w.Write(_y);
-                    w.Write(_width);
-                    w.Write(_height);
-                    w.Write(_baseX);
-                    w.Write(_baseY);
-                    w.Write(_currentMaxWidth);
-
-                    KeyValuePair<int, Vector2[]>[] uvs = UVs.ToArray();
-
-                    w.Write(uvs.Length);
-                    for (int i = 0; i < uvs.Length; i++)
-                    {
-                        ref KeyValuePair<int, Vector2[]> uv = ref uvs[i];
-
-                        w.Write(uv.Key);
-
-                        if (uv.Value != null)
-                        {
-                            w.Write((byte)1);
-
-                            w.Write(uv.Value[0]);
-                            w.Write(uv.Value[1]);
-                            w.Write(uv.Value[2]);
-                            w.Write(uv.Value[3]);
-                        }
-                        else
-                            w.Write((byte)0);
-                    }
-
-                    w.Flush();
+                    GameTexture.SetPixel(x + _x, y + _y, color);
                 }
             }
 
-            string texPath = Path.Combine(folder, "tileatlas.tex");
+            GameTexture.Apply();
 
-            if (File.Exists(texPath))
-                File.Delete(texPath);
+            if (_currentMaxWidth < 44)
+                _currentMaxWidth = 44;
 
-            byte[] textureBytes = GameTexture.EncodeToPNG();
-            File.WriteAllBytes(texPath, textureBytes);
+            _y += 44;
+
+            UVs.Add(int.MaxValue, uvs);
+            return uvs;
         }
 
         public static unsafe bool Import(string uvfile, string texfile)
         {
             if (!File.Exists(uvfile))
                 return false;
-
-            // For some reason the following commented code results in unity getting stuck at the map building process,
-            // need to further investigate this
-
-            //ConcurrentDictionary<int, Vector2[]> uvs;
-
-            //using (FileStream uvstream = new FileStream(uvfile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-            //using (MemoryMappedFile mmf = MemoryMappedFile.CreateFromFile(uvstream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, true))
-            //using (MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor())
-            //{
-            //    byte* start = null;
-            //    accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref start);
-
-            //    if (start == null)
-            //        throw new OperationCanceledException("Unable to acquire pointer for MemoryMappedFile");
-
-            //    MemoryManager mem = new MemoryManager(start, uvstream.Length);
-
-            //    _x = *mem.ReadInt();
-            //    _y = *mem.ReadInt();
-            //    _width = *mem.ReadInt();
-            //    _height = *mem.ReadInt();
-            //    _baseX = *mem.ReadFloat();
-            //    _baseY = *mem.ReadFloat();
-            //    _currentMaxWidth = *mem.ReadInt();
-
-            //    int length = *mem.ReadInt();
-            //    uvs = new ConcurrentDictionary<int, Vector2[]>();
-
-            //    Parallel.For(0, length, i =>
-            //    {
-            //        int id = *mem.ReadInt();
-
-            //        if (*mem.ReadByte() == 0)
-            //            return;
-
-            //        Vector2[] verts = new Vector2[]
-            //        {
-            //            new Vector2(*mem.ReadFloat(), *mem.ReadFloat()),
-            //            new Vector2(*mem.ReadFloat(), *mem.ReadFloat()),
-            //            new Vector2(*mem.ReadFloat(), *mem.ReadFloat()),
-            //            new Vector2(*mem.ReadFloat(), *mem.ReadFloat()),
-            //        };
-
-            //        uvs.TryAdd(id, verts);
-            //    });
-            //}
 
             Dictionary<int, Vector2[]> uvs;
             using (FileStream uvstream = new FileStream(uvfile, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -196,17 +136,110 @@ namespace Assets.Source.Textures
             return true;
         }
 
+        public static Vector2[] GetUVsTile(int id)
+        {
+            if (TryGetUVs(id, out Vector2[] uvs))
+                return uvs;
+
+            Debug.Log($"Tile art not found {id}, returning NoDraw");
+
+            return AddNoDraw();
+        }
+
+        public static Vector2[] GetUVsTexture(int id)
+        {
+            if (TryGetUVs(id + _textureIdOffset, out Vector2[] uvs))
+                return uvs;
+
+            Debug.Log($"Texture art not found {id}, returning NoDraw");
+
+            return AddNoDraw();
+        }
+
+        public static Vector2[] AddTile(int id)
+        {
+            if (id < 0)
+                return null;
+
+            var img = ClassicUO.IO.Resources.ArtLoader.Instance.GetLandTexture((uint)id);
+
+            return AddTexture(id, img, false, 0);
+        }
+
+        public static Vector2[] AddTexture(int id)
+        {
+            if (id <= 0)
+                return null;
+
+            var img = ClassicUO.IO.Resources.ArtLoader.Instance.GetLandTexture((uint)id);
+
+            if (img == null)
+                return null;
+
+            id += _textureIdOffset;
+            return AddTexture(id, img, false);
+        }
+
         public static void ApplyChanges()
         {
             GameTexture.Apply();
         }
 
-        public static bool TryGetUVs(int id, out Vector2[] uvs)
+        static void Export(string folder)
+        {
+            using (FileStream uvstream = new FileStream(Path.Combine(folder, "tileatlas.uvs"), FileMode.Create, FileAccess.Write, FileShare.Write))
+            {
+                using (BinaryWriter w = new BinaryWriter(uvstream))
+                {
+                    w.Write(_x);
+                    w.Write(_y);
+                    w.Write(_width);
+                    w.Write(_height);
+                    w.Write(_baseX);
+                    w.Write(_baseY);
+                    w.Write(_currentMaxWidth);
+
+                    KeyValuePair<int, Vector2[]>[] uvs = UVs.ToArray();
+
+                    w.Write(uvs.Length);
+                    for (int i = 0; i < uvs.Length; i++)
+                    {
+                        ref KeyValuePair<int, Vector2[]> uv = ref uvs[i];
+
+                        w.Write(uv.Key);
+
+                        if (uv.Value != null)
+                        {
+                            w.Write((byte)1);
+
+                            w.Write(uv.Value[0]);
+                            w.Write(uv.Value[1]);
+                            w.Write(uv.Value[2]);
+                            w.Write(uv.Value[3]);
+                        }
+                        else
+                            w.Write((byte)0);
+                    }
+
+                    w.Flush();
+                }
+            }
+
+            string texPath = Path.Combine(folder, "tileatlas.tex");
+
+            if (File.Exists(texPath))
+                File.Delete(texPath);
+
+            byte[] textureBytes = GameTexture.EncodeToPNG();
+            File.WriteAllBytes(texPath, textureBytes);
+        }
+
+        static bool TryGetUVs(int id, out Vector2[] uvs)
         {
             return UVs.TryGetValue(id, out uvs);
         }
 
-        public static Vector2[] AddTexture(int id, Texture2D tex, bool rotateIsometric, int rotations = 1)
+        static Vector2[] AddTexture(int id, Texture2D tex, bool rotateIsometric, int rotations = 1)
         {
             if (UVs.TryGetValue(id, out Vector2[] oldUvs))
                 return oldUvs;
@@ -237,7 +270,7 @@ namespace Assets.Source.Textures
             return uvs;
         }
 
-        public static unsafe Vector2[] AddTexture(int id, ushort[] colors, int width, int height)
+        static unsafe Vector2[] AddTexture(int id, ushort[] colors, int width, int height)
         {
             if (UVs.TryGetValue(id, out Vector2[] oldUvs))
                 return oldUvs;
@@ -303,41 +336,7 @@ namespace Assets.Source.Textures
             return uvs;
         }
 
-        public static Vector2[] AddNoDraw()
-        {
-            if (UVs.TryGetValue(int.MaxValue, out Vector2[] oldUvs))
-                return oldUvs;
-
-            if (_y + 44 >= _height)
-            {
-                _y = 0;
-                _x += _currentMaxWidth;
-                _currentMaxWidth = 0;
-            }
-
-            Vector2[] uvs = CalculateUVs(_x, _y, 44, 44, false);
-            UnityEngine.Color color = new UnityEngine.Color(0, 0, 0, 1);
-
-            for (int x = 0; x < 44; x++)
-            {
-                for (int y = 0; y < 44; y++)
-                {
-                    GameTexture.SetPixel(x + _x, y + _y, color);
-                }
-            }
-
-            GameTexture.Apply();
-
-            if (_currentMaxWidth < 44)
-                _currentMaxWidth = 44;
-
-            _y += 44;
-
-            UVs.Add(int.MaxValue, uvs);
-            return uvs;
-        }
-
-        public static Vector2[] AddSquareTexture(int id, ushort[] colors, int width, int height)
+        static Vector2[] AddSquareTexture(int id, ushort[] colors, int width, int height)
         {
             if (UVs.TryGetValue(id, out Vector2[] oldUvs))
                 return oldUvs;
