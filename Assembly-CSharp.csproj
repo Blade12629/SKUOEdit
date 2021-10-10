@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -55,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
+    <Compile Include="Assets\Source\Input.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
     <Compile Include="Assets\Source\UI\MenuBar.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
