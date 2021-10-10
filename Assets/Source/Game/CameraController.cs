@@ -169,7 +169,7 @@ namespace Assets.Source.Game
         public Vector3 NewPosition { get; }
         public Vector3 Diffrence { get; }
 
-        public CameraMovedEventArgs(Vector3 oldPos, Vector3 newPos, Vector3 diff) : base()
+        public CameraMovedEventArgs(Vector3 oldPos, Vector3 newPos, Vector3 diff)
         {
             OldPosition = oldPos;
             NewPosition = newPos;

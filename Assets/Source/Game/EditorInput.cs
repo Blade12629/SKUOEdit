@@ -13,7 +13,7 @@ namespace Assets.Source.Game
         public int CurrentTileId { get; set; }
         public bool DisableEditorInput { get; set; }
 
-        int _terrainLayerMask;
+        readonly int _terrainLayerMask;
 
         public EditorInput()
         {

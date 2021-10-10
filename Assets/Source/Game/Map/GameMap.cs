@@ -242,7 +242,12 @@ namespace Assets.Source.Game.Map
             IncreaseTileHeight(x, z, -height);
         }
 
-        public void SetTileCornerHeight(int x, int z, int height, bool updateChunks = true)
+        public void SetTileCornerHeight(int x, int z, int height)
+        {
+            SetTileCornerHeight(x, z, height, true);
+        }
+
+        public void SetTileCornerHeight(int x, int z, int height, bool updateChunks)
         {
             SetTileCornerHeight(x, z, height, 0, false);
             SetTileCornerHeight(x - 1, z, height, 3, false);
@@ -253,7 +258,12 @@ namespace Assets.Source.Game.Map
                 UpdateChunks(x, z);
         }
 
-        public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks = true)
+        public void IncreaseTileCornerHeight(int x, int z, int amount)
+        {
+            IncreaseTileCornerHeight(x, z, amount, true);
+        }
+
+        public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks)
         {
             int oldHeight = GetTileCornerHeight(x, z);
             int newHeight = oldHeight + amount;
@@ -718,6 +728,7 @@ namespace Assets.Source.Game.Map
 
                         switch (i)
                         {
+                            default:
                             case 0:
                                 vertex.X = x;
                                 vertex.Z = z;
