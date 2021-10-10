@@ -19,6 +19,15 @@ namespace Assets.Source.UI
         [SerializeField] InputField _gridColorGInput;
         [SerializeField] InputField _gridColorBInput;
 
+        public SettingsPanel() : base()
+        {
+            GameMap.OnMapFinishLoading += () =>
+            {
+                SetGridColorValue(GameMap.Instance.GetGridColor());
+                SetGridSizeValue(GameMap.Instance.GetGridSize());
+                SetRenderSizesValues(MapChunk.MeshSize * 3, MapChunk.MeshSize * 3);
+            };
+        }
 
         public void ApplyRenderSizes()
         {
@@ -53,6 +62,26 @@ namespace Assets.Source.UI
                 oldColor.b = b;
 
             GameMap.Instance.SetGridColor(oldColor);
+        }
+
+        public void SetGridColorValue(Color c)
+        {
+            _gridColorRInput.SetTextWithoutNotify(c.r.ToString());
+            _gridColorGInput.SetTextWithoutNotify(c.g.ToString());
+            _gridColorBInput.SetTextWithoutNotify(c.b.ToString());
+        }
+
+        public void SetGridSizeValue(float v)
+        {
+            _gridSizeInput.SetTextWithoutNotify(v.ToString());
+        }
+
+        public void SetRenderSizesValues(int? width, int? depth)
+        {
+            if (width.HasValue)
+                _renderWidthInput.SetTextWithoutNotify(width.ToString());
+            if (depth.HasValue)
+                _renderDepthInput.SetTextWithoutNotify(depth.ToString());
         }
     }
 }

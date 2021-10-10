@@ -13,6 +13,7 @@ namespace Assets.Source.Game
         Vertex[] _vertices;
         Mesh _mesh;
         MeshCollider _collider;
+        MeshRenderer _renderer;
 
         public void BuildChunk(Rect areaToRender)
         {
@@ -21,9 +22,9 @@ namespace Assets.Source.Game
             _mesh = GetComponent<MeshFilter>().mesh = new Mesh();
             _collider = GetComponent<MeshCollider>();
 
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
-            renderer.material = new Material(Client.Instance.DefaultMaterial);
-            renderer.material.mainTexture = Textures.UOAtlas.AtlasTexture;
+            _renderer = GetComponent<MeshRenderer>();
+            _renderer.material = new Material(Client.Instance.DefaultMaterial);
+            _renderer.material.mainTexture = Textures.UOAtlas.AtlasTexture;
 
             _mesh.SetVertexBufferParams(_vertices.Length, VertexLayout.Layout);
             RefreshChunk();
@@ -82,6 +83,41 @@ namespace Assets.Source.Game
         public bool IsInBounds(int x, int z)
         {
             return _renderedArea.Contains(new Vector2(x, z), false);
+        }
+
+        public void EnableGrid()
+        {
+            _renderer.material.SetInt("_DrawGrid", 1);
+        }
+
+        public void DisableGrid()
+        {
+            _renderer.material.SetInt("_DrawGrid", 0);
+        }
+
+        public void SetGridColor(Color color)
+        {
+            _renderer.material.SetColor("_GridColor", color);
+        }
+
+        public void SetGridSize(float size)
+        {
+            _renderer.material.SetFloat("_GridSize", size);
+        }
+
+        public bool IsGridEnabled()
+        {
+            return _renderer.material.GetInt("_DrawGrid") != 0;
+        }
+
+        public Color GetGridColor()
+        {
+            return _renderer.material.GetColor("_GridColor");
+        }
+
+        public float GetGridSize()
+        {
+            return _renderer.material.GetFloat("_GridSize");
         }
     }
 }

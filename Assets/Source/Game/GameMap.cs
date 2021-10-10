@@ -26,6 +26,7 @@ namespace Assets.Source.Game
             }
         }
         public static event Action OnMapFinishLoading;
+        public static event Action OnMapDestroyed;
 
         static EditorInput _input;
         static readonly FileShare FileShareFlags = FileShare.ReadWrite | FileShare.Delete;
@@ -44,6 +45,8 @@ namespace Assets.Source.Game
 
         MapChunk[] _chunks;
         Rect _renderedArea;
+
+        [SerializeField] bool _toggleGrid;
         
         public GameMap()
         {
@@ -96,6 +99,8 @@ namespace Assets.Source.Game
 
             Instance = null;
             IsMapLoaded = false;
+
+            OnMapDestroyed?.Invoke();
         }
 
         public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds)
@@ -363,6 +368,69 @@ namespace Assets.Source.Game
                 Array.Copy(_vertices, indexSrc, dest, indexDest, length);
             });
         }
+
+        public void EnableGrid()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.EnableGrid();
+        }
+
+        public void DisableGrid()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.DisableGrid();
+        }
+        public void SetGridColor(Color color)
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.SetGridColor(color);
+        }
+
+        public void SetGridSize(float size)
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.SetGridSize(size);
+        }
+
+        public bool IsGridEnabled()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+            {
+                if (_chunks[i] == null)
+                    continue;
+
+                return _chunks[i].IsGridEnabled();
+            }
+
+            return false;
+        }
+
+        public Color GetGridColor()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+            {
+                if (_chunks[i] == null)
+                    continue;
+
+                return _chunks[i].GetGridColor();
+            }
+
+            return default;
+        }
+
+        public float GetGridSize()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+            {
+                if (_chunks[i] == null)
+                    continue;
+
+                return _chunks[i].GetGridSize();
+            }
+
+            return 0;
+        }
+
 
         void RefreshUVs(int x, int z, bool updateChunks = true)
         {

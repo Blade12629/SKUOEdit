@@ -1,10 +1,12 @@
-﻿using Assets.Source.Game.Colorstores;
+﻿using Assets.Source.Game;
+using Assets.Source.Game.Colorstores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
@@ -13,6 +15,24 @@ namespace Assets.Source.UI
         [SerializeField] GameObject _settingsPanel;
         [SerializeField] LoadMapPanel _loadMapPanel;
         [SerializeField] GenerateFlatlandMapPanel _genMapPanel;
+
+        [SerializeField] GameObject _settingsBtn;
+        [SerializeField] GameObject _saveMapBtn;
+
+        public MenuBar()
+        {
+            GameMap.OnMapDestroyed += () =>
+            {
+                _settingsBtn.SetActive(false);
+                _saveMapBtn.SetActive(false);
+            };
+
+            GameMap.OnMapFinishLoading += () =>
+            {
+                _settingsBtn.SetActive(true);
+                _saveMapBtn.SetActive(true);
+            };
+        }
 
         public void ToggleVisSettingsPanel()
         {
