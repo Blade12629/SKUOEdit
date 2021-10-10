@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Source.Game.Colorstores
 {
-    public class ColorStore
+    public sealed class ColorStore
     {
         public IReadOnlyDictionary<Color, int> Storage => _storage;
 

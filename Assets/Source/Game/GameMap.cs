@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Assets.Source.Game
 {
-    public class GameMap : MonoBehaviour
+    public sealed class GameMap : MonoBehaviour
     {
         public static GameMap Instance { get; private set; }
         public static EditorInput Input

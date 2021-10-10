@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Source.Game
 {
-    public class EditorInput
+    public sealed class EditorInput
     {
         public static EditorInput Instance { get; private set; }
 

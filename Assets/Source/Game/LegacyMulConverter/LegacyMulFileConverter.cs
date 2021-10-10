@@ -11,7 +11,7 @@ using System.IO;
 
 namespace UoFiddler.Plugin.UopPacker.Classes
 {
-    public class LegacyMulFileConverter
+    public sealed class LegacyMulFileConverter
     {
         private struct IdxEntry
         {

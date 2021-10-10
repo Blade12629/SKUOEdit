@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.Diagnostic
 {
-    public class FPSCounter : MonoBehaviour
+    public sealed class FPSCounter : MonoBehaviour
     {
         float _timePassed;
         int _lastFPS;

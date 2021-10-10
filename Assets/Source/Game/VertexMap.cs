@@ -9,7 +9,7 @@ namespace Assets.Source.Game
     /// <summary>
     /// Vertexmap used to hold and manage vertices
     /// </summary>
-    public unsafe class VertexMap
+    public sealed unsafe class VertexMap
     {
         public int Width { get; }
         public int Depth { get; }

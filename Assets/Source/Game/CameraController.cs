@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.Game
 {
-    public class CameraController : MonoBehaviour
+    public sealed class CameraController : MonoBehaviour
     {
         public static event Action<CameraMovedEventArgs> OnCameraMoved;
         public static CameraController Instance { get; private set; }

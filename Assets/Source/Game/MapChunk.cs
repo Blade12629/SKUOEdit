@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Source.Game
 {
-    public class MapChunk : MonoBehaviour
+    public sealed class MapChunk : MonoBehaviour
     {
         public static int MeshSize = 32;
         public Rect RenderedArea => _renderedArea;

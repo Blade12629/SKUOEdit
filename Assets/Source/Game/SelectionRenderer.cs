@@ -12,7 +12,7 @@ using UnityEngine.UI;
 namespace Assets.Source.Game
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class SelectionRenderer : MonoBehaviour
+    public sealed class SelectionRenderer : MonoBehaviour
     {
         public static int MaxAreaSize => 20;
         public static SelectionRenderer Instance { get; private set; }
