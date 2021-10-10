@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Source.Game.Map;
+using System;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 namespace Assets.Source.Game
 {
@@ -85,7 +81,7 @@ namespace Assets.Source.Game
                     return;
             }
 
-            int length = areaWidth * 2 + areaDepth * 2 + 1; 
+            int length = areaWidth * 2 + areaDepth * 2 + 1;
 
             using (NativeArray<Vector3> tempPoints = new NativeArray<Vector3>(length, Allocator.TempJob))
             {
@@ -130,10 +126,10 @@ namespace Assets.Source.Game
                 int x = (int)StartPosition.x;
                 int z = (int)StartPosition.z;
 
-                AddDirection(ref index, ref x, ref z,  0,  1, AreaDepth);
-                AddDirection(ref index, ref x, ref z,  1,  0, AreaWidth);
-                AddDirection(ref index, ref x, ref z,  0, -1, AreaDepth);
-                AddDirection(ref index, ref x, ref z, -1,  0, AreaWidth);
+                AddDirection(ref index, ref x, ref z, 0, 1, AreaDepth);
+                AddDirection(ref index, ref x, ref z, 1, 0, AreaWidth);
+                AddDirection(ref index, ref x, ref z, 0, -1, AreaDepth);
+                AddDirection(ref index, ref x, ref z, -1, 0, AreaWidth);
 
                 Result[Result.Length - 1] = Result[0];
             }

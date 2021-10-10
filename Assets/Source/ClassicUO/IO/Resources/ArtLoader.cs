@@ -30,16 +30,16 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 //using ClassicUO.Configuration;
 using ClassicUO.Game;
 using ClassicUO.Game.Data;
 //using ClassicUO.Game.Data;
 //using ClassicUO.Renderer;
 using ClassicUO.Utility;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 //using Microsoft.Xna.Framework;
 //using SDL2;
 using UnityEngine;
@@ -57,7 +57,7 @@ namespace ClassicUO.IO.Resources
 
         private ArtLoader(int staticCount, int landCount) : base(staticCount)
         {
-            _graphicMask = Client.IsUOPInstallation ? (ushort) 0xFFFF : (ushort) 0x3FFF;
+            _graphicMask = Client.IsUOPInstallation ? (ushort)0xFFFF : (ushort)0x3FFF;
             _landResources = new Texture2D[landCount];
         }
 
@@ -75,7 +75,7 @@ namespace ClassicUO.IO.Resources
                     if (Client.IsUOPInstallation && File.Exists(filePath))
                     {
                         _file = new UOFileUop(filePath, "build/artlegacymul/{0:D8}.tga");
-                        Entries = new UOFileIndex[Math.Max(((UOFileUop) _file).TotalEntriesCount, Constants.MAX_STATIC_DATA_INDEX_COUNT)];
+                        Entries = new UOFileIndex[Math.Max(((UOFileUop)_file).TotalEntriesCount, Constants.MAX_STATIC_DATA_INDEX_COUNT)];
                     }
                     else
                     {
@@ -104,7 +104,7 @@ namespace ClassicUO.IO.Resources
 
             if (texture == null /*|| texture.IsDisposed*/)
             {
-                ReadStaticArt(ref texture, (ushort) g);
+                ReadStaticArt(ref texture, (ushort)g);
 
                 if (texture != null)
                 {
@@ -130,7 +130,7 @@ namespace ClassicUO.IO.Resources
 
             if (texture == null /*|| texture.IsDisposed*/)
             {
-                ReadLandArt(ref texture, (ushort) g);
+                ReadLandArt(ref texture, (ushort)g);
 
                 if (texture != null)
                 {
@@ -147,7 +147,7 @@ namespace ClassicUO.IO.Resources
 
         public bool PixelCheck(int index, int x, int y)
         {
-            return _picker.Get((ulong) index, x, y);
+            return _picker.Get((ulong)index, x, y);
         }
 
         public override bool TryGetEntryInfo(int entry, out long address, out long size, out long compressedSize)

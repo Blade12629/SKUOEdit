@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Source.Game.Map;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 namespace Assets.Source.UI
 {
@@ -19,7 +16,7 @@ namespace Assets.Source.UI
                 return;
 
             gameObject.SetActive(false);
-            Client.Instance.LoadMap(null, w, d, Game.GameMap.GenerationOption.Flatland, null, null);
+            Client.Instance.LoadMap(null, w, d, GameMap.GenerationOption.Flatland, null, null);
         }
     }
 }

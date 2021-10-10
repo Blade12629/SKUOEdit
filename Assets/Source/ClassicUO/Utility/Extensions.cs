@@ -32,11 +32,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 //using ClassicUO.Utility.Logging;
 using UnityEngine;
@@ -168,7 +165,7 @@ namespace ClassicUO.Utility
             return inrect;
         }
 
-        
+
 #if NETFRAMEWORK
         public static void ExtractToDirectory(this ZipArchive archive, string destinationDirectoryName, bool overwrite)
         {

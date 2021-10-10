@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Unity.Collections;
+﻿using Unity.Collections;
 using UnityEngine;
 
 namespace Assets.Source.Game.Map

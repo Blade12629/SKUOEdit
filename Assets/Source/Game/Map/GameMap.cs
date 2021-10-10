@@ -2,7 +2,6 @@
 using Assets.Source.UI;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
@@ -47,7 +46,7 @@ namespace Assets.Source.Game.Map
         Rect _renderedArea;
 
         [SerializeField] bool _toggleGrid;
-        
+
         public GameMap()
         {
             Instance = this;
@@ -66,7 +65,7 @@ namespace Assets.Source.Game.Map
 
             for (int i = 0; i < _chunks.Length; i++)
             {
-                MapChunk chunk = _chunks[i];                
+                MapChunk chunk = _chunks[i];
                 Rect chunkRenderedArea = chunk.RenderedArea;
 
                 chunk.MoveToWorld(new Vector3(chunkRenderedArea.x + xDiff, 0, chunkRenderedArea.y + zDiff));
@@ -134,7 +133,7 @@ namespace Assets.Source.Game.Map
                         {
                             LoadUOPMapBlocks(GetMapIndex(MapFile));
                         }
-                        else 
+                        else
                             LoadMapBlocks();
                         break;
 
@@ -220,18 +219,18 @@ namespace Assets.Source.Game.Map
 
         public void SetTileHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x,      z, height, false);
-            SetTileCornerHeight(x,      z + 1, height, false);
-            SetTileCornerHeight(x + 1,  z + 1, height, false);
-            SetTileCornerHeight(x + 1,  z, height, false);
+            SetTileCornerHeight(x, z, height, false);
+            SetTileCornerHeight(x, z + 1, height, false);
+            SetTileCornerHeight(x + 1, z + 1, height, false);
+            SetTileCornerHeight(x + 1, z, height, false);
 
             UpdateChunks(x, z);
         }
 
         public void IncreaseTileHeight(int x, int z, int height)
         {
-            IncreaseTileCornerHeight(x,     z, height, false);
-            IncreaseTileCornerHeight(x,     z + 1, height, false);
+            IncreaseTileCornerHeight(x, z, height, false);
+            IncreaseTileCornerHeight(x, z + 1, height, false);
             IncreaseTileCornerHeight(x + 1, z + 1, height, false);
             IncreaseTileCornerHeight(x + 1, z, height, false);
 
@@ -245,10 +244,10 @@ namespace Assets.Source.Game.Map
 
         public void SetTileCornerHeight(int x, int z, int height, bool updateChunks = true)
         {
-            SetTileCornerHeight(x,      z,      height, 0, false);
-            SetTileCornerHeight(x - 1,  z,      height, 3, false);
-            SetTileCornerHeight(x - 1,  z - 1,  height, 2, false);
-            SetTileCornerHeight(x,      z - 1,  height, 1, false);
+            SetTileCornerHeight(x, z, height, 0, false);
+            SetTileCornerHeight(x - 1, z, height, 3, false);
+            SetTileCornerHeight(x - 1, z - 1, height, 2, false);
+            SetTileCornerHeight(x, z - 1, height, 1, false);
 
             if (updateChunks)
                 UpdateChunks(x, z);
@@ -571,7 +570,7 @@ namespace Assets.Source.Game.Map
                 {
                     ref TileBlock block = ref _tileBlocks[i];
                     writer.Write(block.Header);
-                    
+
                     for (int x = 0; x < block.Tiles.Length; x++)
                     {
                         ref Tile tile = ref block.Tiles[x];

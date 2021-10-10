@@ -30,10 +30,10 @@
 
 #endregion
 
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using ClassicUO.Data;
 using ClassicUO.Game;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace ClassicUO.IO.Resources
 {

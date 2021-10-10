@@ -35,7 +35,6 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using ClassicUO.Utility;
 //using ClassicUO.Utility.Logging;
 
 namespace ClassicUO.IO
@@ -90,7 +89,7 @@ namespace ClassicUO.IO
                 try
                 {
                     _accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
-                    SetData(ptr, (long) _accessor.SafeMemoryMappedViewHandle.ByteLength);
+                    SetData(ptr, (long)_accessor.SafeMemoryMappedViewHandle.ByteLength);
                 }
                 catch
                 {
@@ -121,7 +120,7 @@ namespace ClassicUO.IO
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Fill(ref byte[] buffer, int count)
         {
-            byte* ptr = (byte*) PositionAddress;
+            byte* ptr = (byte*)PositionAddress;
 
             for (int i = 0; i < count; i++)
             {

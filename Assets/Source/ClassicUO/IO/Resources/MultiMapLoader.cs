@@ -30,13 +30,13 @@
 
 #endregion
 
+using ClassicUO.Game;
+//using ClassicUO.Renderer;
+using ClassicUO.Utility;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using ClassicUO.Game;
-//using ClassicUO.Renderer;
-using ClassicUO.Utility;
 //using ClassicUO.Utility.Logging;
 using UnityEngine;
 
@@ -149,7 +149,7 @@ namespace ClassicUO.IO.Resources
             while (_file.Position < _file.Length)
             {
                 byte pic = _file.ReadByte();
-                byte size = (byte) (pic & 0x7F);
+                byte size = (byte)(pic & 0x7F);
                 bool colored = (pic & 0x80) != 0;
 
                 int currentHeight = y * pheight;
@@ -196,7 +196,7 @@ namespace ClassicUO.IO.Resources
                     Marshal.StructureToPtr(HuesLoader.Instance.HuesRange[i], ptr + i * s, false);
                 }
 
-                ushort* huesData = (ushort*) (byte*) (ptr + 30800);
+                ushort* huesData = (ushort*)(byte*)(ptr + 30800);
 
                 uint[] colorTable = new uint[maxPixelValue] /*System.Buffers.ArrayPool<uint>.Shared.Rent(maxPixelValue)*/;
                 Texture2D texture = new Texture2D(width, height);
@@ -215,15 +215,15 @@ namespace ClassicUO.IO.Resources
 
                     //try
                     //{
-                        for (int i = 0; i < mapSize; i++)
-                        {
-                            byte bytepic = data[i];
+                    for (int i = 0; i < mapSize; i++)
+                    {
+                        byte bytepic = data[i];
 
-                            worldMap[i] = bytepic != 0 ? colorTable[bytepic - 1] : 0;
-                        }
+                        worldMap[i] = bytepic != 0 ? colorTable[bytepic - 1] : 0;
+                    }
 
-                        //texture.SetData(worldMap, 0, width * height);
-                        texture.SetPixelData(worldMap, 0);
+                    //texture.SetData(worldMap, 0, width * height);
+                    texture.SetPixelData(worldMap, 0);
                     //}
                     //finally
                     //{
@@ -284,31 +284,31 @@ namespace ClassicUO.IO.Resources
 
             //try
             //{
-                for (int y = 0; y < h; y++)
+            for (int y = 0; y < h; y++)
+            {
+                int x = 0;
+
+                int colorCount = _facets[facet].ReadInt() / 3;
+
+                for (int i = 0; i < colorCount; i++)
                 {
-                    int x = 0;
+                    int size = _facets[facet].ReadByte();
 
-                    int colorCount = _facets[facet].ReadInt() / 3;
+                    uint color = HuesHelper.Color16To32(_facets[facet].ReadUShort()) | 0xFF_00_00_00;
 
-                    for (int i = 0; i < colorCount; i++)
+                    for (int j = 0; j < size; j++)
                     {
-                        int size = _facets[facet].ReadByte();
-
-                        uint color = HuesHelper.Color16To32(_facets[facet].ReadUShort()) | 0xFF_00_00_00;
-
-                        for (int j = 0; j < size; j++)
+                        if (x >= startX && x < endX && y >= startY && y < endY)
                         {
-                            if (x >= startX && x < endX && y >= startY && y < endY)
-                            {
-                                map[(y - startY) * pwidth + (x - startX)] = color;
-                            }
-
-                            x++;
+                            map[(y - startY) * pwidth + (x - startX)] = color;
                         }
+
+                        x++;
                     }
                 }
+            }
 
-                texture.SetPixelData(map, 0);
+            texture.SetPixelData(map, 0);
             //}
             //finally
             //{

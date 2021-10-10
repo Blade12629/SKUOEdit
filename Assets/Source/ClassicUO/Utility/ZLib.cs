@@ -30,9 +30,9 @@
 
 #endregion
 
+using ClassicUO.Utility.Platforms;
 using System;
 using System.Runtime.InteropServices;
-using ClassicUO.Utility.Platforms;
 
 namespace ClassicUO.Utility
 {
@@ -44,9 +44,9 @@ namespace ClassicUO.Utility
 
         static ZLib()
         {
-            if(Environment.Is64BitProcess) 
+            if (Environment.Is64BitProcess)
             {
-                if(PlatformHelper.IsWindows)
+                if (PlatformHelper.IsWindows)
                 {
                     _compressor = new Compressor64();
                 }
@@ -167,7 +167,7 @@ namespace ClassicUO.Utility
             {
                 long destLengthLong = destLength;
                 ZLibError z = SafeNativeMethods.compress(dest, ref destLengthLong, source, sourceLength);
-                destLength = (int) destLengthLong;
+                destLength = (int)destLengthLong;
 
                 return z;
             }
@@ -185,7 +185,7 @@ namespace ClassicUO.Utility
                     quality
                 );
 
-                destLength = (int) destLengthLong;
+                destLength = (int)destLengthLong;
 
                 return z;
             }
@@ -194,7 +194,7 @@ namespace ClassicUO.Utility
             {
                 long destLengthLong = destLength;
                 ZLibError z = SafeNativeMethods.uncompress(dest, ref destLengthLong, source, sourceLength);
-                destLength = (int) destLengthLong;
+                destLength = (int)destLengthLong;
 
                 return z;
             }

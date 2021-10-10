@@ -326,11 +326,11 @@ namespace TinyJson
             }
             else if (value is bool)
             {
-                AppendBool((bool) value);
+                AppendBool((bool)value);
             }
             else if (value is string)
             {
-                AppendString((string) value);
+                AppendString((string)value);
             }
             else if (value is char)
             {
@@ -338,7 +338,7 @@ namespace TinyJson
             }
             else if (IsEnum(value))
             {
-                AppendNumber((int) value);
+                AppendNumber((int)value);
             }
             else if (IsNumber(value))
             {

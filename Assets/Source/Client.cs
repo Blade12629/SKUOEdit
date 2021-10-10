@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using Assets.Source.Game;
-using Assets.Source.Textures;
+﻿using Assets.Source.Game.Map;
 using Assets.Source.UI;
+using UnityEngine;
 
 namespace Assets.Source
 {

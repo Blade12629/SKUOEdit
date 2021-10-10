@@ -294,7 +294,7 @@ namespace TinyJson
 
                                 case 'u':
                                     string hex = string.Concat(ReadChar(), ReadChar(), ReadChar(), ReadChar());
-                                    sb.Append((char) Convert.ToInt32(hex, 16));
+                                    sb.Append((char)Convert.ToInt32(hex, 16));
 
                                     break;
                             }

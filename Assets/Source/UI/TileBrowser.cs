@@ -1,12 +1,9 @@
 ﻿using Assets.Source.Game;
-using System;
+using Assets.Source.Game.Map;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 namespace Assets.Source.UI
 {
@@ -72,7 +69,7 @@ namespace Assets.Source.UI
 
             if (EditorInput.Instance != null)
                 EditorInput.Instance.CurrentTileId = id;
-            
+
             if (MappingTools.Instance != null)
                 MappingTools.Instance.SetTileIdInput(id);
 

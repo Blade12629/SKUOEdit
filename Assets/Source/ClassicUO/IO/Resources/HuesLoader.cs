@@ -30,11 +30,11 @@
 
 #endregion
 
+using ClassicUO.Utility;
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using ClassicUO.Utility;
 
 namespace ClassicUO.IO.Resources
 {
@@ -68,14 +68,14 @@ namespace ClassicUO.IO.Resources
 
                     UOFileMul file = new UOFileMul(path);
                     int groupSize = Marshal.SizeOf<HuesGroup>();
-                    int entrycount = (int) file.Length / groupSize;
+                    int entrycount = (int)file.Length / groupSize;
                     HuesCount = entrycount * 8;
                     HuesRange = new HuesGroup[entrycount];
-                    ulong addr = (ulong) file.StartAddress;
+                    ulong addr = (ulong)file.StartAddress;
 
                     for (int i = 0; i < entrycount; i++)
                     {
-                        HuesRange[i] = Marshal.PtrToStructure<HuesGroup>((IntPtr) (addr + (ulong) (i * groupSize)));
+                        HuesRange[i] = Marshal.PtrToStructure<HuesGroup>((IntPtr)(addr + (ulong)(i * groupSize)));
                     }
 
                     path = UOFileManager.GetUOFilePath("radarcol.mul");
@@ -83,7 +83,7 @@ namespace ClassicUO.IO.Resources
                     FileSystemHelper.EnsureFileExists(path);
 
                     UOFileMul radarcol = new UOFileMul(path);
-                    RadarCol = radarcol.ReadArray<ushort>((int) radarcol.Length >> 1);
+                    RadarCol = radarcol.ReadArray<ushort>((int)radarcol.Length >> 1);
                     file.Dispose();
                     radarcol.Dispose();
                 }
@@ -255,9 +255,9 @@ namespace ClassicUO.IO.Resources
                 int e = color % 8;
                 uint cl = HuesHelper.Color16To32(c);
 
-                byte R = (byte) (cl & 0xFF);
-                byte G = (byte) ((cl >> 8) & 0xFF);
-                byte B = (byte) ((cl >> 16) & 0xFF);
+                byte R = (byte)(cl & 0xFF);
+                byte G = (byte)((cl >> 8) & 0xFF);
+                byte B = (byte)((cl >> 16) & 0xFF);
 
                 if (R == G && R == B)
                 {

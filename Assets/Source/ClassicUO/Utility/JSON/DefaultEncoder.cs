@@ -117,7 +117,7 @@ namespace TinyJson
             {
                 builder.AppendBeginObject();
                 bool first = true;
-                IDictionary dict = (IDictionary) obj;
+                IDictionary dict = (IDictionary)obj;
 
                 foreach (object key in dict.Keys)
                 {
@@ -144,7 +144,7 @@ namespace TinyJson
                 builder.AppendBeginArray();
                 bool first = true;
 
-                foreach (object item in (IEnumerable) obj)
+                foreach (object item in (IEnumerable)obj)
                 {
                     if (first)
                     {
@@ -166,7 +166,7 @@ namespace TinyJson
         {
             return (obj, builder) =>
             {
-                DateTime date = (DateTime) obj;
+                DateTime date = (DateTime)obj;
 
                 string zulu = date.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
 

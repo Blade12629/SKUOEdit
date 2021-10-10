@@ -33,8 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ClassicUO.Game;
-using UnityEngine;
 
 namespace ClassicUO.IO
 {

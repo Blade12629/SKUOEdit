@@ -30,13 +30,11 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using ClassicUO.Game;
 //using ClassicUO.Renderer;
 using ClassicUO.Utility;
+using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ClassicUO.IO.Resources
@@ -161,7 +159,7 @@ namespace ClassicUO.IO.Resources
 
             if (texture == null /*|| texture.IsDisposed*/)
             {
-                ReadTexmapTexture(ref texture, (ushort) g);
+                ReadTexmapTexture(ref texture, (ushort)g);
 
                 if (texture != null)
                 {
@@ -211,7 +209,7 @@ namespace ClassicUO.IO.Resources
             //texture.SetDataPointerEXT(0, null, (IntPtr) data, size_pot * sizeof(uint));
 
             uint[] texData = new uint[size_pot];
-            
+
             for (int i = 0; i < size_pot; i++)
             {
                 texData[i] = data[i];

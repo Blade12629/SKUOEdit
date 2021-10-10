@@ -30,15 +30,13 @@
 
 #endregion
 
+//using ClassicUO.Configuration;
+using ClassicUO.IO.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-//using ClassicUO.Configuration;
-using ClassicUO.IO.Resources;
 //using ClassicUO.Renderer;
-using ClassicUO.Utility;
-using UnityEngine;
 
 namespace ClassicUO.Game.Data
 {

@@ -578,7 +578,7 @@ namespace ClassicUO.Utility.Collections
         public T[] ToArray()
         {
             T[] result = new T[Count];
-            ((ICollection<T>) this).CopyTo(result, 0);
+            ((ICollection<T>)this).CopyTo(result, 0);
 
             return result;
         }
@@ -897,19 +897,19 @@ namespace ClassicUO.Utility.Collections
                 throw new ArgumentException("Value is of incorrect type.", nameof(value));
             }
 
-            AddToBack((T) value);
+            AddToBack((T)value);
 
             return Count - 1;
         }
 
         bool IList.Contains(object value)
         {
-            return IsT(value) && ((ICollection<T>) this).Contains((T) value);
+            return IsT(value) && ((ICollection<T>)this).Contains((T)value);
         }
 
         int IList.IndexOf(object value)
         {
-            return IsT(value) ? IndexOf((T) value) : -1;
+            return IsT(value) ? IndexOf((T)value) : -1;
         }
 
         void IList.Insert(int index, object value)
@@ -924,7 +924,7 @@ namespace ClassicUO.Utility.Collections
                 throw new ArgumentException("Value is of incorrect type.", "value");
             }
 
-            Insert(index, (T) value);
+            Insert(index, (T)value);
         }
 
         bool IList.IsFixedSize => false;
@@ -935,7 +935,7 @@ namespace ClassicUO.Utility.Collections
         {
             if (IsT(value))
             {
-                Remove((T) value);
+                Remove((T)value);
             }
         }
 
@@ -955,7 +955,7 @@ namespace ClassicUO.Utility.Collections
                     throw new ArgumentException("Value is of incorrect type.", nameof(value));
                 }
 
-                this[index] = (T) value;
+                this[index] = (T)value;
             }
         }
 

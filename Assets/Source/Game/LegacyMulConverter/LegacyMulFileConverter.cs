@@ -50,7 +50,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
         //
         // MUL -> UOP
         //
-        public static void ToUOP(string inFile, string outFile,  int typeIndex)
+        public static void ToUOP(string inFile, string outFile, int typeIndex)
         {
             // Same for all UOP files
             const long firstTable = 0x200;
@@ -60,7 +60,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
             // Sanity, in case firstTable is customized by you!
             if (firstTable < 0x28)
             {
-                throw new Exception( "At least 0x28 bytes are needed for the header." );
+                throw new Exception("At least 0x28 bytes are needed for the header.");
             }
 #pragma warning restore 162
 
@@ -93,7 +93,7 @@ namespace UoFiddler.Plugin.UopPacker.Classes
 
                     position += 0xC4000;
                 }
-                
+
                 // File header
                 writer.Write(0x50594D); // MYP
                 writer.Write(5); // version

@@ -1,9 +1,4 @@
 ﻿using Assets.Source.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +21,7 @@ namespace Assets.Source.UI
         [SerializeField] InputField _heightValueInput;
         [SerializeField] InputField _tileIdInput;
         [SerializeField] TileBrowser _tileBrowser;
-        
+
         MappingTools() : base()
         {
             Instance = this;

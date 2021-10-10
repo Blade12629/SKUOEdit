@@ -83,7 +83,7 @@ namespace StbTextEditSharp
 
             y = 0;
 
-            for (;;)
+            for (; ; )
             {
                 r = str.Handler.LayoutRow(i);
 

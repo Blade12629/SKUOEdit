@@ -30,14 +30,13 @@
 
 #endregion
 
-using System;
-using System.IO;
 using Assets.SourceRemake;
 //using Assets.Source;
 using ClassicUO.Data;
 using ClassicUO.IO;
+using System;
+using System.IO;
 //using ClassicUO.Utility.Logging;
-using ClassicUO.Utility.Platforms;
 
 namespace ClassicUO
 {

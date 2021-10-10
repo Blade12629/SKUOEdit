@@ -30,18 +30,16 @@
 
 #endregion
 
+using Assets.SourceRemake;
+//using Assets.Source;
+//using ClassicUO.Configuration;
+using ClassicUO.Game;
+using ClassicUO.IO.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Assets.SourceRemake;
-//using Assets.Source;
-//using ClassicUO.Configuration;
-using ClassicUO.Data;
-using ClassicUO.Game;
-using ClassicUO.IO.Resources;
 //using ClassicUO.Utility.Logging;
 
 namespace ClassicUO.IO
@@ -105,9 +103,9 @@ namespace ClassicUO.IO
 
             if (File.Exists(pathdef))
             {
-                TileDataLoader tiledataLoader =  TileDataLoader.Instance;
+                TileDataLoader tiledataLoader = TileDataLoader.Instance;
                 ArtLoader artLoader = ArtLoader.Instance;
-                
+
                 using (DefReader reader = new DefReader(pathdef, 1))
                 {
                     while (reader.Next())
@@ -147,8 +145,8 @@ namespace ClassicUO.IO
                             }
 
                             if (index < Constants.MAX_LAND_DATA_INDEX_COUNT &&
-                                checkIndex < Constants.MAX_LAND_DATA_INDEX_COUNT && 
-                                checkIndex < tiledataLoader.LandData.Length && 
+                                checkIndex < Constants.MAX_LAND_DATA_INDEX_COUNT &&
+                                checkIndex < tiledataLoader.LandData.Length &&
                                 index < tiledataLoader.LandData.Length &&
                                 !tiledataLoader.LandData[checkIndex].Equals(default) &&
                                 tiledataLoader.LandData[index].Equals(default))

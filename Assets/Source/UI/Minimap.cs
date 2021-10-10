@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using Assets.Source.Game;
 using ClassicUO.IO.Resources;
+using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using Assets.Source.Game;
+using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {

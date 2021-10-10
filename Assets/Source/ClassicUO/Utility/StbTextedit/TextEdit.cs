@@ -32,7 +32,6 @@
 
 using System;
 using System.Text;
-using ClassicUO.Utility;
 
 namespace StbTextEditSharp
 {
@@ -354,7 +353,7 @@ namespace StbTextEditSharp
 
         private static bool IsSpace(int codepoint)
         {
-            return char.IsWhiteSpace((char) codepoint);
+            return char.IsWhiteSpace((char)codepoint);
         }
 
         public bool IsWordBoundary(int idx)
@@ -465,7 +464,7 @@ namespace StbTextEditSharp
 
         public void Key(ControlKeys key)
         {
-            retry:
+        retry:
 
             switch (key)
             {
@@ -590,125 +589,125 @@ namespace StbTextEditSharp
 
                 case ControlKeys.Down:
                 case ControlKeys.Down | ControlKeys.Shift:
-                {
-                    FindState find = new FindState();
-                    TextEditRow row = new TextEditRow();
-                    bool sel = (key & ControlKeys.Shift) != 0;
-
-                    if (SingleLine)
                     {
-                        key = ControlKeys.Right | (key & ControlKeys.Shift);
+                        FindState find = new FindState();
+                        TextEditRow row = new TextEditRow();
+                        bool sel = (key & ControlKeys.Shift) != 0;
 
-                        goto retry;
-                    }
-
-                    if (sel)
-                    {
-                        PrepareSelectionAtCursor();
-                    }
-                    else if (SelectStart != SelectEnd)
-                    {
-                        MoveToLast();
-                    }
-
-                    Clamp();
-                    find.FindCharPosition(this, CursorIndex, SingleLine);
-
-                    if (find.length != 0)
-                    {
-                        float goal_x = HasPreferredX ? PreferredX : find.x;
-                        float x = 0;
-                        int start = find.first_char + find.length;
-                        CursorIndex = start;
-                        row = Handler.LayoutRow(CursorIndex);
-                        x = row.x0;
-
-                        for (int i = 0; i < row.num_chars; ++i)
+                        if (SingleLine)
                         {
-                            float dx = 1;
-                            x += dx;
+                            key = ControlKeys.Right | (key & ControlKeys.Shift);
 
-                            if (x > goal_x)
-                            {
-                                break;
-                            }
-
-                            ++CursorIndex;
+                            goto retry;
                         }
-
-                        Clamp();
-                        HasPreferredX = true;
-                        PreferredX = goal_x;
 
                         if (sel)
                         {
-                            SelectEnd = CursorIndex;
+                            PrepareSelectionAtCursor();
                         }
-                    }
+                        else if (SelectStart != SelectEnd)
+                        {
+                            MoveToLast();
+                        }
 
-                    break;
-                }
+                        Clamp();
+                        find.FindCharPosition(this, CursorIndex, SingleLine);
+
+                        if (find.length != 0)
+                        {
+                            float goal_x = HasPreferredX ? PreferredX : find.x;
+                            float x = 0;
+                            int start = find.first_char + find.length;
+                            CursorIndex = start;
+                            row = Handler.LayoutRow(CursorIndex);
+                            x = row.x0;
+
+                            for (int i = 0; i < row.num_chars; ++i)
+                            {
+                                float dx = 1;
+                                x += dx;
+
+                                if (x > goal_x)
+                                {
+                                    break;
+                                }
+
+                                ++CursorIndex;
+                            }
+
+                            Clamp();
+                            HasPreferredX = true;
+                            PreferredX = goal_x;
+
+                            if (sel)
+                            {
+                                SelectEnd = CursorIndex;
+                            }
+                        }
+
+                        break;
+                    }
 
                 case ControlKeys.Up:
                 case ControlKeys.Up | ControlKeys.Shift:
-                {
-                    FindState find = new FindState();
-                    TextEditRow row = new TextEditRow();
-                    int i = 0;
-                    bool sel = (key & ControlKeys.Shift) != 0;
-
-                    if (SingleLine)
                     {
-                        key = ControlKeys.Left | (key & ControlKeys.Shift);
+                        FindState find = new FindState();
+                        TextEditRow row = new TextEditRow();
+                        int i = 0;
+                        bool sel = (key & ControlKeys.Shift) != 0;
 
-                        goto retry;
-                    }
-
-                    if (sel)
-                    {
-                        PrepareSelectionAtCursor();
-                    }
-                    else if (SelectStart != SelectEnd)
-                    {
-                        MoveToFirst();
-                    }
-
-                    Clamp();
-                    find.FindCharPosition(this, CursorIndex, SingleLine);
-
-                    if (find.prev_first != find.first_char)
-                    {
-                        float goal_x = HasPreferredX ? PreferredX : find.x;
-                        float x = 0;
-                        CursorIndex = find.prev_first;
-                        row = Handler.LayoutRow(CursorIndex);
-                        x = row.x0;
-
-                        for (i = 0; i < row.num_chars; ++i)
+                        if (SingleLine)
                         {
-                            float dx = 1;
-                            x += dx;
+                            key = ControlKeys.Left | (key & ControlKeys.Shift);
 
-                            if (x > goal_x)
-                            {
-                                break;
-                            }
-
-                            ++CursorIndex;
+                            goto retry;
                         }
-
-                        Clamp();
-                        HasPreferredX = true;
-                        PreferredX = goal_x;
 
                         if (sel)
                         {
-                            SelectEnd = CursorIndex;
+                            PrepareSelectionAtCursor();
                         }
-                    }
+                        else if (SelectStart != SelectEnd)
+                        {
+                            MoveToFirst();
+                        }
 
-                    break;
-                }
+                        Clamp();
+                        find.FindCharPosition(this, CursorIndex, SingleLine);
+
+                        if (find.prev_first != find.first_char)
+                        {
+                            float goal_x = HasPreferredX ? PreferredX : find.x;
+                            float x = 0;
+                            CursorIndex = find.prev_first;
+                            row = Handler.LayoutRow(CursorIndex);
+                            x = row.x0;
+
+                            for (i = 0; i < row.num_chars; ++i)
+                            {
+                                float dx = 1;
+                                x += dx;
+
+                                if (x > goal_x)
+                                {
+                                    break;
+                                }
+
+                                ++CursorIndex;
+                            }
+
+                            Clamp();
+                            HasPreferredX = true;
+                            PreferredX = goal_x;
+
+                            if (sel)
+                            {
+                                SelectEnd = CursorIndex;
+                            }
+                        }
+
+                        break;
+                    }
 
                 case ControlKeys.Delete:
                 case ControlKeys.Delete | ControlKeys.Shift:
@@ -799,27 +798,27 @@ namespace StbTextEditSharp
                     break;
 
                 case ControlKeys.LineEnd:
-                {
-                    int n = Length;
-                    Clamp();
-                    MoveToFirst();
+                    {
+                        int n = Length;
+                        Clamp();
+                        MoveToFirst();
 
-                    if (SingleLine)
-                    {
-                        CursorIndex = n;
-                    }
-                    else
-                    {
-                        while (CursorIndex < n && text[CursorIndex] != '\n')
+                        if (SingleLine)
                         {
-                            ++CursorIndex;
+                            CursorIndex = n;
                         }
+                        else
+                        {
+                            while (CursorIndex < n && text[CursorIndex] != '\n')
+                            {
+                                ++CursorIndex;
+                            }
+                        }
+
+                        HasPreferredX = false;
+
+                        break;
                     }
-
-                    HasPreferredX = false;
-
-                    break;
-                }
 
                 case ControlKeys.LineStart | ControlKeys.Shift:
                     Clamp();
@@ -843,28 +842,28 @@ namespace StbTextEditSharp
                     break;
 
                 case ControlKeys.LineEnd | ControlKeys.Shift:
-                {
-                    int n = Length;
-                    Clamp();
-                    PrepareSelectionAtCursor();
+                    {
+                        int n = Length;
+                        Clamp();
+                        PrepareSelectionAtCursor();
 
-                    if (SingleLine)
-                    {
-                        CursorIndex = n;
-                    }
-                    else
-                    {
-                        while (CursorIndex < n && text[CursorIndex] != '\n')
+                        if (SingleLine)
                         {
-                            ++CursorIndex;
+                            CursorIndex = n;
                         }
+                        else
+                        {
+                            while (CursorIndex < n && text[CursorIndex] != '\n')
+                            {
+                                ++CursorIndex;
+                            }
+                        }
+
+                        SelectEnd = CursorIndex;
+                        HasPreferredX = false;
+
+                        break;
                     }
-
-                    SelectEnd = CursorIndex;
-                    HasPreferredX = false;
-
-                    break;
-                }
             }
         }
 
@@ -917,7 +916,7 @@ namespace StbTextEditSharp
 
                     for (i = 0; i < u.delete_length; ++i)
                     {
-                        s.undo_char[s.undo_rec[rpos].char_storage + i] = (sbyte) text[u.where + i];
+                        s.undo_char[s.undo_rec[rpos].char_storage + i] = (sbyte)text[u.where + i];
                     }
                 }
 

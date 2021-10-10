@@ -1,11 +1,8 @@
-﻿using Assets.Source.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Source.Game.Map;
+using Assets.Source.IO;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 namespace Assets.Source.UI
 {
@@ -26,7 +23,7 @@ namespace Assets.Source.UI
 
             FileBrowser.OpenFile("Load Map", s =>
             {
-                Client.Instance.LoadMap(s, w, d, Game.GameMap.GenerationOption.Default, null, null);
+                Client.Instance.LoadMap(s, w, d, GameMap.GenerationOption.Default, null, null);
             }, null);
 
             gameObject.SetActive(false);

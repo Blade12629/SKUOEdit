@@ -172,7 +172,7 @@ namespace ClassicUO.Utility.Collections
                 return;
             }
 
-            int newCapacity = Math.Max((int) (_items.Length * 1.5), capacity);
+            int newCapacity = Math.Max((int)(_items.Length * 1.5), capacity);
             T[] oldElements = _items;
             _items = new T[newCapacity];
 

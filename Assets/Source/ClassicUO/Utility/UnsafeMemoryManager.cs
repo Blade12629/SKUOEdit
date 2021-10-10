@@ -55,13 +55,13 @@ namespace ClassicUO.Utility
 
         public static void Memset(void* ptr, byte value, int count)
         {
-            long* c = (long*) ptr;
+            long* c = (long*)ptr;
 
             count /= 8;
 
             for (int i = 0; i < count; ++i)
             {
-                *c++ = (long) value;
+                *c++ = (long)value;
             }
         }
 
@@ -78,7 +78,7 @@ namespace ClassicUO.Utility
         {
             IntPtr ptr = Alloc(size);
 
-            Memset((void*) ptr, 0, size);
+            Memset((void*)ptr, 0, size);
 
             return ptr;
         }
@@ -87,7 +87,7 @@ namespace ClassicUO.Utility
         {
             void* pRet = pool.Free;
 
-            pool.Free = *((byte**) pool.Free);
+            pool.Free = *((byte**)pool.Free);
 
             return pRet;
         }
@@ -113,7 +113,7 @@ namespace ClassicUO.Utility
             pool.NumBlocks = numBlocks;
             pool.BlockSize = blockSize;
 
-            pool.Alloc = (byte*) Alloc(blockSize * numBlocks);
+            pool.Alloc = (byte*)Alloc(blockSize * numBlocks);
 
             FreeAll(&pool);
 
@@ -132,7 +132,7 @@ namespace ClassicUO.Utility
         {
             if (ptr != null)
             {
-                void** pHead = (void**) ptr;
+                void** pHead = (void**)ptr;
                 *pHead = pool->Free;
                 pool->Free = pHead;
             }
@@ -140,13 +140,13 @@ namespace ClassicUO.Utility
 
         public static void FreeAll(UnmanagedMemoryPool* pool)
         {
-            void** pCur = (void**) pool->Alloc;
+            void** pCur = (void**)pool->Alloc;
             byte* pNext = pool->Alloc + pool->BlockSize;
 
             for (int i = 0, count = pool->NumBlocks - 1; i < count; ++i)
             {
                 *pCur = pNext;
-                pCur = (void**) pNext;
+                pCur = (void**)pNext;
                 pNext += pool->BlockSize;
             }
 
@@ -157,7 +157,7 @@ namespace ClassicUO.Utility
 
         public static void FreePool(UnmanagedMemoryPool* pool)
         {
-            Free((IntPtr) pool->Alloc);
+            Free((IntPtr)pool->Alloc);
             pool->Alloc = null;
             pool->Free = null;
         }

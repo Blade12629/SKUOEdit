@@ -401,7 +401,7 @@ namespace ClassicUO.Utility.Collections
 
         void IOrderedDictionary.Insert(int index, object key, object value)
         {
-            Insert(index, (TKey) key, (TValue) value);
+            Insert(index, (TKey)key, (TValue)value);
         }
 
         void IOrderedDictionary.RemoveAt(int index)
@@ -412,7 +412,7 @@ namespace ClassicUO.Utility.Collections
         object IOrderedDictionary.this[int index]
         {
             get => this[index];
-            set => this[index] = (TValue) value;
+            set => this[index] = (TValue)value;
         }
 
         #endregion
@@ -421,7 +421,7 @@ namespace ClassicUO.Utility.Collections
 
         void IDictionary.Add(object key, object value)
         {
-            Add((TKey) key, (TValue) value);
+            Add((TKey)key, (TValue)value);
         }
 
         void IDictionary.Clear()
@@ -431,7 +431,7 @@ namespace ClassicUO.Utility.Collections
 
         bool IDictionary.Contains(object key)
         {
-            return _keyedCollection.Contains((TKey) key);
+            return _keyedCollection.Contains((TKey)key);
         }
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
@@ -443,19 +443,19 @@ namespace ClassicUO.Utility.Collections
 
         bool IDictionary.IsReadOnly => false;
 
-        ICollection IDictionary.Keys => (ICollection) Keys;
+        ICollection IDictionary.Keys => (ICollection)Keys;
 
         void IDictionary.Remove(object key)
         {
-            Remove((TKey) key);
+            Remove((TKey)key);
         }
 
-        ICollection IDictionary.Values => (ICollection) Values;
+        ICollection IDictionary.Values => (ICollection)Values;
 
         object IDictionary.this[object key]
         {
-            get => this[(TKey) key];
-            set => this[(TKey) key] = (TValue) value;
+            get => this[(TKey)key];
+            set => this[(TKey)key] = (TValue)value;
         }
 
         #endregion
@@ -464,14 +464,14 @@ namespace ClassicUO.Utility.Collections
 
         void ICollection.CopyTo(Array array, int index)
         {
-            ((ICollection) _keyedCollection).CopyTo(array, index);
+            ((ICollection)_keyedCollection).CopyTo(array, index);
         }
 
-        int ICollection.Count => ((ICollection) _keyedCollection).Count;
+        int ICollection.Count => ((ICollection)_keyedCollection).Count;
 
-        bool ICollection.IsSynchronized => ((ICollection) _keyedCollection).IsSynchronized;
+        bool ICollection.IsSynchronized => ((ICollection)_keyedCollection).IsSynchronized;
 
-        object ICollection.SyncRoot => ((ICollection) _keyedCollection).SyncRoot;
+        object ICollection.SyncRoot => ((ICollection)_keyedCollection).SyncRoot;
 
         #endregion
     }

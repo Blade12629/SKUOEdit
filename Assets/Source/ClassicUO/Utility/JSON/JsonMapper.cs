@@ -38,8 +38,8 @@ using System.Reflection;
 
 namespace TinyJson
 {
-    using Encoder = Action<object, JsonBuilder>;
     using Decoder = Func<Type, object, object>;
+    using Encoder = Action<object, JsonBuilder>;
 
     public static class JsonMapper
     {
@@ -143,7 +143,7 @@ namespace TinyJson
         {
             Decoder decoder = GetDecoder(typeof(T));
 
-            return (T) decoder(typeof(T), jsonObj);
+            return (T)decoder(typeof(T), jsonObj);
         }
 
         public static void EncodeValue(object value, JsonBuilder builder)
@@ -193,7 +193,7 @@ namespace TinyJson
 
                 if (value is string)
                 {
-                    return Enum.Parse(type, (string) value);
+                    return Enum.Parse(type, (string)value);
                 }
 
                 return Enum.ToObject(type, value);

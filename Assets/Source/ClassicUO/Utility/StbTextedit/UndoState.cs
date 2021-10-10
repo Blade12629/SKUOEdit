@@ -114,7 +114,7 @@ namespace StbTextEditSharp
                         num
                     );
 
-                    for (i = (int) redo_point; i < k; ++i)
+                    for (i = (int)redo_point; i < k; ++i)
                     {
                         if (undo_rec[i].char_storage >= 0)
                         {
@@ -178,9 +178,9 @@ namespace StbTextEditSharp
 
             undo_rec[rposv].where = pos;
 
-            undo_rec[rposv].insert_length = (short) insert_len;
+            undo_rec[rposv].insert_length = (short)insert_len;
 
-            undo_rec[rposv].delete_length = (short) delete_len;
+            undo_rec[rposv].delete_length = (short)delete_len;
 
             if (insert_len == 0)
             {
@@ -189,9 +189,9 @@ namespace StbTextEditSharp
                 return null;
             }
 
-            undo_rec[rposv].char_storage = (short) undo_char_point;
+            undo_rec[rposv].char_storage = (short)undo_char_point;
 
-            undo_char_point = (short) (undo_char_point + insert_len);
+            undo_char_point = (short)(undo_char_point + insert_len);
 
             return undo_rec[rposv].char_storage;
         }

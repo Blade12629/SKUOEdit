@@ -72,7 +72,7 @@ namespace ClassicUO.Utility.Collections
 
         public T[] Items => _items;
 
-        public ArraySegment<T> ArraySegment => new ArraySegment<T>(_items, 0, (int) _count);
+        public ArraySegment<T> ArraySegment => new ArraySegment<T>(_items, 0, (int)_count);
 
         public ref T this[uint index]
         {
@@ -108,7 +108,7 @@ namespace ClassicUO.Utility.Collections
         {
             if (_count == _items.Length)
             {
-                Array.Resize(ref _items, (int) (_items.Length * GrowthFactor));
+                Array.Resize(ref _items, (int)(_items.Length * GrowthFactor));
             }
 
             _items[_count] = item;
@@ -119,7 +119,7 @@ namespace ClassicUO.Utility.Collections
         {
             if (_count == _items.Length)
             {
-                Array.Resize(ref _items, (int) (_items.Length * GrowthFactor));
+                Array.Resize(ref _items, (int)(_items.Length * GrowthFactor));
             }
 
             _items[_count] = item;
@@ -137,11 +137,11 @@ namespace ClassicUO.Utility.Collections
             Debug.Assert(items != null);
 #endif
 
-            int requiredSize = (int) (_count + items.Length);
+            int requiredSize = (int)(_count + items.Length);
 
             if (requiredSize > _items.Length)
             {
-                Array.Resize(ref _items, (int) (requiredSize * GrowthFactor));
+                Array.Resize(ref _items, (int)(requiredSize * GrowthFactor));
             }
 
             Array.Copy
@@ -149,11 +149,11 @@ namespace ClassicUO.Utility.Collections
                 items,
                 0,
                 _items,
-                (int) _count,
+                (int)_count,
                 items.Length
             );
 
-            _count += (uint) items.Length;
+            _count += (uint)items.Length;
         }
 
         public void AddRange(IEnumerable<T> items)
@@ -181,7 +181,7 @@ namespace ClassicUO.Utility.Collections
 
         public void Resize(uint count)
         {
-            Array.Resize(ref _items, (int) count);
+            Array.Resize(ref _items, (int)count);
             _count = count;
         }
 
@@ -229,7 +229,7 @@ namespace ClassicUO.Utility.Collections
         public bool GetIndex(T item, out uint index)
         {
             int signedIndex = Array.IndexOf(_items, item);
-            index = (uint) signedIndex;
+            index = (uint)signedIndex;
 
             return signedIndex != -1;
         }
@@ -249,7 +249,7 @@ namespace ClassicUO.Utility.Collections
 #else
             Debug.Assert(comparer != null);
 #endif
-            Array.Sort(_items, 0, (int) Count, comparer);
+            Array.Sort(_items, 0, (int)Count, comparer);
         }
 
         public void TransformAll(Func<T, T> transformation)
@@ -295,10 +295,10 @@ namespace ClassicUO.Utility.Collections
             Array.Copy
             (
                 _items,
-                (int) index + 1,
+                (int)index + 1,
                 _items,
-                (int) index,
-                (int) (_count - index)
+                (int)index,
+                (int)(_count - index)
             );
 
             _items[_count] = default;

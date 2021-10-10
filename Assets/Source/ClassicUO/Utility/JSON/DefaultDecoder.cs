@@ -57,9 +57,9 @@ namespace TinyJson
                     {
                         FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-                        foreach (DictionaryEntry item in (IDictionary) jsonObj)
+                        foreach (DictionaryEntry item in (IDictionary)jsonObj)
                         {
-                            string name = (string) item.Key;
+                            string name = (string)item.Key;
                             object value = item.Value;
 
                             if (!JsonMapper.DecodeValue
@@ -77,9 +77,9 @@ namespace TinyJson
                     }
                     else
                     {
-                        foreach (DictionaryEntry item in (IDictionary) jsonObj)
+                        foreach (DictionaryEntry item in (IDictionary)jsonObj)
                         {
-                            string name = (string) item.Key;
+                            string name = (string)item.Key;
                             object value = item.Value;
 
                             if (!JsonMapper.DecodeValue
@@ -114,7 +114,7 @@ namespace TinyJson
                 // Dictionary
                 if (jsonObj is IDictionary<string, object>)
                 {
-                    Dictionary<string, object> jsonDict = (Dictionary<string, object>) jsonObj;
+                    Dictionary<string, object> jsonDict = (Dictionary<string, object>)jsonObj;
 
                     if (type.GetGenericArguments().Length == 2)
                     {
@@ -163,7 +163,7 @@ namespace TinyJson
                 {
                     Dictionary<string, object> jsonDict = new Dictionary<string, object>();
 
-                    foreach (KeyValuePair<int, object> keyValuePair in (Dictionary<int, object>) jsonObj)
+                    foreach (KeyValuePair<int, object> keyValuePair in (Dictionary<int, object>)jsonObj)
                     {
                         jsonDict.Add(keyValuePair.Key.ToString(), keyValuePair.Value);
                     }
@@ -216,7 +216,7 @@ namespace TinyJson
                 {
                     if (jsonObj is IList)
                     {
-                        IList jsonList = (IList) jsonObj;
+                        IList jsonList = (IList)jsonObj;
 
                         if (type.IsArray)
                         {
@@ -255,7 +255,7 @@ namespace TinyJson
 
                     if (jsonObj is IList)
                     {
-                        IList jsonList = (IList) jsonObj;
+                        IList jsonList = (IList)jsonObj;
                         IList instance = null;
                         bool nullable = genericType.IsNullable();
 
@@ -299,7 +299,7 @@ namespace TinyJson
 
                     if (jsonObj is IList)
                     {
-                        IList jsonList = (IList) jsonObj;
+                        IList jsonList = (IList)jsonObj;
 
                         Type listType = type.IsInstanceOfGenericType(typeof(HashSet<>)) ? typeof(HashSet<>) : typeof(List<>);
 

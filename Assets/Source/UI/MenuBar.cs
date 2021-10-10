@@ -1,13 +1,7 @@
-﻿using Assets.Source.Game;
-using Assets.Source.Game.Colorstores;
+﻿using Assets.Source.Game.Map;
 using Assets.Source.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 namespace Assets.Source.UI
 {
@@ -95,7 +89,7 @@ namespace Assets.Source.UI
             int[] heights = ConvertImage(heightMap);
             int[] tiles = ConvertImage(tileMap);
 
-            Client.Instance.LoadMap(null, width, depth, Game.GameMap.GenerationOption.Converted, heights, tiles);
+            Client.Instance.LoadMap(null, width, depth, GameMap.GenerationOption.Converted, heights, tiles);
 
             int[] ConvertImage(string path)
             {

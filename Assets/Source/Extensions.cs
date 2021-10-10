@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public static class Extensions
 {
-    public static void Switch<T>(this T[] array, int indexA, int indexB) 
+    public static void Switch<T>(this T[] array, int indexA, int indexB)
     {
         T a = array[indexA];
         array[indexA] = array[indexB];

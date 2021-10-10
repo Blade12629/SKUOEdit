@@ -30,10 +30,10 @@
 
 #endregion
 
-using System.Threading.Tasks;
 using ClassicUO.Game;
 //using ClassicUO.Renderer;
 using ClassicUO.Utility;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ClassicUO.IO.Resources
@@ -95,7 +95,7 @@ namespace ClassicUO.IO.Resources
 
         private bool GetLight(ref Texture2D texture, uint idx)
         {
-            ref UOFileIndex entry = ref GetValidRefEntry((int) idx);
+            ref UOFileIndex entry = ref GetValidRefEntry((int)idx);
 
             if (entry.Width == 0 && entry.Height == 0)
             {
@@ -106,28 +106,28 @@ namespace ClassicUO.IO.Resources
 
             //try
             //{
-                _file.SetData(entry.Address, entry.FileSize);
-                _file.Seek(entry.Offset);
+            _file.SetData(entry.Address, entry.FileSize);
+            _file.Seek(entry.Offset);
 
-                for (int i = 0; i < entry.Height; i++)
+            for (int i = 0; i < entry.Height; i++)
+            {
+                int pos = i * entry.Width;
+
+                for (int j = 0; j < entry.Width; j++)
                 {
-                    int pos = i * entry.Width;
+                    ushort val = _file.ReadByte();
+                    uint rgb24 = (uint)((val << 19) | (val << 11) | (val << 3));
 
-                    for (int j = 0; j < entry.Width; j++)
+                    if (val != 0)
                     {
-                        ushort val = _file.ReadByte();
-                        uint rgb24 = (uint) ((val << 19) | (val << 11) | (val << 3));
-
-                        if (val != 0)
-                        {
-                            pixels[pos + j] = rgb24 | 0xFF_00_00_00;
-                        }
+                        pixels[pos + j] = rgb24 | 0xFF_00_00_00;
                     }
                 }
+            }
 
-                texture = new Texture2D(entry.Width, entry.Height);
-                texture.SetPixelData(pixels, 0);
-                //texture.SetData(pixels, 0, entry.Width * entry.Height);
+            texture = new Texture2D(entry.Width, entry.Height);
+            texture.SetPixelData(pixels, 0);
+            //texture.SetData(pixels, 0, entry.Width * entry.Height);
             //}
             //finally
             //{

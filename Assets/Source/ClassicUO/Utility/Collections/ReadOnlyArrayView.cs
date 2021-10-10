@@ -97,7 +97,7 @@ namespace ClassicUO.Utility.Collections
             public Enumerator(ReadOnlyArrayView<T> view)
             {
                 _view = view;
-                _currentIndex = (int) view._start;
+                _currentIndex = (int)view._start;
             }
 
             public T Current => _view._items[_currentIndex];
@@ -117,7 +117,7 @@ namespace ClassicUO.Utility.Collections
 
             public void Reset()
             {
-                _currentIndex = (int) _view._start;
+                _currentIndex = (int)_view._start;
             }
 
             public void Dispose()

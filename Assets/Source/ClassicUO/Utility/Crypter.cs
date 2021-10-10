@@ -58,7 +58,7 @@ namespace ClassicUO.Utility
 
             for (int i = 0; i < buff.Length; i++)
             {
-                sb.AppendFormat("{0:X2}", (byte) (buff[i] ^ (byte) key[kidx++]));
+                sb.AppendFormat("{0:X2}", (byte)(buff[i] ^ (byte)key[kidx++]));
 
                 if (kidx >= key.Length)
                 {
@@ -103,7 +103,7 @@ namespace ClassicUO.Utility
                         continue;
                     }
 
-                    buff[(i - 2) >> 1] = (byte) (c ^ (byte) key[kidx++]);
+                    buff[(i - 2) >> 1] = (byte)(c ^ (byte)key[kidx++]);
 
                     if (kidx >= key.Length)
                     {
@@ -113,7 +113,7 @@ namespace ClassicUO.Utility
             }
             else
             {
-                byte key = (byte) (source.Length >> 1);
+                byte key = (byte)(source.Length >> 1);
                 buff = new byte[key];
 
                 for (int i = 0; i < source.Length; i += 2)
@@ -129,7 +129,7 @@ namespace ClassicUO.Utility
                         continue;
                     }
 
-                    buff[i >> 1] = (byte) (c ^ key++);
+                    buff[i >> 1] = (byte)(c ^ key++);
                 }
             }
 

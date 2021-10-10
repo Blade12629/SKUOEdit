@@ -126,7 +126,7 @@ namespace Assets.Source.Game.Map
                 Array.Copy(_vertices, indexSrc, dest, indexDest, length);
             });
         }
-        
+
         /// <summary>
         /// Copies vertex data into the specified array
         /// </summary>
