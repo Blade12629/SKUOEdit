@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class SettingsPanel : MonoBehaviour
+    public sealed class SettingsPanel : MonoBehaviour
     {
         [SerializeField] InputField _renderWidthInput;
         [SerializeField] InputField _renderDepthInput;
@@ -19,7 +19,7 @@ namespace Assets.Source.UI
         [SerializeField] InputField _gridColorGInput;
         [SerializeField] InputField _gridColorBInput;
 
-        public SettingsPanel() : base()
+        SettingsPanel() : base()
         {
             GameMap.OnMapFinishLoading += () =>
             {

@@ -29,6 +29,8 @@ namespace Assets.Source.Game
         {
             Instance = this;
             _terrainLayerMask = 1 << 0;
+
+            GameMap.OnMapFinishLoading += () => InitializePosition();
         }
 
         public void InitializePosition(Vector3? startPos = null)

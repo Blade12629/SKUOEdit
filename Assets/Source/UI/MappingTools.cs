@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class MappingTools : MonoBehaviour
+    public sealed class MappingTools : MonoBehaviour
     {
         public static MappingTools Instance { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Assets.Source.UI
         [SerializeField] InputField _tileIdInput;
         [SerializeField] TileBrowser _tileBrowser;
         
-        public MappingTools()
+        MappingTools() : base()
         {
             Instance = this;
         }

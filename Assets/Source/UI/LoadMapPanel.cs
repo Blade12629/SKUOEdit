@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Source.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,15 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class LoadMapPanel : MonoBehaviour
+    public sealed class LoadMapPanel : MonoBehaviour
     {
         [SerializeField] InputField _widthInput;
         [SerializeField] InputField _depthInput;
+
+        LoadMapPanel() : base()
+        {
+
+        }
 
         public void SelectAndLoadMap()
         {

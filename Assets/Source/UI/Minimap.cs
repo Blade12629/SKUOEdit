@@ -11,7 +11,7 @@ using Assets.Source.Game;
 
 namespace Assets.Source.UI
 {
-    public unsafe class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
+    public sealed unsafe class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         /// <summary>
         /// Vector3 contains map position
@@ -31,7 +31,7 @@ namespace Assets.Source.UI
         static readonly Color _markerColor = new Color(1, 192 / 255, 203 / 255, 1);
         static readonly int _markerSize = 15;
 
-        public Minimap()
+        Minimap() : base()
         {
             Instance = this;
         }

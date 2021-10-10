@@ -20,10 +20,10 @@ namespace Assets.Source
             ClassicUO.Client.Load();
 
             Debug.Log("Loading TileAtlas");
-            if (System.IO.File.Exists(GamePaths.TileAtlasUVFile) &&
-                System.IO.File.Exists(GamePaths.TileAtlasTexFile))
+            if (System.IO.File.Exists(GameConfig.TileAtlasUVFile) &&
+                System.IO.File.Exists(GameConfig.TileAtlasTexFile))
             {
-                GameTextures.Import(GamePaths.TileAtlasUVFile, GamePaths.TileAtlasTexFile);
+                GameTextures.Import(GameConfig.TileAtlasUVFile, GameConfig.TileAtlasTexFile);
             }
             else
             {
@@ -50,7 +50,7 @@ namespace Assets.Source
 
         public static string GetUOPath(string file)
         {
-            return System.IO.Path.Combine(GamePaths.GameClientFiles, file);
+            return System.IO.Path.Combine(GameConfig.GameClientFiles, file);
         }
     }
 }

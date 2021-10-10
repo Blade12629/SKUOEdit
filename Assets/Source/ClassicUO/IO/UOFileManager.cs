@@ -55,7 +55,7 @@ namespace ClassicUO.IO
                 return uoFilePath;
             }
 
-            return Path.Combine(GamePaths.GameClientFiles, file);
+            return Path.Combine(GameConfig.GameClientFiles, file);
         }
 
         public static void Load()

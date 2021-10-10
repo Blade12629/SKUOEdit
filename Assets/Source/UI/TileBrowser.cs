@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class TileBrowser : MonoBehaviour
+    public sealed class TileBrowser : MonoBehaviour
     {
         public static TileBrowser Instance { get; private set; }
 
@@ -22,6 +22,86 @@ namespace Assets.Source.UI
         [SerializeField] ScrollRect _scrollRect;
         [SerializeField] RectTransform _scrollTransform;
         [SerializeField] RectTransform _contentTransform;
+
+        TileBrowser() : base()
+        {
+            Instance = this;
+            _tiles = new Dictionary<short, RawImage>();
+
+            GameMap.OnMapFinishLoading += SelectDefault;
+        }
+
+        public void AddTile(short tileId)
+        {
+            Texture2D imgTex = ClassicUO.IO.Resources.ArtLoader.Instance.GetLandTexture((uint)tileId);
+
+            if (imgTex == null)
+            {
+                _tiles.Add(tileId, null);
+                return;
+            }
+
+            GameObject imgObj = new GameObject($"Tile {tileId}", typeof(Button), typeof(RawImage));
+            imgObj.transform.SetParent(_contentObj.transform);
+            imgObj.transform.rotation = Quaternion.Euler(180f, 0f, 0f);
+            imgObj.GetComponent<Button>().onClick.AddListener(() => OnTileClick(tileId));
+
+            RawImage img = imgObj.GetComponent<RawImage>();
+            img.texture = imgTex;
+
+            _tiles.Add(tileId, img);
+        }
+
+        public void SelectDefault()
+        {
+            if (_tiles.TryGetValue(0, out RawImage img))
+                OnTileClick(0);
+            else
+                OnTileClick(1);
+        }
+
+        public void OnTileClick(short id, bool snapTo = false)
+        {
+            if (_tiles.TryGetValue(id, out RawImage newImg))
+            {
+                if (snapTo)
+                    SnapTo(newImg.rectTransform);
+
+                MoveSelectionCell(newImg);
+            }
+
+            if (EditorInput.Instance != null)
+                EditorInput.Instance.CurrentTileId = id;
+            
+            if (MappingTools.Instance != null)
+                MappingTools.Instance.SetTileIdInput(id);
+
+        }
+
+        public void LoadTiles()
+        {
+            for (short i = 0; i < ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT; i++)
+            {
+                AddTile(i);
+            }
+        }
+
+        void DisableSelectionCell()
+        {
+            if (_selectionCell.activeInHierarchy)
+                _selectionCell.SetActive(false);
+        }
+
+        void MoveSelectionCell(RawImage image)
+        {
+            if (image == null)
+            {
+                DisableSelectionCell();
+                return;
+            }
+
+            _selectionCell.transform.position = image.transform.position;
+        }
 
         void SnapTo(RectTransform target)
         {
@@ -70,83 +150,6 @@ namespace Assets.Source.UI
         Vector3 GetWorldPointInWidget(RectTransform target, Vector3 worldPoint)
         {
             return target.InverseTransformPoint(worldPoint);
-        }
-
-        public TileBrowser()
-        {
-            Instance = this;
-            _tiles = new Dictionary<short, RawImage>();
-        }
-
-        public void AddTile(short tileId)
-        {
-            Texture2D imgTex = ClassicUO.IO.Resources.ArtLoader.Instance.GetLandTexture((uint)tileId);
-
-            if (imgTex == null)
-            {
-                _tiles.Add(tileId, null);
-                return;
-            }
-
-            GameObject imgObj = new GameObject($"Tile {tileId}", typeof(Button), typeof(RawImage));
-            imgObj.transform.SetParent(_contentObj.transform);
-            imgObj.transform.rotation = Quaternion.Euler(180f, 0f, 0f);
-
-            AddButtonClick(imgObj, tileId);
-
-            RawImage img = imgObj.GetComponent<RawImage>();
-            img.texture = imgTex;
-
-            _tiles.Add(tileId, img);
-        }
-
-        void AddButtonClick(GameObject obj, short tileId)
-        {
-            Button button = obj.GetComponent<Button>();
-            button.onClick.AddListener(() => OnTileClick(tileId));
-        }
-
-        public void SelectDefault()
-        {
-            if (_tiles.TryGetValue(0, out RawImage img))
-                OnTileClick(0);
-            else
-                OnTileClick(1);
-        }
-
-        public void OnTileClick(short id, bool snapTo = false)
-        {
-            if (_tiles.TryGetValue(id, out RawImage newImg))
-            {
-                if (snapTo)
-                    SnapTo(newImg.rectTransform);
-
-                MoveSelectionCell(newImg);
-            }
-
-            if (EditorInput.Instance != null)
-                EditorInput.Instance.CurrentTileId = id;
-            
-            if (MappingTools.Instance != null)
-                MappingTools.Instance.SetTileIdInput(id);
-
-        }
-
-        void DisableSelectionCell()
-        {
-            if (_selectionCell.activeInHierarchy)
-                _selectionCell.SetActive(false);
-        }
-
-        void MoveSelectionCell(RawImage image)
-        {
-            if (image == null)
-            {
-                DisableSelectionCell();
-                return;
-            }
-
-            _selectionCell.transform.position = image.transform.position;
         }
     }
 }

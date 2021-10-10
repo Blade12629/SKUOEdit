@@ -59,7 +59,7 @@ namespace ClassicUO
         {
             UnityEngine.Debug.Log(">>>>>>>>>>>>> Loading >>>>>>>>>>>>>");
 
-            string clientPath = GamePaths.GameClientFiles;
+            string clientPath = GameConfig.GameClientFiles;
 
             UnityEngine.Debug.Log($"Ultima Online installation folder: {clientPath}");
 

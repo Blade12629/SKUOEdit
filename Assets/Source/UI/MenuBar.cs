@@ -1,5 +1,6 @@
 ﻿using Assets.Source.Game;
 using Assets.Source.Game.Colorstores;
+using Assets.Source.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Assets.Source.UI
 {
-    public class MenuBar : MonoBehaviour
+    public sealed class MenuBar : MonoBehaviour
     {
         [SerializeField] GameObject _settingsPanel;
         [SerializeField] LoadMapPanel _loadMapPanel;
@@ -19,7 +20,7 @@ namespace Assets.Source.UI
         [SerializeField] GameObject _settingsBtn;
         [SerializeField] GameObject _saveMapBtn;
 
-        public MenuBar()
+        MenuBar() : base()
         {
             GameMap.OnMapDestroyed += () =>
             {

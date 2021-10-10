@@ -34,45 +34,48 @@ namespace Assets.Source.Game
             if (DisableEditorInput)
                 return;
 
-            if (Input.GetMouseButtonDown(0) && CurrentAction != EditorAction.None && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(ray, out RaycastHit hit, 10000f, _terrainLayerMask))
+                if (CurrentAction != EditorAction.None && Input.GetMouseButtonDown(0))
                 {
-                    int x = (int)hit.point.x;
-                    int z = (int)hit.point.z;
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                    switch (CurrentAction)
+                    if (Physics.Raycast(ray, out RaycastHit hit, 10000f, _terrainLayerMask))
                     {
-                        case EditorAction.IncreaseVerticeHeight:
+                        int x = (int)hit.point.x;
+                        int z = (int)hit.point.z;
 
-                            GameMap.Instance.IncreaseTileCornerHeight(x, z, CurrentValue);
-                            break;
+                        switch (CurrentAction)
+                        {
+                            case EditorAction.IncreaseVerticeHeight:
 
-                        case EditorAction.DecreaseVerticeHeight:
-                            GameMap.Instance.IncreaseTileCornerHeight(x, z, -CurrentValue);
-                            break;
+                                GameMap.Instance.IncreaseTileCornerHeight(x, z, CurrentValue);
+                                break;
 
-                        case EditorAction.SetVerticeHeight:
-                            GameMap.Instance.SetTileCornerHeight(x, z, CurrentValue);
-                            break;
+                            case EditorAction.DecreaseVerticeHeight:
+                                GameMap.Instance.IncreaseTileCornerHeight(x, z, -CurrentValue);
+                                break;
 
-                        case EditorAction.IncreaseTileHeight:
-                            GameMap.Instance.IncreaseTileHeight(x, z, CurrentValue);
-                            break;
+                            case EditorAction.SetVerticeHeight:
+                                GameMap.Instance.SetTileCornerHeight(x, z, CurrentValue);
+                                break;
 
-                        case EditorAction.DecreaseTileHeight:
-                            GameMap.Instance.IncreaseTileHeight(x, z, -CurrentValue);
-                            break;
+                            case EditorAction.IncreaseTileHeight:
+                                GameMap.Instance.IncreaseTileHeight(x, z, CurrentValue);
+                                break;
 
-                        case EditorAction.SetTileHeight:
-                            GameMap.Instance.SetTileHeight(x, z, CurrentValue);
-                            break;
+                            case EditorAction.DecreaseTileHeight:
+                                GameMap.Instance.IncreaseTileHeight(x, z, -CurrentValue);
+                                break;
 
-                        case EditorAction.SetTileId:
-                            GameMap.Instance.SetTileId(x, z, (short)CurrentTileId);
-                            break;
+                            case EditorAction.SetTileHeight:
+                                GameMap.Instance.SetTileHeight(x, z, CurrentValue);
+                                break;
+
+                            case EditorAction.SetTileId:
+                                GameMap.Instance.SetTileId(x, z, (short)CurrentTileId);
+                                break;
+                        }
                     }
                 }
             }

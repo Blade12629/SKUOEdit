@@ -47,22 +47,7 @@ namespace Assets.Source
         void Start()
         {
             GameFiles.LoadClientFiles();
-
-            for (short i = 0; i < ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT; i++)
-            {
-                TileBrowser.Instance.AddTile(i);
-            }
-
-            GameMap.OnMapFinishLoading += () =>
-            {
-                TileBrowser.Instance.SelectDefault();
-                CameraController.Instance.InitializePosition();
-            };
-        }
-
-        void OnApplicationQuit()
-        {
-
+            TileBrowser.Instance.LoadTiles();
         }
     }
 }

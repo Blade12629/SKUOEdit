@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,9 +54,11 @@
     <UnityVersion>2021.1.22f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="D:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
-    <Compile Include="Assets\Source\Input.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
     <Compile Include="Assets\Source\UI\MenuBar.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
@@ -88,7 +90,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\ITextEditHandler.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultDecoder.cs" />
     <Compile Include="Assets\Source\Textures\TextureAtlas.cs" />
-    <Compile Include="Assets\Source\UI\FileBrowser.cs" />
+    <Compile Include="Assets\Source\IO\FileBrowser.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\HuesHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Data\StaticFilters.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticInfo.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoState.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileMul.cs" />
     <Compile Include="Assets\Source\UI\TileBrowser.cs" />
+    <Compile Include="Assets\Source\UI\SettingsPanel.cs" />
     <Compile Include="Assets\Source\ClassicUO\Client.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonParser.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\PlatformHelper.cs" />
@@ -112,6 +115,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\TextEdit.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\FindState.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultEncoder.cs" />
+    <Compile Include="Assets\Source\Input.cs" />
     <Compile Include="Assets\Source\Textures\UOAtlas.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\FileSystemHelper.cs" />
@@ -130,7 +134,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\CollectionHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Extensions.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoRecord.cs" />
-    <Compile Include="Assets\Source\GamePaths.cs" />
+    <Compile Include="Assets\Source\GameConfig.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\PixelPicker.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileIndex.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\Native.cs" />
@@ -148,7 +152,6 @@
     <Compile Include="Assets\Source\UI\LoadMapPanel.cs" />
     <Compile Include="Assets\Source\UI\Minimap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
-    <Compile Include="Assets\Source\UI\SettingsPanel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Source\Shaders\UnlitGridShader.shader" />

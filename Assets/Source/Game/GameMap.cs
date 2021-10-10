@@ -243,25 +243,6 @@ namespace Assets.Source.Game
             IncreaseTileHeight(x, z, -height);
         }
 
-        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true)
-        {
-            int index = PositionToIndex(x, z, IndexType.Vertice);
-
-            if (index < 0 || index >= _vertices.Length)
-                return;
-
-            ref Vertex vertex = ref _vertices[index + indexOffset];
-            vertex.Y = height * .1f;
-
-            ref Tile tile = ref GetTile(z, x);
-            tile.Z = (sbyte)height;
-
-            RefreshUVs(x, z, false);
-
-            if (updateChunks)
-                UpdateChunks(x, z);
-        }
-
         public void SetTileCornerHeight(int x, int z, int height, bool updateChunks = true)
         {
             SetTileCornerHeight(x,      z,      height, 0, false);
@@ -431,6 +412,29 @@ namespace Assets.Source.Game
             return 0;
         }
 
+        static int PositionToIndex(int x, int z, int depth, IndexType indexType)
+        {
+            return (x * depth + z) * (int)indexType;
+        }
+
+        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true)
+        {
+            int index = PositionToIndex(x, z, IndexType.Vertice);
+
+            if (index < 0 || index >= _vertices.Length)
+                return;
+
+            ref Vertex vertex = ref _vertices[index + indexOffset];
+            vertex.Y = height * .1f;
+
+            ref Tile tile = ref GetTile(z, x);
+            tile.Z = (sbyte)height;
+
+            RefreshUVs(x, z, false);
+
+            if (updateChunks)
+                UpdateChunks(x, z);
+        }
 
         void RefreshUVs(int x, int z, bool updateChunks = true)
         {
@@ -482,11 +486,6 @@ namespace Assets.Source.Game
         int PositionToIndex(int x, int z, IndexType indexType)
         {
             return (x * Width + z) * (int)indexType;
-        }
-
-        static int PositionToIndex(int x, int z, int depth, IndexType indexType)
-        {
-            return (x * depth + z) * (int)indexType;
         }
 
         void LoadMapBlocks()
