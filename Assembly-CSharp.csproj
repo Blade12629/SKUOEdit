@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -85,7 +86,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Bag.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\ITextEditHandler.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultDecoder.cs" />
-    <Compile Include="Assets\Source\Textures\TextureAtlas.cs" />
     <Compile Include="Assets\Source\IO\FileBrowser.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\HuesHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Data\StaticFilters.cs" />
