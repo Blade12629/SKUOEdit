@@ -44,7 +44,7 @@ namespace Assets.Source.Game
             else
                 pos = Vector3.zero;
 
-            transform.position = new Vector3(pos.x + _cameraOffset.x, transform.position.y, pos.z + _cameraOffset.z);
+            Camera.main.transform.position = new Vector3(pos.x + _cameraOffset.x, transform.position.y, pos.z + _cameraOffset.z);
 
             Minimap.OnMinimapPositionChange += MoveToWorld;
         }
@@ -158,6 +158,7 @@ namespace Assets.Source.Game
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100000f, _terrainLayerMask))
             {
+                GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
                 SelectionRenderer.Instance.SetPosition(hit.point);
             }
         }

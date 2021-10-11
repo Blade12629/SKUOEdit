@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -54,6 +53,9 @@
     <UnityVersion>2021.1.22f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="D:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
@@ -74,23 +76,20 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Json.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonMapper.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileManager.cs" />
-    <Compile Include="Assets\Source\Game\Map\VertexMap.cs" />
     <Compile Include="Assets\Source\UI\MappingTools.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\LegacyMulFileConverter.cs" />
-    <Compile Include="Assets\Source\Game\Map\GameMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Crypter.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\Verdata.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Constants.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\RawList.cs" />
-    <Compile Include="Assets\Source\Game\Map\MapChunk.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Bag.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\ITextEditHandler.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultDecoder.cs" />
     <Compile Include="Assets\Source\IO\FileBrowser.cs" />
+    <Compile Include="Assets\Source\Game\Map\GameMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\HuesHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Data\StaticFilters.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticInfo.cs" />
-    <Compile Include="Assets\Source\Game\Map\Vertex.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\TextEditRow.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\RandomHelper.cs" />
     <Compile Include="Assets\Source\Game\Statics\Item.cs" />
@@ -98,6 +97,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\ReadOnlyArrayView.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\OrderedDictionary.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLIBStream.cs" />
+    <Compile Include="Assets\Source\Game\Map\Vertex.cs" />
     <Compile Include="Assets\Source\GameFiles.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\Enums.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoState.cs" />
@@ -117,10 +117,12 @@
     <Compile Include="Assets\Source\Game\EditorInput.cs" />
     <Compile Include="Assets\Source\Game\SelectionRenderer.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFile.cs" />
+    <Compile Include="Assets\Source\Game\Map\VertexLayout.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\DataReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiLoader.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\FileType.cs" />
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
+    <Compile Include="Assets\Source\Game\Map\VertexMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiMapLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\ArtLoader.cs" />
@@ -134,7 +136,6 @@
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileIndex.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\Native.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Extensions.cs" />
-    <Compile Include="Assets\Source\Game\Map\VertexLayout.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\TileDataLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\HuesLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\Adler32.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Assets\Source\Textures\GameTextures.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ValueStringBuilder.cs" />
+    <Compile Include="Assets\Source\Game\Map\MapChunk.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonBuilder.cs" />
     <Compile Include="Assets\Source\Game\CameraController.cs" />
     <Compile Include="Assets\Source\UI\LoadMapPanel.cs" />
@@ -149,7 +151,7 @@
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Source\Shaders\UnlitGridShader.shader" />
+    <None Include="Assets\Source\Shaders\TerrainShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -842,9 +844,6 @@
       <Project>{0B2DD61D-3F80-C503-A134-D35D2A4F9CA6}</Project>
       <Name>SimpleFileBrowser.Runtime</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\Source\Game\Colorstores\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

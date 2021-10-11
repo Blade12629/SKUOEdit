@@ -104,6 +104,16 @@ namespace Assets.Source.Game.Map
             _renderer.material.SetFloat("_GridSize", size);
         }
 
+        public void SetSelectedTile(int x, int z)
+        {
+            _renderer.material.SetVector("_SelectedPos", new Vector4(x, 0, z, 1));
+        }
+
+        public void SetSelectionSize(int size)
+        {
+            _renderer.material.SetInt("_SelectedAreaSize", size);
+        }
+
         public bool IsGridEnabled()
         {
             return _renderer.material.GetInt("_DrawGrid") != 0;

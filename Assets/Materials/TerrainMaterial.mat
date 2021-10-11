@@ -95,6 +95,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SelectCell: 0
+    - _SelectedAreaSize: 1
     - _SelectedCellX: 0
     - _SelectedCellY: 0
     - _SmoothnessTextureChannel: 0
@@ -113,5 +114,7 @@ Material:
     - _LineColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SelectedColor: {r: 1, g: 0, b: 0, a: 1}
+    - _SelectedPos: {r: 0, g: 0, b: 0, a: 1}
+    - _SelectedTPos: {r: 0, g: 0, b: 0, a: 1}
     - _TestCol: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

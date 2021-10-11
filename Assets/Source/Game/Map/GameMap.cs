@@ -127,8 +127,6 @@ namespace Assets.Source.Game.Map
                 switch (genOption)
                 {
                     case GenerationOption.Default:
-                        // TODO: convert uop file to mul inside of temp directory then load mul file
-                        // TODO: convert mul file uop file
                         if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                         {
                             LoadUOPMapBlocks(GetMapIndex(MapFile));
@@ -161,11 +159,11 @@ namespace Assets.Source.Game.Map
                 yield return new WaitForEndOfFrame();
 
                 LoadMapMesh();
+                IsMapLoaded = true;
 
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
 
-                IsMapLoaded = true;
                 OnMapFinishLoading?.Invoke();
             }
         }
@@ -421,6 +419,18 @@ namespace Assets.Source.Game.Map
             return 0;
         }
 
+        public void SetSelectedTile(int x, int z)
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.SetSelectedTile(x, z);
+        }
+
+        public void SetSelectedAreaSize(int size)
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.SetSelectionSize(size);
+        }
+
         static int PositionToIndex(int x, int z, int depth, IndexType indexType)
         {
             return (x * depth + z) * (int)indexType;
@@ -499,10 +509,6 @@ namespace Assets.Source.Game.Map
 
         void LoadMapBlocks()
         {
-            const int sizePerTile = 3;
-            const int sizePerBlock = 64 * 3 + 4;
-
-            long sizePerRow = sizePerBlock * BlockDepth;
             TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
 
             unsafe
@@ -516,31 +522,41 @@ namespace Assets.Source.Game.Map
                     byte* mapStart = null;
                     mapAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref mapStart);
 
-                    if (mapStart == null)
-                        throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
-
-                    Parallel.For(0, BlockWidth, bx =>
-                    {
-                        byte* xblockPtr = mapStart + bx * sizePerRow;
-                        int xblockIndex = bx * BlockDepth;
-
-                        for (int bz = 0; bz < BlockDepth; bz++)
-                        {
-                            int header = *ReadPtr<int>(ref xblockPtr, 4);
-
-                            Tile[] tiles = new Tile[64];
-                            for (int i = 0; i < 64; i++)
-                                tiles[i] = *ReadPtr<Tile>(ref xblockPtr, sizePerTile);
-
-                            tileBlocks[xblockIndex++] = new TileBlock(header, tiles);
-                        }
-                    });
+                    LoadMapBlocks(mapStart, tileBlocks);
 
                     mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
                 }
             }
 
             _tileBlocks = tileBlocks;
+        }
+
+        unsafe void LoadMapBlocks(byte* mapStart, TileBlock[] tileBlocks)
+        {
+            const int sizePerTile = 3;
+            const int sizePerBlock = 64 * 3 + 4;
+
+            if (mapStart == null)
+                throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
+
+            long sizePerRow = sizePerBlock * BlockDepth;
+
+            Parallel.For(0, BlockWidth, bx =>
+            {
+                byte* xblockPtr = mapStart + bx * sizePerRow;
+                int xblockIndex = bx * BlockDepth;
+
+                for (int bz = 0; bz < BlockDepth; bz++)
+                {
+                    int header = *ReadPtr<int>(ref xblockPtr, 4);
+
+                    Tile[] tiles = new Tile[64];
+                    for (int i = 0; i < 64; i++)
+                        tiles[i] = *ReadPtr<Tile>(ref xblockPtr, sizePerTile);
+
+                    tileBlocks[xblockIndex++] = new TileBlock(header, tiles);
+                }
+            });
 
             static unsafe T* ReadPtr<T>(ref byte* ptr, int length) where T : unmanaged
             {
