@@ -79,6 +79,8 @@ namespace Assets.Source.Game.Map
         {
             Debug.Log("Destroying GameMap");
 
+            EditorInput.Instance.ClearActionQueue();
+
             Width = 0;
             BlockWidth = 0;
             Depth = 0;
@@ -524,6 +526,17 @@ namespace Assets.Source.Game.Map
                 _chunks[i]?.SetSelectionSize(size);
         }
 
+        public int GetTileId(int x, int z)
+        {
+            int index = PositionToIndex(x, z, IndexType.Vertice);
+
+            if (index < 0 || index >= _vertices.Length)
+                return 0;
+
+            ref Tile tile = ref GetTile(z, x);
+            return tile.TileId;
+        }
+
         /// <summary>
         /// Converts a specific position to an index for array access
         /// </summary>
@@ -562,10 +575,10 @@ namespace Assets.Source.Game.Map
             if (vertexIndex < 0 || vertexIndex >= _vertices.Length)
                 return;
 
-            int hBL = GetTileCornerHeight(x,        z);
-            int hTL = GetTileCornerHeight(x,        z + 1);
-            int hTR = GetTileCornerHeight(x + 1,    z + 1);
-            int hBR = GetTileCornerHeight(x + 1,    z);
+            int hBL = GetTileCornerHeight(x, z);
+            int hTL = GetTileCornerHeight(x, z + 1);
+            int hTR = GetTileCornerHeight(x + 1, z + 1);
+            int hBR = GetTileCornerHeight(x + 1, z);
 
             bool isEvenTile = hBL == hTL &&
                               hBL == hTR &&
