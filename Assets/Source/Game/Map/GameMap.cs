@@ -105,6 +105,15 @@ namespace Assets.Source.Game.Map
             OnMapDestroyed?.Invoke();
         }
 
+        /// <summary>
+        /// Loads a specific map
+        /// </summary>
+        /// <param name="file">Map file</param>
+        /// <param name="width">Map width</param>
+        /// <param name="depth">Map depth</param>
+        /// <param name="genOption">Generation option</param>
+        /// <param name="tileHeights">Only used with <see cref="GenerationOption.Converted"/></param>
+        /// <param name="tileIds">Only used with <see cref="GenerationOption.Converted"/></param>
         public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds)
         {
             MapFile = file;
@@ -183,6 +192,10 @@ namespace Assets.Source.Game.Map
             }
         }
 
+        /// <summary>
+        /// Saves the current map to <see cref="MapFile"/>
+        /// </summary>
+        /// <param name="file">if not null sets the <see cref="MapFile"/> path before saving</param>
         public void Save(string file = null)
         {
             if (!string.IsNullOrEmpty(file))
@@ -194,6 +207,11 @@ namespace Assets.Source.Game.Map
                 SaveMapBlocks();
         }
 
+        /// <summary>
+        /// Converts a map from colors to map blocks <see cref="IO.ColorStore"/>
+        /// </summary>
+        /// <param name="tileHeights"></param>
+        /// <param name="tileIds"></param>
         public void ConvertMapFromColors(int[] tileHeights, int[] tileIds)
         {
             int headerStart = 4096;
@@ -230,6 +248,9 @@ namespace Assets.Source.Game.Map
             _tileBlocks = tileBlocks;
         }
 
+        /// <summary>
+        /// Sets the height of a specific tile
+        /// </summary>
         public void SetTileHeight(int x, int z, int height)
         {
             SetTileCornerHeight(x, z, height, false, false);
@@ -238,6 +259,9 @@ namespace Assets.Source.Game.Map
             SetTileCornerHeight(x + 1, z, height, true, true);
         }
 
+        /// <summary>
+        /// Increases the height of a specific tile
+        /// </summary>
         public void IncreaseTileHeight(int x, int z, int height)
         {
             IncreaseTileCornerHeight(x, z, height, false, false);
@@ -246,16 +270,25 @@ namespace Assets.Source.Game.Map
             IncreaseTileCornerHeight(x + 1, z, height, true, true);
         }
 
+        /// <summary>
+        /// Decreases the height of a specific tile
+        /// </summary>
         public void DecreaseTileHeight(int x, int z, int height)
         {
             IncreaseTileHeight(x, z, -height);
         }
 
+        /// <summary>
+        /// Sets the height of a specific point on the map
+        /// </summary>
         public void SetTileCornerHeight(int x, int z, int height)
         {
             SetTileCornerHeight(x, z, height, true, true);
         }
 
+        /// <summary>
+        /// Sets the height of a specific point on the map
+        /// </summary>
         public void SetTileCornerHeight(int x, int z, int height, bool updateChunks, bool refreshSelection)
         {
             SetTileCornerHeight(x, z, height, 0, false);
@@ -270,11 +303,17 @@ namespace Assets.Source.Game.Map
                 UpdateChunks(x, z);
         }
 
+        /// <summary>
+        /// Increases the height of a specific point on the map
+        /// </summary>
         public void IncreaseTileCornerHeight(int x, int z, int amount)
         {
             IncreaseTileCornerHeight(x, z, amount, true, true);
         }
 
+        /// <summary>
+        /// Increases the height of a specific point on the map
+        /// </summary>
         public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks, bool refreshSelection)
         {
             int oldHeight = GetTileCornerHeight(x, z);
@@ -283,11 +322,18 @@ namespace Assets.Source.Game.Map
             SetTileCornerHeight(x, z, newHeight, updateChunks, refreshSelection);
         }
 
+        /// <summary>
+        /// Decreases the height of a specific point on the map
+        /// </summary>
         public void DecreaseTileCornerHeight(int x, int z, int amount)
         {
             IncreaseTileCornerHeight(x, z, -amount);
         }
 
+        /// <summary>
+        /// Gets the height of a specific point on the map
+        /// </summary>
+        /// <returns>Point height or 0 if point is out of bounds</returns>
         public int GetTileCornerHeight(int x, int z)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
@@ -300,6 +346,11 @@ namespace Assets.Source.Game.Map
             return (int)Mathf.Ceil(vertex.Y * 10f);
         }
 
+
+        /// <summary>
+        /// Gets the height of a specific point on the map
+        /// </summary>
+        /// <returns>Point is inside of map bounds</returns>
         public bool TryGetTileCornerHeight(int x, int z, out int height)
         {
             height = 0;
@@ -313,6 +364,9 @@ namespace Assets.Source.Game.Map
             return true;
         }
 
+        /// <summary>
+        /// Sets the tile id of a specific tile
+        /// </summary>
         public void SetTileId(int x, int z, short id)
         {
             int vertexIndex = PositionToIndex(x, z, IndexType.Vertice);
@@ -327,7 +381,7 @@ namespace Assets.Source.Game.Map
         }
 
         /// <summary>
-        /// Copies vertex data into the specified array
+        /// Copies the vertex data of a specific area into the specified vertex array
         /// </summary>
         public void CopyAreaVertices(Vertex[] dest, int x, int z, int width, int depth)
         {
@@ -368,29 +422,45 @@ namespace Assets.Source.Game.Map
             });
         }
 
+        /// <summary>
+        /// Enables the map grid
+        /// </summary>
         public void EnableGrid()
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.EnableGrid();
         }
 
+        /// <summary>
+        /// Disables the map grid
+        /// </summary>
         public void DisableGrid()
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.DisableGrid();
         }
+
+        /// <summary>
+        /// Sets the map grid color
+        /// </summary>
         public void SetGridColor(Color color)
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.SetGridColor(color);
         }
 
+        /// <summary>
+        /// Sets the map grid size
+        /// </summary>
         public void SetGridSize(float size)
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.SetGridSize(size);
         }
 
+        /// <summary>
+        /// Checks if the map grid is currently enabled
+        /// </summary>
         public bool IsGridEnabled()
         {
             for (int i = 0; i < _chunks.Length; i++)
@@ -404,6 +474,9 @@ namespace Assets.Source.Game.Map
             return false;
         }
 
+        /// <summary>
+        /// Gets the map grid color
+        /// </summary>
         public Color GetGridColor()
         {
             for (int i = 0; i < _chunks.Length; i++)
@@ -417,6 +490,9 @@ namespace Assets.Source.Game.Map
             return default;
         }
 
+        /// <summary>
+        /// Gets the map grid size
+        /// </summary>
         public float GetGridSize()
         {
             for (int i = 0; i < _chunks.Length; i++)
@@ -430,18 +506,28 @@ namespace Assets.Source.Game.Map
             return 0;
         }
 
+        /// <summary>
+        /// Sets the currently selected tile <see cref="SelectionRenderer"/>
+        /// </summary>
         public void SetSelectedTile(int x, int z)
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.SetSelectedTile(x, z);
         }
 
+        /// <summary>
+        /// Sets the currently selected tile area size <see cref="SelectionRenderer"/>
+        /// </summary>
         public void SetSelectedAreaSize(int size)
         {
             for (int i = 0; i < _chunks.Length; i++)
                 _chunks[i]?.SetSelectionSize(size);
         }
 
+        /// <summary>
+        /// Converts a specific position to an index for array access
+        /// </summary>
+        /// <param name="indexType">Type of index we want to get, this affects the returned index</param>
         static int PositionToIndex(int x, int z, int depth, IndexType indexType)
         {
             return (x * depth + z) * (int)indexType;
