@@ -1,5 +1,6 @@
 ﻿using Assets.Source.Game.Map;
 using Assets.Source.UI;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Source
@@ -40,8 +41,26 @@ namespace Assets.Source
 
         void Start()
         {
+            if (GameConfig.ConfigNotFound)
+            {
+                Debug.LogError("Config not found, saving config and exiting client");
+
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+
+                return;
+            }
+
             GameFiles.LoadClientFiles();
             TileBrowser.Instance.LoadTiles();
+        }
+
+        private void OnApplicationQuit()
+        {
+            GameConfig.Save();
         }
     }
 }

@@ -18,12 +18,13 @@ namespace Assets.Source.Game
             set
             {
                 _cameraOffset = value;
-                MoveToWorld(transform.position);
+                MoveToWorld(_camera.transform.position);
             }
         }
 
         [SerializeField] Text _positionText;
         [SerializeField] Vector3 _cameraOffset;
+        [SerializeField] Camera _camera;
 
         int _terrainLayerMask;
 
@@ -31,8 +32,6 @@ namespace Assets.Source.Game
         {
             Instance = this;
             _terrainLayerMask = 1 << 0;
-
-            GameMap.OnMapFinishLoading += () => InitializePosition();
         }
 
         public void InitializePosition(Vector3? startPos = null)
@@ -44,7 +43,7 @@ namespace Assets.Source.Game
             else
                 pos = Vector3.zero;
 
-            Camera.main.transform.position = new Vector3(pos.x + _cameraOffset.x, transform.position.y, pos.z + _cameraOffset.z);
+            _camera.transform.position = new Vector3(pos.x + _cameraOffset.x, _camera.transform.transform.position.y, pos.z + _cameraOffset.z);
 
             Minimap.OnMinimapPositionChange += MoveToWorld;
         }
@@ -55,12 +54,12 @@ namespace Assets.Source.Game
         /// <param name="pos">y coordinate is ignored, <see cref="SetCameraHeight(float)"/></param>
         public void MoveToWorld(Vector3 pos)
         {
-            Vector3 oldPos = transform.position;
+            Vector3 oldPos = _camera.transform.position;
             Vector3 newPos = new Vector3(pos.x, oldPos.y, pos.z);
             Vector3 diff = newPos - oldPos;
 
-            transform.position = new Vector3(newPos.x + _cameraOffset.x, transform.position.y, newPos.z + _cameraOffset.z);
-            _positionText.text = $"X: {(int)transform.position.z}\nY: {(int)transform.position.x}";
+            _camera.transform.position = new Vector3(newPos.x + _cameraOffset.x, _camera.transform.position.y, newPos.z + _cameraOffset.z);
+            _positionText.text = $"X: {(int)_camera.transform.position.z}\nY: {(int)_camera.transform.position.x}";
 
             OnCameraMoved?.Invoke(new CameraMovedEventArgs(oldPos, newPos, diff));
         }
@@ -71,10 +70,10 @@ namespace Assets.Source.Game
         /// <param name="height"></param>
         public void SetCameraHeight(float height)
         {
-            Vector3 oldPos = transform.position;
+            Vector3 oldPos = _camera.transform.position;
             oldPos.y = height;
 
-            transform.position = oldPos;
+            _camera.transform.position = oldPos;
         }
 
         void Update()
@@ -87,26 +86,26 @@ namespace Assets.Source.Game
 
             if (Input.GetKey(KeyCode.W))
             {
-                dir += transform.forward;
+                dir += _camera.transform.forward;
                 //dir.x--;
                 //dir.z--;
             }
             if (Input.GetKey(KeyCode.S))
             {
-                dir -= transform.forward;
+                dir -= _camera.transform.forward;
                 //dir.x++;
                 //dir.z++;
             }
 
             if (Input.GetKey(KeyCode.A))
             {
-                dir -= transform.right;
+                dir -= _camera.transform.right;
                 //dir.x++;
                 //dir.z--;
             }
             if (Input.GetKey(KeyCode.D))
             {
-                dir += transform.right;
+                dir += _camera.transform.right;
                 //dir.x--;
                 //dir.z++;
             }
@@ -118,7 +117,7 @@ namespace Assets.Source.Game
 
             if (!dir.Equals(Vector3.zero))
             {
-                Vector3 pos = transform.position + dir * shiftScale;
+                Vector3 pos = _camera.transform.position + dir * shiftScale;
                 pos.x -= _cameraOffset.x;
                 pos.z -= _cameraOffset.z;
 
@@ -134,21 +133,21 @@ namespace Assets.Source.Game
                 else
                     mouseScroll = -1f;
 
-                Vector3 pos = transform.position;
+                Vector3 pos = _camera.transform.position;
                 pos.y += mouseScroll * shiftScale;
 
-                transform.position = pos;
+                _camera.transform.position = pos;
             }
 
             if (Input.GetMouseButton(1) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
-                transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
-                transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+                _camera.transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
+                _camera.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
 
-                Vector3 eulerAngles = transform.eulerAngles;
+                Vector3 eulerAngles = _camera.transform.eulerAngles;
                 eulerAngles.z = 0;
 
-                transform.eulerAngles = eulerAngles;
+                _camera.transform.eulerAngles = eulerAngles;
                 //transform.Rotate(0, 0, -Input.GetAxis("QandE") * 90 * Time.deltaTime);
             }
         }

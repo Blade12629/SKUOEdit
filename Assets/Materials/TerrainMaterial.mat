@@ -85,6 +85,7 @@ Material:
     - _DrawGrid: 0
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
+    - _EnableSelectedRendering: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -113,7 +114,7 @@ Material:
     - _GridColor: {r: 0, g: 0, b: 0, a: 1}
     - _LineColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SelectedColor: {r: 1, g: 0, b: 0, a: 1}
+    - _SelectedColor: {r: 0.17254902, g: 0.8117647, b: 0.16470589, a: 1}
     - _SelectedPos: {r: 0, g: 0, b: 0, a: 1}
     - _SelectedTPos: {r: 0, g: 0, b: 0, a: 1}
     - _TestCol: {r: 1, g: 1, b: 1, a: 1}

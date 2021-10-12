@@ -32,6 +32,14 @@ namespace Assets.Source.Game
         LineRenderer _renderer;
         Vector3 _lastPos;
 
+        readonly Vector2[] _defaultPointOffsets = new Vector2[]
+        {
+            new Vector2(0, 0),
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+            new Vector2(1, 0),
+        };
+
         public SelectionRenderer() : base()
         {
             Instance = this;
@@ -39,66 +47,43 @@ namespace Assets.Source.Game
 
         public void Refresh()
         {
-            SetPosition(_lastPos);
+            Vector3[] linePoints = new Vector3[_defaultPointOffsets.Length + 1];
+            _renderer.GetPositions(linePoints);
+
+            for (int i = 0; i < linePoints.Length; i++)
+            {
+                ref Vector3 point = ref linePoints[i];
+                point.y = GameMap.Instance.GetTileCornerHeight((int)point.x, (int)point.z) * .1f + .1f;
+            }
+
+            _renderer.SetPositions(linePoints);
         }
 
         public void SetPosition(Vector3 pos)
         {
+            pos.x = (int)pos.x;
+            pos.z = (int)pos.z;
+
             if (pos.x == _lastPos.x && pos.z == _lastPos.z)
                 return;
 
             _lastPos = pos;
-            int areaWidth = AreaSize;
-            int areaDepth = AreaSize;
+            Vector2[] pointOffsets = _defaultPointOffsets;
+            Vector3[] linePoints = new Vector3[pointOffsets.Length + 1];
 
-            if (pos.x < 0)
+            for (int i = 0; i < pointOffsets.Length; i++)
             {
-                areaWidth -= (int)pos.x;
+                Vector2 offset = pointOffsets[i] * AreaSize;
+                Vector3 curPos = new Vector3(pos.x + offset.x, 0, pos.z + offset.y);
 
-                if (areaWidth <= 0)
-                    return;
-            }
-            else if (pos.x >= GameMap.Instance.Width)
-            {
-                areaWidth -= (int)(pos.x - GameMap.Instance.Width);
-
-                if (areaWidth <= 0)
-                    return;
+                curPos.y = GameMap.Instance.GetTileCornerHeight((int)curPos.x, (int)curPos.z) * .1f + .1f;
+                linePoints[i] = curPos;
             }
 
-            if (pos.z < 0)
-            {
-                areaDepth -= (int)pos.z;
+            linePoints[linePoints.Length - 1] = linePoints[0];
 
-                if (areaDepth <= 0)
-                    return;
-            }
-            else if (pos.z >= GameMap.Instance.Depth)
-            {
-                areaDepth -= (int)(pos.z - GameMap.Instance.Depth);
-
-                if (areaDepth <= 0)
-                    return;
-            }
-
-            int length = areaWidth * 2 + areaDepth * 2 + 1;
-
-            using (NativeArray<Vector3> tempPoints = new NativeArray<Vector3>(length, Allocator.TempJob))
-            {
-                CalculateLinePointsJob job = new CalculateLinePointsJob()
-                {
-                    StartPosition = new Vector3((int)pos.x, pos.y, (int)pos.z),
-                    AreaWidth = areaWidth,
-                    AreaDepth = areaDepth,
-                    Result = tempPoints
-                };
-
-                JobHandle handle = job.Schedule();
-                handle.Complete();
-
-                _renderer.positionCount = length;
-                _renderer.SetPositions(tempPoints.ToArray());
-            }
+            _renderer.positionCount = linePoints.Length;
+            _renderer.SetPositions(linePoints);
         }
 
         public void Clear()
@@ -110,46 +95,6 @@ namespace Assets.Source.Game
         void Start()
         {
             _renderer = GetComponent<LineRenderer>();
-        }
-
-        struct CalculateLinePointsJob : IJob
-        {
-            public int AreaWidth;
-            public int AreaDepth;
-            public Vector3 StartPosition;
-
-            public NativeArray<Vector3> Result;
-
-            public void Execute()
-            {
-                int index = 0;
-                int x = (int)StartPosition.x;
-                int z = (int)StartPosition.z;
-
-                AddDirection(ref index, ref x, ref z, 0, 1, AreaDepth);
-                AddDirection(ref index, ref x, ref z, 1, 0, AreaWidth);
-                AddDirection(ref index, ref x, ref z, 0, -1, AreaDepth);
-                AddDirection(ref index, ref x, ref z, -1, 0, AreaWidth);
-
-                Result[Result.Length - 1] = Result[0];
-            }
-
-            void AddDirection(ref int index, ref int x, ref int z, int xDir, int zDir, int length)
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    AddPoint(ref index, ref x, ref z);
-
-                    x += xDir;
-                    z += zDir;
-                }
-            }
-
-            void AddPoint(ref int index, ref int x, ref int z)
-            {
-                float height = GameMap.Instance.GetTileCornerHeight(x, z) * .1f + .1f;
-                Result[index++] = new Vector3(x, height, z);
-            }
         }
     }
 }

@@ -47,10 +47,13 @@ namespace Assets.Source.Game.Map
 
         [SerializeField] bool _toggleGrid;
 
+        bool _firstMapCreation;
+
         public GameMap()
         {
             Instance = this;
             CameraController.OnCameraMoved += args => MoveToWorld(args.NewPosition);
+            _firstMapCreation = true;
         }
 
         public void MoveToWorld(Vector3 newPos)
@@ -165,6 +168,18 @@ namespace Assets.Source.Game.Map
                 yield return new WaitForEndOfFrame();
 
                 OnMapFinishLoading?.Invoke();
+                CameraController.Instance.InitializePosition();
+
+                if (_firstMapCreation)
+                {
+                    _firstMapCreation = false;
+
+                    SetGridSize(GameConfig.GridSize);
+                    SetGridColor(GameConfig.GridColor);
+
+                    if (GameConfig.EnableGrid)
+                        EnableGrid();
+                }
             }
         }
 
@@ -217,22 +232,18 @@ namespace Assets.Source.Game.Map
 
         public void SetTileHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x, z, height, false);
-            SetTileCornerHeight(x, z + 1, height, false);
-            SetTileCornerHeight(x + 1, z + 1, height, false);
-            SetTileCornerHeight(x + 1, z, height, false);
-
-            UpdateChunks(x, z);
+            SetTileCornerHeight(x, z, height, false, false);
+            SetTileCornerHeight(x, z + 1, height, false, false);
+            SetTileCornerHeight(x + 1, z + 1, height, false, false);
+            SetTileCornerHeight(x + 1, z, height, true, true);
         }
 
         public void IncreaseTileHeight(int x, int z, int height)
         {
-            IncreaseTileCornerHeight(x, z, height, false);
-            IncreaseTileCornerHeight(x, z + 1, height, false);
-            IncreaseTileCornerHeight(x + 1, z + 1, height, false);
-            IncreaseTileCornerHeight(x + 1, z, height, false);
-
-            UpdateChunks(x, z);
+            IncreaseTileCornerHeight(x, z, height, false, false);
+            IncreaseTileCornerHeight(x, z + 1, height, false, false);
+            IncreaseTileCornerHeight(x + 1, z + 1, height, false, false);
+            IncreaseTileCornerHeight(x + 1, z, height, true, true);
         }
 
         public void DecreaseTileHeight(int x, int z, int height)
@@ -242,15 +253,18 @@ namespace Assets.Source.Game.Map
 
         public void SetTileCornerHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x, z, height, true);
+            SetTileCornerHeight(x, z, height, true, true);
         }
 
-        public void SetTileCornerHeight(int x, int z, int height, bool updateChunks)
+        public void SetTileCornerHeight(int x, int z, int height, bool updateChunks, bool refreshSelection)
         {
             SetTileCornerHeight(x, z, height, 0, false);
             SetTileCornerHeight(x - 1, z, height, 3, false);
             SetTileCornerHeight(x - 1, z - 1, height, 2, false);
             SetTileCornerHeight(x, z - 1, height, 1, false);
+
+            if (refreshSelection)
+                SelectionRenderer.Instance.Refresh();
 
             if (updateChunks)
                 UpdateChunks(x, z);
@@ -258,18 +272,15 @@ namespace Assets.Source.Game.Map
 
         public void IncreaseTileCornerHeight(int x, int z, int amount)
         {
-            IncreaseTileCornerHeight(x, z, amount, true);
+            IncreaseTileCornerHeight(x, z, amount, true, true);
         }
 
-        public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks)
+        public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks, bool refreshSelection)
         {
             int oldHeight = GetTileCornerHeight(x, z);
             int newHeight = oldHeight + amount;
 
-            SetTileCornerHeight(x, z, newHeight, false);
-
-            if (updateChunks)
-                UpdateChunks(x, z);
+            SetTileCornerHeight(x, z, newHeight, updateChunks, refreshSelection);
         }
 
         public void DecreaseTileCornerHeight(int x, int z, int amount)
@@ -436,7 +447,7 @@ namespace Assets.Source.Game.Map
             return (x * depth + z) * (int)indexType;
         }
 
-        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true)
+        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true, bool refreshSelection = true)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
@@ -451,6 +462,9 @@ namespace Assets.Source.Game.Map
 
             RefreshUVs(x, z, false);
 
+            if (refreshSelection)
+                SelectionRenderer.Instance.Refresh();
+
             if (updateChunks)
                 UpdateChunks(x, z);
         }
@@ -462,14 +476,16 @@ namespace Assets.Source.Game.Map
             if (vertexIndex < 0 || vertexIndex >= _vertices.Length)
                 return;
 
-            ref Tile tileBL = ref GetTile(z, x);
-            ref Tile tileTL = ref GetTile(z + 1, x);
-            ref Tile tileTR = ref GetTile(z + 1, x + 1);
-            ref Tile tileBR = ref GetTile(z, x + 1);
+            int hBL = GetTileCornerHeight(x,        z);
+            int hTL = GetTileCornerHeight(x,        z + 1);
+            int hTR = GetTileCornerHeight(x + 1,    z + 1);
+            int hBR = GetTileCornerHeight(x + 1,    z);
 
-            bool isEvenTile = tileBL.Z == tileTL.Z &&
-                              tileBL.Z == tileTR.Z &&
-                              tileBL.Z == tileBR.Z;
+            bool isEvenTile = hBL == hTL &&
+                              hBL == hTR &&
+                              hBL == hBR;
+
+            ref Tile tileBL = ref GetTile(z, x);
 
             Vector2[] tileUVs = GetTileUVs(tileBL.TileId, !isEvenTile);
 
