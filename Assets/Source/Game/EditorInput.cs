@@ -74,31 +74,44 @@ namespace Assets.Source.Game
             List<int> newValues = new List<int>();
 
             EditorAction action = CurrentAction;
-            int size = CurrentSize;
+            int sizew = CurrentSize;
+            int sizeh = CurrentSize;
 
             if (CurrentSize > 1)
             {
-                size++;
-
                 switch(action)
                 {
                     case EditorAction.DecreaseTileHeight:
                         action = EditorAction.DecreaseVerticeHeight;
+                        sizeh++;
+                        sizew++;
                         break;
                     case EditorAction.IncreaseTileHeight:
                         action = EditorAction.IncreaseVerticeHeight;
+                        sizeh++;
+                        sizew++;
                         break;
                     case EditorAction.SetTileHeight:
                         action = EditorAction.SetVerticeHeight;
+                        sizeh++;
+                        sizew++;
                         break;
+
+                    case EditorAction.DecreaseVerticeHeight:
+                    case EditorAction.IncreaseVerticeHeight:
+                    case EditorAction.SetVerticeHeight:
+                        sizeh++;
+                        sizew++;
+                        break;
+
 
                     default:
                         break;
                 }
             }
 
-            int xEnd = xStart + size;
-            int zEnd = zStart + size;
+            int xEnd = xStart + sizew;
+            int zEnd = zStart + sizeh;
 
             for (int x = xStart; x < xEnd; x++)
             {
@@ -108,7 +121,7 @@ namespace Assets.Source.Game
                 }
             }
 
-            AddAction(new CachedInputAction(action, xStart, zStart, size, oldValues.ToArray(), newValues.ToArray()));
+            AddAction(new CachedInputAction(action, xStart, zStart, sizew, sizeh, oldValues.ToArray(), newValues.ToArray()));
         }
 
         static void UndoAction()
@@ -118,8 +131,8 @@ namespace Assets.Source.Game
             if (action == null)
                 return;
 
-            int xEnd = action.X + action.Size;
-            int zEnd = action.Z + action.Size;
+            int xEnd = action.X + action.SizeW;
+            int zEnd = action.Z + action.SizeH;
             int index = 0;
             bool firstSet = true;
 
@@ -168,8 +181,8 @@ namespace Assets.Source.Game
             if (action == null)
                 return;
 
-            int xEnd = action.X + action.Size;
-            int zEnd = action.Z + action.Size;
+            int xEnd = action.X + action.SizeW;
+            int zEnd = action.Z + action.SizeH;
             int index = 0;
 
             for (int x = action.X; x < xEnd; x++)
@@ -301,17 +314,19 @@ namespace Assets.Source.Game
             public int X { get; }
             public int Z { get; }
 
-            public int Size { get; }
+            public int SizeW { get; }
+            public int SizeH { get; }
 
             public int[] OldValues { get; }
             public int[] NewValues { get; }
 
-            public CachedInputAction(EditorAction action, int x, int z, int size, int[] oldValues, int[] newValues)
+            public CachedInputAction(EditorAction action, int x, int z, int sizew, int sizeh, int[] oldValues, int[] newValues)
             {
                 Action = action;
                 X = x;
                 Z = z;
-                Size = size;
+                SizeW = sizew;
+                SizeH = sizeh;
                 OldValues = oldValues;
                 NewValues = newValues;
             }

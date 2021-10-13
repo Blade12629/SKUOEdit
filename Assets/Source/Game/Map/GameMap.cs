@@ -169,9 +169,6 @@ namespace Assets.Source.Game.Map
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
 
-                OnMapFinishLoading?.Invoke();
-                CameraController.Instance.InitializePosition();
-
                 if (_firstMapCreation)
                 {
                     _firstMapCreation = false;
@@ -182,6 +179,9 @@ namespace Assets.Source.Game.Map
                     if (GameConfig.EnableGrid)
                         EnableGrid();
                 }
+
+                OnMapFinishLoading?.Invoke();
+                CameraController.Instance.InitializePosition();
             }
         }
 
@@ -1028,7 +1028,7 @@ namespace Assets.Source.Game.Map
             }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Tile
         {
             public short TileId { get; set; }
