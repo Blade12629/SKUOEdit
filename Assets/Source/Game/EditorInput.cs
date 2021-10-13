@@ -1,46 +1,49 @@
 ﻿using Assets.Source.Game.Map;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-
 
 namespace Assets.Source.Game
 {
-    public sealed class EditorInput
+    public static class EditorInput
     {
-        public static EditorInput Instance { get; private set; }
+        public static EditorAction CurrentAction { get; set; } = EditorAction.IncreaseTileHeight;
+        public static int CurrentHeightValue { get; set; } = 1;
+        public static short CurrentTileId { get; set; }
+        public static int CurrentSize { get; set; } = 1;
+        public static bool DisableInput { get; set; }
 
-        public EditorAction CurrentAction { get; set; }
-        public int CurrentValue { get; set; }
-        public int CurrentTileId { get; set; }
-        public bool DisableEditorInput { get; set; }
+        static List<CachedInputAction> _actions = new List<CachedInputAction>(500);
+        static int _actionIndex = -1;
 
-        readonly int _terrainLayerMask;
-        List<InvokedEditorAction> _actionQueue;
-        int _actionIndex = -1;
+        static readonly int _terrainLayerMask = 1 << 0;
 
-
-        public EditorInput()
+        public static void InitializeUIPart()
         {
-            Instance = this;
-            _terrainLayerMask = 1 << 0;
-            _actionQueue = new List<InvokedEditorAction>(500);
-
-            CurrentAction = EditorAction.IncreaseTileHeight;
-            CurrentValue = 1;
-
-            UI.MappingTools.Instance.SetHeightValueInput(CurrentValue);
+            UI.MappingTools.Instance.SetHeightValueInput(CurrentHeightValue);
+            UI.MappingTools.Instance.SetTileIdInput(CurrentTileId);
+            UI.MappingTools.Instance.SetSelectionSizeValue(CurrentSize);
         }
 
-        public void Update()
+        public static void ClearActions()
         {
-            if (DisableEditorInput)
+            _actions.Clear();
+            _actionIndex = -1;
+        }
+
+        public static void UpdateInput()
+        {
+            if (DisableInput)
                 return;
 
             if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
             {
                 if (Input.GetKeyDown(KeyCode.Z))
                 {
-                    ReverseLastAction();
+                    UndoAction();
                 }
                 else if (Input.GetKeyDown(KeyCode.Y))
                 {
@@ -59,235 +62,259 @@ namespace Assets.Source.Game
                         int x = (int)hit.point.x;
                         int z = (int)hit.point.z;
 
-                        InvokeAction(CurrentAction, x, z, CurrentAction == EditorAction.SetTileId ? CurrentTileId : CurrentValue, false);
+                        ExecuteInput(x, z);
                     }
                 }
             }
         }
 
-        public void ClearActionQueue()
+        static void ExecuteInput(int xStart, int zStart)
         {
-            _actionQueue.Clear();
-            _actionIndex = -1;
-        }
+            List<int> oldValues = new List<int>();
+            List<int> newValues = new List<int>();
 
-        void InvokeAction(EditorAction action, int x, int z, int value, bool isRedoAction)
-        {
-            int ov0 = 0;
-            int ov1 = 0;
-            int ov2 = 0;
-            int ov3 = 0;
+            EditorAction action = CurrentAction;
+            int size = CurrentSize;
 
-            switch (CurrentAction)
+            if (CurrentSize > 1)
             {
-                case EditorAction.IncreaseVerticeHeight:
-                    SetVertAction();
-                    GameMap.Instance.IncreaseTileCornerHeight(x, z, value);
-                    break;
+                size++;
 
-                case EditorAction.DecreaseVerticeHeight:
-                    SetVertAction();
-                    GameMap.Instance.IncreaseTileCornerHeight(x, z, -value);
-                    break;
-
-                case EditorAction.SetVerticeHeight:
-                    SetVertAction();
-                    GameMap.Instance.SetTileCornerHeight(x, z, value);
-                    break;
-
-                case EditorAction.IncreaseTileHeight:
-                    SetTileAction();
-                    GameMap.Instance.IncreaseTileHeight(x, z, value);
-                    break;
-
-                case EditorAction.DecreaseTileHeight:
-                    SetTileAction();
-                    GameMap.Instance.IncreaseTileHeight(x, z, -value);
-                    break;
-
-                case EditorAction.SetTileHeight:
-                    SetTileAction();
-                    GameMap.Instance.SetTileHeight(x, z, value);
-                    break;
-
-                case EditorAction.SetTileId:
-                    SetTileIdAction();
-                    GameMap.Instance.SetTileId(x, z, (short)value);
-                    break;
-            }
-
-            OnActionExecuted(action, x, z, ov0, ov1, ov2, ov3, isRedoAction);
-
-            void SetTileAction()
-            {
-                ov0 = GameMap.Instance.GetTileCornerHeight(x, z);
-                ov1 = GameMap.Instance.GetTileCornerHeight(x, z + 1);
-                ov2 = GameMap.Instance.GetTileCornerHeight(x + 1, z + 1);
-                ov3 = GameMap.Instance.GetTileCornerHeight(x + 1, z);
-            }
-
-            void SetVertAction()
-            {
-                ov0 = GameMap.Instance.GetTileCornerHeight(x, z);
-            }
-
-            void SetTileIdAction()
-            {
-                ov0 = GameMap.Instance.GetTileId(x, z);
-            }
-        }
-
-        void OnActionExecuted(EditorAction action, int x, int z, int ov0, int ov1, int ov2, int ov3, bool isRedoAction)
-        {
-            if (_actionQueue.Count > 0)
-            {
-                // check if we reversed an action before
-                if (_actionIndex < _actionQueue.Count - 1)
+                switch(action)
                 {
-                    // we are just redoing our action
-                    if (isRedoAction)
-                    {
-                        _actionIndex++;
-                        return;
-                    }
+                    case EditorAction.DecreaseTileHeight:
+                        action = EditorAction.DecreaseVerticeHeight;
+                        break;
+                    case EditorAction.IncreaseTileHeight:
+                        action = EditorAction.IncreaseVerticeHeight;
+                        break;
+                    case EditorAction.SetTileHeight:
+                        action = EditorAction.SetVerticeHeight;
+                        break;
 
-                    // delete all actions that are infront of us since we did something new instead of redoing
-                    while (_actionIndex < _actionQueue.Count - 1)
-                        _actionQueue.RemoveAt(_actionQueue.Count - 1);
+                    default:
+                        break;
                 }
             }
 
-            int nv0 = 0;
-            int nv1 = 0;
-            int nv2 = 0;
-            int nv3 = 0;
+            int xEnd = xStart + size;
+            int zEnd = zStart + size;
 
-            switch (action)
+            for (int x = xStart; x < xEnd; x++)
             {
-                case EditorAction.IncreaseVerticeHeight:
-                case EditorAction.DecreaseVerticeHeight:
-                case EditorAction.SetVerticeHeight:
-                    nv0 = GameMap.Instance.GetTileCornerHeight(x, z);
-                    break;
-
-                case EditorAction.IncreaseTileHeight:
-                case EditorAction.DecreaseTileHeight:
-                case EditorAction.SetTileHeight:
-                    nv0 = GameMap.Instance.GetTileCornerHeight(x, z);
-                    nv1 = GameMap.Instance.GetTileCornerHeight(x, z + 1);
-                    nv2 = GameMap.Instance.GetTileCornerHeight(x + 1, z + 1);
-                    nv3 = GameMap.Instance.GetTileCornerHeight(x + 1, z);
-                    break;
-
-                case EditorAction.SetTileId:
-                    nv0 = GameMap.Instance.GetTileId(x, z);
-                    break;
+                for (int z = zStart; z < zEnd; z++)
+                {
+                    ExecuteAction(action, x, z, CurrentAction == EditorAction.SetTileId ? CurrentTileId : CurrentHeightValue, oldValues, newValues);
+                }
             }
 
-            _actionQueue.Add(new InvokedEditorAction(action, x, z, ov0, ov1, ov2, ov3, nv0, nv1, nv2, nv3));
+            AddAction(new CachedInputAction(action, xStart, zStart, size, oldValues.ToArray(), newValues.ToArray()));
+        }
+
+        static void UndoAction()
+        {
+            CachedInputAction action = DecrementActions();
+
+            if (action == null)
+                return;
+
+            int xEnd = action.X + action.Size;
+            int zEnd = action.Z + action.Size;
+            int index = 0;
+            bool firstSet = true;
+
+            for (int x = action.X; x < xEnd; x++)
+            {
+                for (int z = action.Z; z < zEnd; z++)
+                {
+                    switch (action.Action)
+                    {
+                        case EditorAction.DecreaseTileHeight:
+                        case EditorAction.IncreaseTileHeight:
+                        case EditorAction.SetTileHeight:
+                            if (firstSet)
+                            {
+                                firstSet = false;
+                                GameMap.Instance.SetTileCornerHeight(x, z, action.OldValues[index]);
+                            }
+
+                            index++;
+                            GameMap.Instance.SetTileCornerHeight(x, z + 1, action.OldValues[index++]);
+                            GameMap.Instance.SetTileCornerHeight(x + 1, z + 1, action.OldValues[index++]);
+                            GameMap.Instance.SetTileCornerHeight(x + 1, z, action.OldValues[index++]);
+                            break;
+
+                        case EditorAction.DecreaseVerticeHeight:
+                        case EditorAction.IncreaseVerticeHeight:
+                        case EditorAction.SetVerticeHeight:
+                            GameMap.Instance.SetTileCornerHeight(x, z, action.OldValues[index++]);
+                            break;
+
+                        case EditorAction.SetTileId:
+                            GameMap.Instance.SetTileId(x, z, (short)action.OldValues[index++]);
+                            break;
+
+                        default:
+                            continue;
+                    }
+                }
+            }
+        }
+
+        static void RedoAction()
+        {
+            CachedInputAction action = IncrementActions();
+
+            if (action == null)
+                return;
+
+            int xEnd = action.X + action.Size;
+            int zEnd = action.Z + action.Size;
+            int index = 0;
+
+            for (int x = action.X; x < xEnd; x++)
+            {
+                for (int z = action.Z; z < zEnd; z++)
+                {
+                    switch (action.Action)
+                    {
+                        case EditorAction.DecreaseTileHeight:
+                        case EditorAction.IncreaseTileHeight:
+                        case EditorAction.SetTileHeight:
+                            GameMap.Instance.SetTileCornerHeight(x,     z,      action.NewValues[index++]);
+                            GameMap.Instance.SetTileCornerHeight(x,     z + 1,  action.NewValues[index++]);
+                            GameMap.Instance.SetTileCornerHeight(x + 1, z + 1,  action.NewValues[index++]);
+                            GameMap.Instance.SetTileCornerHeight(x + 1, z,      action.NewValues[index++]);
+                            break;
+
+                        case EditorAction.DecreaseVerticeHeight:
+                        case EditorAction.IncreaseVerticeHeight:
+                        case EditorAction.SetVerticeHeight:
+                            GameMap.Instance.SetTileCornerHeight(x, z, action.NewValues[index++]);
+                            break;
+
+                        case EditorAction.SetTileId:
+                            GameMap.Instance.SetTileId(x, z, (short)action.NewValues[index++]);
+                            break;
+
+                        default:
+                            continue;
+                    }
+                }
+            }
+        }
+
+        static CachedInputAction DecrementActions()
+        {
+            if (_actionIndex == -1)
+                return null;
+
+            return _actions[_actionIndex--];
+        }
+
+        static CachedInputAction IncrementActions()
+        {
+            if (_actionIndex == _actions.Count - 1)
+                return null;
+
+            return _actions[++_actionIndex];
+        }
+
+        static void AddAction(CachedInputAction action)
+        {
+            while (_actionIndex < _actions.Count - 1)
+                _actions.RemoveAt(_actions.Count - 1);
+
+            if (_actions.Count == 500) // actionqueue is at it's limit
+            {
+                _actions.RemoveAt(0);
+                _actionIndex--;
+            }
+
+            _actions.Add(action);
             _actionIndex++;
         }
 
-        public void ReverseLastAction()
+        static void ExecuteAction(EditorAction action, int x, int z, int value, List<int> oldValues, List<int> newValues)
         {
-            if (_actionQueue.Count == 0 || _actionIndex == -1)
-                return;
-
-            InvokedEditorAction la = _actionQueue[_actionIndex--];
-
-            switch (la.Action)
+            switch(action)
             {
-                case EditorAction.SetVerticeHeight:
-                case EditorAction.DecreaseVerticeHeight:
                 case EditorAction.IncreaseVerticeHeight:
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z, la.OldValue0);
+                    InvokeVertexAction(GameMap.Instance.IncreaseTileCornerHeight);
                     break;
 
-                case EditorAction.DecreaseTileHeight:
-                case EditorAction.IncreaseTileHeight:
-                case EditorAction.SetTileHeight:
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z, la.OldValue0);
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z + 1, la.OldValue1);
-                    GameMap.Instance.SetTileCornerHeight(la.X + 1, la.Z + 1, la.OldValue2);
-                    GameMap.Instance.SetTileCornerHeight(la.X + 1, la.Z, la.OldValue3);
+                case EditorAction.DecreaseVerticeHeight:
+                    InvokeVertexAction(GameMap.Instance.DecreaseTileCornerHeight);
                     break;
+
+                case EditorAction.SetVerticeHeight:
+                    InvokeVertexAction(GameMap.Instance.SetTileCornerHeight);
+                    break;
+
+
+                case EditorAction.IncreaseTileHeight:
+                    InvokeTileAction(GameMap.Instance.IncreaseTileHeight);
+                    break;
+                case EditorAction.DecreaseTileHeight:
+                    InvokeTileAction(GameMap.Instance.DecreaseTileHeight);
+                    break;
+                case EditorAction.SetTileHeight:
+                    InvokeTileAction(GameMap.Instance.SetTileHeight);
+                    break;
+
 
                 case EditorAction.SetTileId:
-                    GameMap.Instance.SetTileId(la.X, la.Z, (short)la.OldValue0);
+                    oldValues?.Add(GameMap.Instance.GetTileId(x, z));
+                    GameMap.Instance.SetTileId(x, z, (short)value);
+                    newValues?.Add(GameMap.Instance.GetTileId(x, z));
                     break;
+            }
+
+            void InvokeTileAction(Action<int, int, int> toExecute)
+            {
+                oldValues?.AddRange(GameMap.Instance.GetTileCornerHeight(x,     z),
+                                    GameMap.Instance.GetTileCornerHeight(x,     z + 1),
+                                    GameMap.Instance.GetTileCornerHeight(x + 1, z + 1),
+                                    GameMap.Instance.GetTileCornerHeight(x + 1, z));
+
+                toExecute(x, z, value);
+
+
+                newValues?.AddRange(GameMap.Instance.GetTileCornerHeight(x,     z),
+                                    GameMap.Instance.GetTileCornerHeight(x,     z + 1),
+                                    GameMap.Instance.GetTileCornerHeight(x + 1, z + 1),
+                                    GameMap.Instance.GetTileCornerHeight(x + 1, z));
+            }
+
+            void InvokeVertexAction(Action<int, int, int> toExecute)
+            {
+                oldValues?.Add(GameMap.Instance.GetTileCornerHeight(x, z));
+                toExecute(x, z, value);
+                newValues?.Add(GameMap.Instance.GetTileCornerHeight(x, z));
             }
         }
 
-        public void RedoAction()
+        class CachedInputAction
         {
-            if (_actionIndex == _actionQueue.Count - 1)
-                return;
+            public EditorAction Action { get; }
 
-            InvokedEditorAction la = _actionQueue[++_actionIndex];
+            public int X { get; }
+            public int Z { get; }
 
-            switch (la.Action)
+            public int Size { get; }
+
+            public int[] OldValues { get; }
+            public int[] NewValues { get; }
+
+            public CachedInputAction(EditorAction action, int x, int z, int size, int[] oldValues, int[] newValues)
             {
-                case EditorAction.SetVerticeHeight:
-                case EditorAction.DecreaseVerticeHeight:
-                case EditorAction.IncreaseVerticeHeight:
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z, la.NewValue0);
-                    break;
-
-                case EditorAction.DecreaseTileHeight:
-                case EditorAction.IncreaseTileHeight:
-                case EditorAction.SetTileHeight:
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z, la.NewValue0);
-                    GameMap.Instance.SetTileCornerHeight(la.X, la.Z + 1, la.NewValue1);
-                    GameMap.Instance.SetTileCornerHeight(la.X + 1, la.Z + 1, la.NewValue2);
-                    GameMap.Instance.SetTileCornerHeight(la.X + 1, la.Z, la.NewValue3);
-                    break;
-
-                case EditorAction.SetTileId:
-                    GameMap.Instance.SetTileId(la.X, la.Z, (short)la.NewValue0);
-                    break;
+                Action = action;
+                X = x;
+                Z = z;
+                Size = size;
+                OldValues = oldValues;
+                NewValues = newValues;
             }
-        }
-    }
-
-    struct InvokedEditorAction
-    {
-        public EditorAction Action { get; }
-
-        public int NewValue0 { get; }
-        public int NewValue1 { get; }
-        public int NewValue2 { get; }
-        public int NewValue3 { get; }
-
-        public int OldValue0 { get; }
-        public int OldValue1 { get; }
-        public int OldValue2 { get; }
-        public int OldValue3 { get; }
-
-        public int X { get; }
-        public int Z { get; }
-
-        public InvokedEditorAction(EditorAction action, int x, int z,
-                                   int oldValue0, int oldValue1, int oldValue2, int oldValue3,
-                                   int newValue0, int newValue1, int newValue2, int newValue3) : this()
-        {
-            Action = action;
-            X = x;
-            Z = z;
-            OldValue0 = oldValue0;
-            OldValue1 = oldValue1;
-            OldValue2 = oldValue2;
-            OldValue3 = oldValue3;
-            NewValue0 = newValue0;
-            NewValue1 = newValue3;
-            NewValue2 = newValue2;
-            NewValue3 = newValue1;
-        }
-
-        public InvokedEditorAction(EditorAction action, int x, int z, int oldValue0, int newValue0) : this(action, x, z,
-                                                                                                           oldValue0, 0, 0, 0,
-                                                                                                           newValue0, 0, 0, 0)
-        {
-
         }
     }
 

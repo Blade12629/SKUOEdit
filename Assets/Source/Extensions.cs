@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -81,5 +82,13 @@ public static class Extensions
     public static Vector2 ReadVector2(this BinaryReader r)
     {
         return new Vector2(r.ReadSingle(), r.ReadSingle());
+    }
+
+    public static void AddRange<T>(this List<T> list, params T[] values)
+    {
+        if (values == null || values.Length == 0)
+            return;
+
+        list.AddRange(values);
     }
 }

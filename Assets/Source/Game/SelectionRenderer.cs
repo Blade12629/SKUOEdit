@@ -1,5 +1,6 @@
 ﻿using Assets.Source.Game.Map;
 using System;
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -32,22 +33,15 @@ namespace Assets.Source.Game
         LineRenderer _renderer;
         Vector3 _lastPos;
 
-        readonly Vector2[] _defaultPointOffsets = new Vector2[]
-        {
-            new Vector2(0, 0),
-            new Vector2(0, 1),
-            new Vector2(1, 1),
-            new Vector2(1, 0),
-        };
-
         public SelectionRenderer() : base()
         {
             Instance = this;
+            _areaSize = 1;
         }
 
         public void Refresh()
         {
-            Vector3[] linePoints = new Vector3[_defaultPointOffsets.Length + 1];
+            Vector3[] linePoints = new Vector3[_renderer.positionCount];
             _renderer.GetPositions(linePoints);
 
             for (int i = 0; i < linePoints.Length; i++)
@@ -61,29 +55,35 @@ namespace Assets.Source.Game
 
         public void SetPosition(Vector3 pos)
         {
-            pos.x = (int)pos.x;
-            pos.z = (int)pos.z;
+            int x;
+            int z;
+            pos.x = x = (int)pos.x;
+            pos.z = z = (int)pos.z;
 
             if (pos.x == _lastPos.x && pos.z == _lastPos.z)
                 return;
 
             _lastPos = pos;
-            Vector2[] pointOffsets = _defaultPointOffsets;
-            Vector3[] linePoints = new Vector3[pointOffsets.Length + 1];
+            List<Vector3> linePoints = new List<Vector3>(4);
 
-            for (int i = 0; i < pointOffsets.Length; i++)
+            int xEnd = (int)pos.x + AreaSize;
+            int zEnd = (int)pos.z + AreaSize;
+
+            AddDirection(linePoints, x, z, AreaSize, 0, 1);
+            AddDirection(linePoints, x, zEnd, AreaSize, 1, 0);
+            AddDirection(linePoints, xEnd, zEnd, AreaSize, 0, -1);
+            AddDirection(linePoints, xEnd, z, AreaSize + 1, -1, 0);
+
+            _renderer.positionCount = linePoints.Count;
+            _renderer.SetPositions(linePoints.ToArray());
+        }
+
+        void AddDirection(List<Vector3> linePoints, int x, int z, int count, int xStep, int zStep)
+        {
+            for (int i = 0; i < count; i++, x += xStep, z += zStep)
             {
-                Vector2 offset = pointOffsets[i] * AreaSize;
-                Vector3 curPos = new Vector3(pos.x + offset.x, 0, pos.z + offset.y);
-
-                curPos.y = GameMap.Instance.GetTileCornerHeight((int)curPos.x, (int)curPos.z) * .1f + .1f;
-                linePoints[i] = curPos;
+                linePoints.Add(new Vector3(x, GameMap.Instance.GetTileCornerHeight(x, z) * .1f + .1f, z));
             }
-
-            linePoints[linePoints.Length - 1] = linePoints[0];
-
-            _renderer.positionCount = linePoints.Length;
-            _renderer.SetPositions(linePoints);
         }
 
         public void Clear()

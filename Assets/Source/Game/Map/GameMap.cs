@@ -14,20 +14,9 @@ namespace Assets.Source.Game.Map
     public sealed class GameMap : MonoBehaviour
     {
         public static GameMap Instance { get; private set; }
-        public static EditorInput Input
-        {
-            get
-            {
-                if (_input == null)
-                    _input = new EditorInput();
-
-                return _input;
-            }
-        }
         public static event Action OnMapFinishLoading;
         public static event Action OnMapDestroyed;
 
-        static EditorInput _input;
         static readonly FileShare FileShareFlags = FileShare.ReadWrite | FileShare.Delete;
 
         public int Width { get; private set; }
@@ -79,7 +68,7 @@ namespace Assets.Source.Game.Map
         {
             Debug.Log("Destroying GameMap");
 
-            EditorInput.Instance.ClearActionQueue();
+            EditorInput.ClearActions();
 
             Width = 0;
             BlockWidth = 0;
@@ -125,6 +114,8 @@ namespace Assets.Source.Game.Map
             BlockDepth = depth / 8;
 
             _chunks = new MapChunk[3 * 3];
+
+            EditorInput.InitializeUIPart();
 
             Debug.Log("Initializing minimap");
             Minimap.Instance.Initialize(width, depth);
@@ -526,7 +517,7 @@ namespace Assets.Source.Game.Map
                 _chunks[i]?.SetSelectionSize(size);
         }
 
-        public int GetTileId(int x, int z)
+        public short GetTileId(int x, int z)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
@@ -1008,7 +999,7 @@ namespace Assets.Source.Game.Map
 
         void Update()
         {
-            Input.Update();
+            EditorInput.UpdateInput();
         }
 
         public enum GenerationOption

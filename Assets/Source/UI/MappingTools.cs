@@ -1,4 +1,5 @@
 ﻿using Assets.Source.Game;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,7 @@ namespace Assets.Source.UI
         [SerializeField] InputField _heightValueInput;
         [SerializeField] InputField _tileIdInput;
         [SerializeField] TileBrowser _tileBrowser;
+        [SerializeField] InputField _selectionAreaSize;
 
         MappingTools() : base()
         {
@@ -35,12 +37,24 @@ namespace Assets.Source.UI
             _tileBrowser.OnTileClick((short)tileId, true);
         }
 
+        public void OnSelectionAreaSizeChanged(string newValue)
+        {
+            if (!int.TryParse(_selectionAreaSize.text, out int selectionAreaSize))
+                return;
+
+            selectionAreaSize = Math.Max(1, Math.Min(selectionAreaSize, SelectionRenderer.MaxAreaSize));
+
+            EditorInput.CurrentSize = selectionAreaSize;
+            SelectionRenderer.Instance.AreaSize = selectionAreaSize;
+            _selectionAreaSize.SetTextWithoutNotify(selectionAreaSize.ToString());
+        }
+
         public void OnHeightValueChanged(string newValue)
         {
             if (!int.TryParse(_heightValueInput.text, out int h))
                 return;
 
-            EditorInput.Instance.CurrentValue = h;
+            EditorInput.CurrentHeightValue = h;
         }
 
         public void SetTileIdInput(short tileid)
@@ -53,51 +67,56 @@ namespace Assets.Source.UI
             _heightValueInput.SetTextWithoutNotify(height.ToString());
         }
 
+        public void SetSelectionSizeValue(int size)
+        {
+            _selectionAreaSize.SetTextWithoutNotify(size.ToString());
+        }
+
         public void SetToolVertUp()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.IncreaseVerticeHeight;
+            EditorInput.CurrentAction = EditorAction.IncreaseVerticeHeight;
             DisableOutlines();
             _vertUpLine.enabled = true;
         }
 
         public void SetToolVertDown()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.DecreaseVerticeHeight;
+            EditorInput.CurrentAction = EditorAction.DecreaseVerticeHeight;
             DisableOutlines();
             _vertDownLine.enabled = true;
         }
 
         public void SetToolVert()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.SetVerticeHeight;
+            EditorInput.CurrentAction = EditorAction.SetVerticeHeight;
             DisableOutlines();
             _vertLine.enabled = true;
         }
 
         public void SetToolTileUp()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.IncreaseTileHeight;
+            EditorInput.CurrentAction = EditorAction.IncreaseTileHeight;
             DisableOutlines();
             _tileUpLine.enabled = true;
         }
 
         public void SetToolTileDown()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.DecreaseTileHeight;
+            EditorInput.CurrentAction = EditorAction.DecreaseTileHeight;
             DisableOutlines();
             _tileDownLine.enabled = true;
         }
 
         public void SetToolTile()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.SetTileHeight;
+            EditorInput.CurrentAction = EditorAction.SetTileHeight;
             DisableOutlines();
             _tileLine.enabled = true;
         }
 
         public void SetToolTileId()
         {
-            EditorInput.Instance.CurrentAction = EditorAction.SetTileId;
+            EditorInput.CurrentAction = EditorAction.SetTileId;
             DisableOutlines();
             _tileIdLine.enabled = true;
         }

@@ -67,8 +67,7 @@ namespace Assets.Source.UI
                 MoveSelectionCell(newImg);
             }
 
-            if (EditorInput.Instance != null)
-                EditorInput.Instance.CurrentTileId = id;
+            EditorInput.CurrentTileId = id;
 
             if (MappingTools.Instance != null)
                 MappingTools.Instance.SetTileIdInput(id);
