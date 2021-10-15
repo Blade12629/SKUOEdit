@@ -1,0 +1,285 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 9
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 3
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 12
+  m_GIWorkflowMode: 1
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 0
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 0
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 1024
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 1
+    m_BakeBackend: 0
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 512
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 0
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 0
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 157ccb318c9823e46baac96c1c0e797d,
+    type: 2}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 2
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &1073559698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1073559705}
+  - component: {fileID: 1073559704}
+  - component: {fileID: 1073559703}
+  - component: {fileID: 1073559701}
+  - component: {fileID: 1073559700}
+  - component: {fileID: 1073559699}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1073559699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb4e3f9b01ede5e488dc77b4ab7569d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ChartGradient: {fileID: 2100000, guid: 34cb0aad339f4764ebd5f766d10e1c06, type: 2}
+--- !u!114 &1073559700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b664445e1d15e7f4e83fb62bd50b69b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Resources:
+    Fonts:
+    - {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    Images: {ArrowDown: {fileID: 2800000, guid: 285eb5cfce1911246a33678d2af6f68c,
+        type: 3}, ArrowLeft: {fileID: 2800000, guid: 631e9c90b1e483848a4682f664b30350,
+        type: 3}, ArrowRight: {fileID: 2800000, guid: bae55d209103bb8499ab233330a464a8,
+        type: 3}, ArrowUp: {fileID: 2800000, guid: 3ba45b558eade3e47adb5c90d1e2db81,
+        type: 3}, Circle: {fileID: 2800000, guid: 4cc853ea6ce1303468e342eb5f41869a,
+        type: 3}, Checked: {fileID: 2800000, guid: 21b339b14b3fa864794104279fb4772d,
+        type: 3}, Close: {fileID: 2800000, guid: 1cdb61d224d849841919a7659053e8d8,
+        type: 3}, Cursors: {Default: {fileID: 0}, Hand: {fileID: 2800000, guid: 4c94a566214645f4e9d575b9e8aed106,
+          type: 3}, Help: {fileID: 2800000, guid: 46441784dd7e2f041a44f366598b5356,
+          type: 3}, HSplit: {fileID: 2800000, guid: 16a306e6774023441a91fe07a0c24ca5,
+          type: 3}, IBeam: {fileID: 2800000, guid: 62b7f37574772bd4c919968bc6c7e251,
+          type: 3}, SizeAll: {fileID: 2800000, guid: 77eeb927f4609c042b02eaed43b584a7,
+          type: 3}, SizeNESW: {fileID: 2800000, guid: 831e8d238aefbd24693bb19eb208f665,
+          type: 3}, SizeNS: {fileID: 2800000, guid: 9d02c3bc3127ffe42bc14ca21119f1c9,
+          type: 3}, SizeNWSE: {fileID: 2800000, guid: 0191e8fa1cf14da4598c0a4c8840c17e,
+          type: 3}, SizeWE: {fileID: 2800000, guid: 1a46a6827bdccf348a44505858baacd2,
+          type: 3}, VSplit: {fileID: 2800000, guid: 7443aa1bee2cd68438c335ec3243051d,
+          type: 3}}, CurvedArrowDown: {fileID: 2800000, guid: 1048a1619152ad440bcd2faf85907dde,
+        type: 3}, CurvedArrowLeft: {fileID: 2800000, guid: 5f0bfa566ab1b8c4596634b1e34cdcf5,
+        type: 3}, CurvedArrowRight: {fileID: 2800000, guid: 7b624a30c71c688449833ce7fa96e291,
+        type: 3}, CurvedArrowUp: {fileID: 2800000, guid: b805dc4d489f05a43a4499414f55f1e7,
+        type: 3}, DateTimePicker: {fileID: 2800000, guid: 222d17d465753094f87ccfd2a13cb68d,
+        type: 3}, DropDownRightArrow: {fileID: 2800000, guid: 16ba61f3f4a58894384195547d403822,
+        type: 3}, FileDialogBack: {fileID: 2800000, guid: a19a05b640ea2e644af5d7019c884d48,
+        type: 3}, FileDialogFile: {fileID: 2800000, guid: 1a52065d03cc1b844a6f38a1eab2a974,
+        type: 3}, FileDialogFolder: {fileID: 2800000, guid: 77eb916491438934da7949a3b6e7c35d,
+        type: 3}, FileDialogRefresh: {fileID: 2800000, guid: 21a121ba0ef2eec4ea4a576bd06c1095,
+        type: 3}, FileDialogUp: {fileID: 2800000, guid: 5baa7d9616b4cb940b30d544082a4370,
+        type: 3}, FormResize: {fileID: 2800000, guid: ecca73eeb187ca046af1b2f114d79620,
+        type: 3}, NumericDown: {fileID: 2800000, guid: 2595b1b5bff9715438287d656c92dadb,
+        type: 3}, NumericUp: {fileID: 2800000, guid: 9e575d57106e25c49b996eebd74aa3a3,
+        type: 3}, RadioButton_Checked: {fileID: 2800000, guid: 2efadf3ff04f5174d801adae4af37acf,
+        type: 3}, RadioButton_Hovered: {fileID: 2800000, guid: 9a64ee629d58e9c42a03ce5f6349d885,
+        type: 3}, RadioButton_Unchecked: {fileID: 2800000, guid: 3ec7e6cc0c16b8b49af534fc6e74e437,
+        type: 3}, TreeNodeCollapsed: {fileID: 2800000, guid: 57d2982f3d54bb74cb09dda7c83a3e66,
+        type: 3}, TreeNodeExpanded: {fileID: 2800000, guid: 8dc4eee6eeb8a9f4594cb27b75d40485,
+        type: 3}}
+--- !u!81 &1073559701
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_Enabled: 1
+--- !u!124 &1073559703
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_Enabled: 1
+--- !u!20 &1073559704
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.97794116, g: 0.97794116, b: 0.97794116, a: 0.019607844}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1073559705
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073559698}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

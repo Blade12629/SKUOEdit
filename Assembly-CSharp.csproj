@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,9 +53,6 @@
     <UnityVersion>2021.1.22f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="D:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
@@ -102,6 +99,7 @@
     <Compile Include="Assets\Source\GameFiles.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\Enums.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoState.cs" />
+    <Compile Include="Assets\Source\StaticsBuilder\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileMul.cs" />
     <Compile Include="Assets\Source\UI\TileBrowser.cs" />
     <Compile Include="Assets\Source\UI\SettingsPanel.cs" />
@@ -149,8 +147,14 @@
     <Compile Include="Assets\Source\UI\LoadMapPanel.cs" />
     <Compile Include="Assets\Source\UI\Minimap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
+    <Compile Include="Assets\Source\StaticsBuilder\RowPanel.cs" />
+    <Compile Include="Assets\Source\StaticsBuilder\OnClickEvent.cs" />
+    <Compile Include="Assets\Source\StaticsBuilder\CameraControllerStatics.cs" />
+    <Compile Include="Assets\Source\StaticsBuilder\TexImage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Source\StaticsBuilder\Shaders\UnlitObjectShader.shader" />
+    <None Include="Assets\Source\StaticsBuilder\Shaders\UnlitMapShader.shader" />
     <None Include="Assets\Source\Shaders\TerrainShader.shader" />
   </ItemGroup>
   <ItemGroup>

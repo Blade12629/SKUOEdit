@@ -2,6 +2,7 @@
 using Assets.Source.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
@@ -25,11 +26,14 @@ namespace Assets.Source.Game.Map
         public int BlockDepth { get; private set; }
 
         public string MapFile { get; private set; }
+        public string StaticsFile { get; private set; }
+        public string StaticsIdxFile { get; private set; }
 
         public bool IsMapLoaded { get; private set; }
 
         Vertex[] _vertices;
         TileBlock[] _tileBlocks;
+        StaticBlock[] _staticBlocks;
 
         MapChunk[] _chunks;
         Rect _renderedArea;
@@ -628,9 +632,14 @@ namespace Assets.Source.Game.Map
                     byte* mapStart = null;
                     mapAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref mapStart);
 
-                    LoadMapBlocks(mapStart, tileBlocks);
-
-                    mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
+                    try
+                    {
+                        LoadMapBlocks(mapStart, tileBlocks);
+                    }
+                    finally
+                    {
+                        mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
+                    }
                 }
             }
 
@@ -641,9 +650,6 @@ namespace Assets.Source.Game.Map
         {
             const int sizePerTile = 3;
             const int sizePerBlock = 64 * 3 + 4;
-
-            if (mapStart == null)
-                throw new OperationCanceledException($"Unable to acquire pointer for map {MapFile}");
 
             long sizePerRow = sizePerBlock * BlockDepth;
 
@@ -929,6 +935,113 @@ namespace Assets.Source.Game.Map
                 }
             }
         }
+
+        void LoadStatics()
+        {
+            unsafe
+            {
+                List<IDX> idx = new List<IDX>();
+                File.SetAttributes(StaticsIdxFile, FileAttributes.Normal);
+
+                using (FileStream stIdxStream = new FileStream(StaticsIdxFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (MemoryMappedFile stIdxMMF = MemoryMappedFile.CreateFromFile(stIdxStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
+                using (MemoryMappedViewAccessor stIdxAccessor = stIdxMMF.CreateViewAccessor())
+                {
+                    byte* stIdxStart = null;
+                    stIdxAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref stIdxStart);
+
+                    try
+                    {
+                        byte* end = stIdxStart + stIdxStream.Length;
+
+                        for(; stIdxStart < end; stIdxStart += 12)
+                        {
+                            idx.Add(*(IDX*)stIdxStart);
+                        }
+                    }
+                    finally
+                    {
+                        stIdxAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
+                    }
+                }
+
+                File.SetAttributes(StaticsFile, FileAttributes.Normal);
+
+                using (FileStream stStream = new FileStream(StaticsFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (MemoryMappedFile stMMF = MemoryMappedFile.CreateFromFile(stStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
+                using (MemoryMappedViewAccessor stAccessor = stMMF.CreateViewAccessor())
+                {
+                    byte* stStart = null;
+                    stAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref stStart);
+
+                    StaticBlock[] staticBlocks = new StaticBlock[idx.Count];
+
+                    try
+                    {
+                        for (int i = 0; i < idx.Count; i++)
+                        {
+                            IDX index = idx[i];
+
+                            if (index.Lookup == -1)
+                                continue;
+
+                            byte* cur = stStart + index.Lookup;
+                            Static[] statics = new Static[index.Length / 7];
+
+                            for (int x = 0; x < statics.Length; x++, cur += 7)
+                                statics[x] = *(Static*)cur;
+
+                            staticBlocks[i] = new StaticBlock(statics);
+                        }
+                    }
+                    finally
+                    {
+                        stAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
+                    }
+
+                    _staticBlocks = staticBlocks;
+                }
+            }
+        }
+
+        void SaveStatics()
+        {
+            if (File.Exists(StaticsIdxFile))
+                File.Delete(StaticsIdxFile);
+
+            if (File.Exists(StaticsFile))
+                File.Delete(StaticsIdxFile);
+
+            using (FileStream stIdxStream = new FileStream(StaticsIdxFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (FileStream stStream = new FileStream(StaticsFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (BinaryWriter idxWriter = new BinaryWriter(stIdxStream))
+            using (BinaryWriter stWriter = new BinaryWriter(stStream))
+            {
+                for (int i = 0; i < _staticBlocks.Length; i++)
+                {
+                    ref StaticBlock block = ref _staticBlocks[i];
+
+                    idxWriter.Write(stStream.Position);
+                    idxWriter.Write(block.Statics.Length * 7);
+                    idxWriter.Write(0);
+
+                    for (int x = 0; x < block.Statics.Length; x++)
+                    {
+                        ref Static st = ref block.Statics[x];
+
+                        stWriter.Write(st.TileId);
+                        stWriter.Write(st.X);
+                        stWriter.Write(st.Y);
+                        stWriter.Write(st.Z);
+                        stWriter.Write(st.Unkown);
+                    }
+                }
+
+                idxWriter.Flush();
+                stWriter.Flush();
+            }
+        }
+
         void GenerateFlatmap()
         {
             int headerStart = 4096;
@@ -1028,7 +1141,7 @@ namespace Assets.Source.Game.Map
             }
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [StructLayout(LayoutKind.Sequential)]
         struct Tile
         {
             public short TileId { get; set; }
@@ -1038,6 +1151,50 @@ namespace Assets.Source.Game.Map
             {
                 TileId = tileId;
                 Z = z;
+            }
+        }
+
+        struct StaticBlock
+        {
+            public Static[] Statics { get; set; }
+
+            public StaticBlock(Static[] statics) : this()
+            {
+                Statics = statics;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct Static
+        {
+            public short TileId { get; set; }
+            public byte X { get; set; } // Ranges from 0 to 7
+            public byte Y { get; set; } // Ranges from 0 to 7
+            public sbyte Z { get; set; }
+            public short Unkown { get; set; } // At one point this was the hue, but doesn't appear to be used anymore
+
+            public Static(short tileId, byte x, byte y, sbyte z, short unkown) : this()
+            {
+                TileId = tileId;
+                X = x;
+                Y = y;
+                Z = z;
+                Unkown = unkown;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct IDX
+        {
+            public int Lookup { get; set; }
+            public int Length { get; set; }
+            public int Extra { get; set; }
+
+            public IDX(int lookup, int length, int extra) : this()
+            {
+                Lookup = lookup;
+                Length = length;
+                Extra = extra;
             }
         }
     }
