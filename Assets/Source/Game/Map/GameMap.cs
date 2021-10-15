@@ -133,12 +133,20 @@ namespace Assets.Source.Game.Map
                 Debug.Log("Loading map blocks");
                 yield return new WaitForEndOfFrame();
 
+                int index = GetMapIndex(MapFile);
+                string dir = new FileInfo(MapFile).Directory.FullName;
+
+                StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
+                StaticsFile = Path.Combine(dir, $"statics{index}.mul");
+
+                LoadStatics();
+
                 switch (genOption)
                 {
                     case GenerationOption.Default:
                         if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            LoadUOPMapBlocks(GetMapIndex(MapFile));
+                            LoadUOPMapBlocks(index);
                         }
                         else
                             LoadMapBlocks();
