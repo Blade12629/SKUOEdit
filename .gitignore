@@ -76,3 +76,5 @@ crashlytics-build.properties
 /missing3.txt
 /missing4.txt
 /MeshPresetTypes.txt
+/Assets/Plugins/PluginSystem/obj
+/Assets/Plugins/PluginSystem/bin

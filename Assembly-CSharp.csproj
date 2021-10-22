@@ -859,6 +859,10 @@
       <Project>{0B2DD61D-3F80-C503-A134-D35D2A4F9CA6}</Project>
       <Name>SimpleFileBrowser.Runtime</Name>
     </ProjectReference>
+    <ProjectReference Include="PluginSystem.Runtime.csproj">
+      <Project>{7E667245-2ED1-AC70-A5B5-0CAB5B534B52}</Project>
+      <Name>PluginSystem.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
