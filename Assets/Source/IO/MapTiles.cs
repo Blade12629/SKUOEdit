@@ -147,12 +147,22 @@ namespace Assets.Source.IO
         {
             ref Tile a = ref GetTile(x,     z);
             ref Tile b = ref GetTile(x,     z + 1);
+
+            if (a.Z != b.Z)
+                return false;
+
             ref Tile c = ref GetTile(x + 1, z + 1);
+
+            if (b.Z != c.Z)
+                return false;
+
             ref Tile d = ref GetTile(x + 1, z);
 
-            return a.Z == b.Z &&
-                   b.Z == c.Z &&
-                   c.Z == d.Z;
+            if (c.Z != d.Z)
+                return false;
+
+
+            return true;
         }
 
         void Save(string file)
