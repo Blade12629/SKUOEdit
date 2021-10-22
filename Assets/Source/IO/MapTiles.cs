@@ -165,6 +165,67 @@ namespace Assets.Source.IO
             return true;
         }
 
+        public void ResizeWidth(int width)
+        {
+            // For width we only need to add the diffrence times the blockdepth
+
+            int newBlockWidth = width / 8;
+            int diff = newBlockWidth - BlockWidth;
+
+            if (diff == 0)
+                return;
+
+            int index = _tileBlocks.Length;
+            Array.Resize(ref _tileBlocks, _tileBlocks.Length + diff * BlockDepth);
+
+            for (; index < _tileBlocks.Length; index++)
+            {
+                Tile[] tiles = new Tile[64];
+
+                for (int i = 0; i < 64; i++)
+                    tiles[i] = new Tile(1, 0);
+
+                _tileBlocks[index] = new TileBlock(_headerStart + index, tiles);
+            }
+        }
+
+        public void ResizeDepth(int depth)
+        {
+            // For the depth we have to add the diffrence times the blockwidth
+
+            int newBlockDepth = depth / 8;
+            int diff = newBlockDepth - BlockDepth;
+
+            if (diff == 0)
+                return;
+
+            TileBlock[] blocks = new TileBlock[BlockWidth * newBlockDepth];
+
+            for (int bx = 0; bx < BlockWidth; bx++)
+            {
+                int destStart = bx * newBlockDepth;
+                Array.Copy(_tileBlocks, bx * BlockDepth, blocks, bx * newBlockDepth, BlockDepth);
+
+
+                for (int z = BlockDepth; z < newBlockDepth; z++)
+                {
+                    Tile[] tiles = new Tile[64];
+
+                    for (int i = 0; i < 64; i++)
+                        tiles[i] = new Tile(1, 0);
+
+                    _tileBlocks[destStart + z] = new TileBlock(_headerStart + destStart + z, tiles);
+                }
+            }
+
+        }
+
+        public void Resize(int width, int depth)
+        {
+            ResizeWidth(width);
+            ResizeDepth(depth);
+        }
+
         void Save(string file)
         {
             if (File.Exists(file))
