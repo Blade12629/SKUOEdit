@@ -15,8 +15,10 @@ namespace Assets.Source.IO
 
         StaticBlock[] _staticBlocks;
 
-        public void Load(string file, string idxFile)
+        public void Load(string file, string idxFile, int width, int depth)
         {
+            SetSize(width, depth);
+
             unsafe
             {
                 List<IDX> idx = new List<IDX>();

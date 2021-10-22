@@ -27,11 +27,32 @@ namespace Assets.Source.IO
                 FileInfo uopFile = new FileInfo(file);
                 FileInfo tempMulFile = new FileInfo(Path.Combine(uopFile.Directory.FullName, $"{uopFile.Name}.mul"));
 
+                int start = -1;
+                int end = -1;
+                for (int i = 0; i < uopFile.Name.Length; i++)
+                {
+                    char c = uopFile.Name[i];
+
+                    if (char.IsDigit(c))
+                    {
+                        if (start == -1)
+                            start = i;
+                    }
+                    else if (start != -1)
+                    {
+                        end = i;
+                        break;
+                    }
+                }
+
+                int length = end - start;
+                int mapIndex = int.Parse(uopFile.Name.Substring(start, length));
+
                 if (File.Exists(tempMulFile.FullName))
                     File.Delete(tempMulFile.FullName);
 
                 UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter converter = new UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter();
-                converter.FromUOP(uopFile.FullName, tempMulFile.FullName, _mapIndex);
+                converter.FromUOP(uopFile.FullName, tempMulFile.FullName, mapIndex);
 
                 LoadTiles(tempMulFile.FullName);
 

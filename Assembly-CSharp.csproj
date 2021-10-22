@@ -71,6 +71,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Deque.cs" />
     <Compile Include="Assets\Source\Extensions.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\TexmapsLoader.cs" />
+    <Compile Include="Assets\Source\Game\Map\StaticCache.cs" />
     <Compile Include="Assets\Source\UI\GenerateFlatlandMapPanel.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonAttributes.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Json.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Assets\Source\Game\Map\VertexLayout.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\DataReader.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\OnClickEvent.cs" />
+    <Compile Include="Assets\Source\Game\Map\StaticPool.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiLoader.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\FileType.cs" />
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />

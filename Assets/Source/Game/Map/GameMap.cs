@@ -1,4 +1,6 @@
-﻿using Assets.Source.IO;
+﻿//#define LOG_MISSING_STATIC_IDS
+
+using Assets.Source.IO;
 using Assets.Source.Textures;
 using Assets.Source.UI;
 using System;
@@ -140,10 +142,18 @@ namespace Assets.Source.Game.Map
                 int index = GetMapIndex(MapFile);
                 string dir = new FileInfo(MapFile).Directory.FullName;
 
-                //StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
-                //StaticsFile = Path.Combine(dir, $"statics{index}.mul");
+                StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
+                StaticsFile = Path.Combine(dir, $"statics{index}.mul");
 
-                //_mapStatics.Load(StaticsFile, StaticsIdxFile);
+                try
+                {
+                    _mapStatics.Load(StaticsFile, StaticsIdxFile, width, depth);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError(ex);
+                    UnityEditor.EditorApplication.isPlaying = false;
+                }
 
                 Debug.Log("Loading tile blocks");
                 yield return new WaitForEndOfFrame();
@@ -168,7 +178,6 @@ namespace Assets.Source.Game.Map
                         break;
                 }
 
-
                 Debug.Log("Loading map vertices");
                 yield return new WaitForEndOfFrame();
 
@@ -185,10 +194,18 @@ namespace Assets.Source.Game.Map
                 LoadMapMesh();
                 IsMapLoaded = true;
 
-                //Debug.Log("Spawning Statics");
-                //yield return new WaitForEndOfFrame();
+                Debug.Log("Spawning Statics");
+                yield return new WaitForEndOfFrame();
 
-                //SpawnStatics();
+                try
+                {
+                    SpawnStatics();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError(ex);
+                    UnityEditor.EditorApplication.isPlaying = false;
+                }
 
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
@@ -764,172 +781,69 @@ namespace Assets.Source.Game.Map
 
         void SpawnStatics()
         {
-            List<uint> missingModels = new List<uint>();
+            //for (int bx = 0; bx < BlockWidth; bx++)
+            //{
+            //    int wx = bx * 8;
 
-            try
+            //    for (int bz = 0; bz < BlockDepth; bz++)
+            //    {
+            //        int wz = bz * 8;
+            //        StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
+
+            //        if (sb == null)
+            //            continue;
+
+            //        for (int i = 0; i < sb.Statics.Length; i++)
+            //        {
+            //            ref var st = ref sb.Statics[i];
+            //            GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
+            //        }
+            //    }
+            //}
+
+            //Test for luna bank (malas) area
+            for (int x = 55; x <= 137; x++)
             {
-                //for (int x = 0; x < BlockWidth; x++)
-                //{
-                //    for (int z = 0; z < BlockDepth; z++)
-                //    {
-                //        int wx = x * 8;
-                //        int wz = z * 8;
-                //        ref var sb = ref _stm.GetStaticBlock(wx, wz);
-
-                //        //StaticBlock sb = GetStaticBlock(wz, wx);
-                //        SpawnStaticBlock(ref sb, wx, wz);
-                //    }
-                //}
-
-                //Test for luna bank (malas) area
-                for (int x = 55; x <= 137; x++)
+                for (int z = 55; z <= 137; z++)
                 {
-                    for (int z = 55; z <= 137; z++)
+                    int wx = x * 8;
+                    int wz = z * 8;
+                    StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
+
+                    if (sb == null)
+                        continue;
+
+                    for (int i = 0; i < sb.Statics.Length; i++)
                     {
-                        int wx = x * 8;
-                        int wz = z * 8;
-                        StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
-                        SpawnStaticBlock(sb, wx, wz);
+                        ref var st = ref sb.Statics[i];
+                        GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
                     }
-                }
-
-                //int bx = 61;
-                //int bz = 126;
-                //int wx = bx * 8;
-                //int wz = bz * 8;
-                //StaticBlock sb = GetStaticBlock(wz, wx);
-                //SpawnStaticBlock(sb, wx, wz);
-
-                // 63 128
-
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex);
-                UnityEditor.EditorApplication.isPlaying = false;
-            }
-
-            if (missingModels.Count > 0)
-            {
-                missingModels = missingModels.OrderBy(i => i).ToList();
-                StringBuilder missingsb = new StringBuilder();
-
-                int lb = 0;
-                for (int i = 0; i < missingModels.Count; i++)
-                {
-                    missingsb.Append($"{missingModels[i]}, ");
-
-                    if (lb++ == 4)
-                    {
-                        missingsb.Remove(missingsb.Length - 2, 2);
-                        missingsb.AppendLine();
-                        lb = 0;
-                    }
-                }
-
-                if (lb != 0)
-                    missingsb.Remove(missingsb.Length - 2, 2);
-
-                int mapIndex = GetMapIndex(MapFile);
-                string missFile = Path.Combine(Environment.CurrentDirectory, $"missing{mapIndex}.txt");
-
-                if (File.Exists(missFile))
-                    File.Delete(missFile);
-
-                File.WriteAllText(missFile, missingsb.ToString());
-            }
-
-            //void SpawnStaticBlock(ref SKMapGenerator.Ultima.StaticBlock sb, int wx, int wz)
-            void SpawnStaticBlock(StaticBlock sb, int wx, int wz)
-            {
-                //if (sb.Lookup == -1)
-                if (sb == null)
-                    return;
-
-                GameObject stchunk = new GameObject($"{wx / 8}/{wz / 8}");
-
-                for (int i = 0; i < sb.Statics.Length; i++)
-                {
-                    ref var st = ref sb.Statics[i];
-                    GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
-
-                    if (stObj == null)
-                    {
-                        //    if (!missingModels.Contains(st.TileId))
-                        //        missingModels.Add(st.TileId);
-                    }
-                    //else
-                        //stObj.transform.SetParent(stchunk.transform);
                 }
             }
         }
 
         GameObject LoadStatic(uint stId, Vector3 pos)
         {
-            string staticInfoFile = Path.Combine($"Statics", $"{stId}.stinfo");
+            StaticCacheEntry entry = StaticCache.Get(stId);
 
-            if (!File.Exists(staticInfoFile))
+            if (entry == null)
                 return null;
 
-            GameObject stObj = new GameObject($"Static {stId}", typeof(MeshRenderer), typeof(MeshFilter));
-            stObj.transform.rotation = Quaternion.Euler(0, -90, 0);
-            //stObj.SetActive(false);
-            MeshFilter filter = stObj.GetComponent<MeshFilter>();
-            MeshRenderer renderer = stObj.GetComponent<MeshRenderer>();
-            Mesh mesh = filter.mesh = new Mesh();
-            List<int> indices = new List<int>();
-            List<Vertex> vertices = new List<Vertex>();
+            GameObject staticObj = StaticPool.Rent();
+            staticObj.name = stId.ToString();
+            Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
 
-            string[] lines = File.ReadAllLines(staticInfoFile);
-            bool isvertice = true;
-            int skippedLines = 0;
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string line = lines[i];
-
-                if (string.IsNullOrEmpty(line))
-                {
-                    skippedLines++;
-                    continue;
-                }
-
-                if (isvertice)
-                {
-                    if (line.Equals("---"))
-                    {
-                        isvertice = false;
-                        continue;
-                    }
-
-                    string[] vertSplit = line.Split(',');
-                    Vertex v = new Vertex(float.Parse(vertSplit[0]),
-                                          float.Parse(vertSplit[1]),
-                                          float.Parse(vertSplit[2]),
-                                          float.Parse(vertSplit[3]),
-                                          float.Parse(vertSplit[4]));
-
-                    vertices.Add(v);
-                }
-                else
-                {
-                    string[] indicesSplit = line.Split(',');
-
-                    for (int x = 0; x < indicesSplit.Length; x++)
-                        indices.Add(int.Parse(indicesSplit[x]));
-                }
-            }
-
-            mesh.SetVertexBufferParams(vertices.Count, VertexLayout.Layout);
-            mesh.SetVertexBufferData(vertices, 0, 0, vertices.Count);
-            mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            mesh.SetVertexBufferParams(entry.Vertices.Length, VertexLayout.Layout);
+            mesh.SetVertexBufferData(entry.Vertices, 0, 0, entry.Vertices.Length);
+            mesh.SetIndices(entry.Indices, MeshTopology.Triangles, 0);
             mesh.RecalculateBounds();
 
+            MeshRenderer renderer = staticObj.GetComponent<MeshRenderer>();
             renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
             renderer.material.mainTexture = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(stId);
-            stObj.transform.position = pos;
+            staticObj.transform.position = pos;
 
-            return stObj;
+            return staticObj;
         }
 
         Vector2[] GetTileUVs(short tileId, bool getTexture)
