@@ -829,7 +829,9 @@ namespace Assets.Source.Game.Map
             if (entry == null)
                 return null;
 
-            GameObject staticObj = StaticPool.Rent();
+            // TODO: track gameobject so we can return it to the pool
+            // TODO: return all objects to the pool when the map gets destroyed
+            GameObject staticObj = StaticPool.Rent(); 
             staticObj.name = stId.ToString();
             Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
 

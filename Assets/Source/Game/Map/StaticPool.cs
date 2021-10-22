@@ -17,6 +17,9 @@ namespace Assets.Source.Game.Map
         static readonly int _growSize = 100;
         static readonly Quaternion _defaultStaticRot = Quaternion.Euler(0, -90, 0);
 
+        /// <summary>
+        /// Rent a new object, if no objects available the pool will grow by 100 objects
+        /// </summary>
         public static GameObject Rent()
         {
             if (_pool.Count == 0)
@@ -25,9 +28,20 @@ namespace Assets.Source.Game.Map
             return _pool.Dequeue();
         }
 
+        /// <summary>
+        /// Returns the object back to the pool and disable it
+        /// </summary>
         public static void Return(GameObject obj)
         {
-            if (obj.activeSelf)
+            Return(obj, true);
+        }
+
+        /// <summary>
+        /// Returns the object back to the pool and optionally disable it
+        /// </summary>
+        public static void Return(GameObject obj, bool disableObject)
+        {
+            if (disableObject && obj.activeSelf)
                 obj.SetActive(false);
 
             _pool.Enqueue(obj);

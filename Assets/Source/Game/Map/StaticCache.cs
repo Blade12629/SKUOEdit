@@ -8,10 +8,18 @@ using System.Threading.Tasks;
 
 namespace Assets.Source.Game.Map
 {
+    /// <summary>
+    /// Simple class which allows to get static entries while only loading each static id once
+    /// </summary>
     public static class StaticCache
     {
         static Dictionary<uint, StaticCacheEntry> _entries = new Dictionary<uint, StaticCacheEntry>();
 
+        /// <summary>
+        /// Gets an already cached entry or loads, caches and then returns the entity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns null if static entry does not exist</returns>
         public static StaticCacheEntry Get(uint id)
         {
             if (!_entries.TryGetValue(id, out StaticCacheEntry entry))
@@ -25,6 +33,9 @@ namespace Assets.Source.Game.Map
             return entry;
         }
 
+        /// <summary>
+        /// Clears the cache from all entries
+        /// </summary>
         public static void ClearCache()
         {
             _entries.Clear();
