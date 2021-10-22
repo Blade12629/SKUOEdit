@@ -35,7 +35,7 @@ namespace Assets.Source.Game.Map
 
         Vertex[] _vertices;
         MapTiles _mapTiles;
-        StaticBlock[] _staticBlocks;
+        MapStatics _mapStatics;
 
         MapChunk[] _chunks;
         Rect _renderedArea;
@@ -120,6 +120,8 @@ namespace Assets.Source.Game.Map
             BlockDepth = depth / 8;
 
             _chunks = new MapChunk[3 * 3];
+            _mapTiles = new MapTiles();
+            _mapStatics = new MapStatics();
 
             EditorInput.InitializeUIPart();
 
@@ -141,7 +143,7 @@ namespace Assets.Source.Game.Map
                 //StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
                 //StaticsFile = Path.Combine(dir, $"statics{index}.mul");
 
-                //LoadStatics();
+                //_mapStatics.Load(StaticsFile, StaticsIdxFile);
 
                 Debug.Log("Loading tile blocks");
                 yield return new WaitForEndOfFrame();
@@ -223,14 +225,56 @@ namespace Assets.Source.Game.Map
         }
 
         /// <summary>
-        /// Sets the height of a specific tile
+        /// Sets the height of tiles within a specific area
         /// </summary>
-        public void SetTileHeight(int x, int z, int height)
+        public void SetTileAreaHeight(int x, int z, int width, int depth, int height)
         {
-            SetTileCornerHeight(x, z, height, false, false);
-            SetTileCornerHeight(x, z + 1, height, false, false);
-            SetTileCornerHeight(x + 1, z + 1, height, false, false);
-            SetTileCornerHeight(x + 1, z, height, true, true);
+            int xend = x + width + 1;
+            int zend = z + depth + 1;
+
+            for (; x < xend; x++)
+            {
+                for (; z < zend; z++)
+                {
+                    SetTileCornerHeight(x,      z,      height, 0, false, false, true);
+                    SetTileCornerHeight(x - 1,  z,      height, 3, false, false, true);
+                    SetTileCornerHeight(x - 1,  z - 1,  height, 2, false, false, true);
+                    SetTileCornerHeight(x,      z - 1,  height, 1, false, false, true);
+
+                    UpdateChunks(x, z);
+                }
+            }
+
+            SelectionRenderer.Instance.Refresh();
+        }
+
+        /// <summary>
+        /// Increases the height of tiles within a specific area
+        /// </summary>
+        public void IncreaseTileAreaHeight(int x, int z, int width, int depth, int height)
+        {
+            int xend = x + width + 1;
+            int zend = z + depth + 1;
+
+            for (; x < xend; x++)
+            {
+                for (; z < zend; z++)
+                {
+                    int h0 = GetTileCornerHeight(x,     z);
+                    int h1 = GetTileCornerHeight(x - 1, z);
+                    int h2 = GetTileCornerHeight(x - 1, z - 1);
+                    int h3 = GetTileCornerHeight(x,     z - 1);
+
+                    SetTileCornerHeight(x,      z,      h0 + height, 0, false, false, true);
+                    SetTileCornerHeight(x - 1,  z,      h1 + height, 3, false, false, true);
+                    SetTileCornerHeight(x - 1,  z - 1,  h2 + height, 2, false, false, true);
+                    SetTileCornerHeight(x,      z - 1,  h3 + height, 1, false, false, true);
+
+                    UpdateChunks(x, z);
+                }
+            }
+
+            SelectionRenderer.Instance.Refresh();
         }
 
         /// <summary>
@@ -238,18 +282,35 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void IncreaseTileHeight(int x, int z, int height)
         {
-            IncreaseTileCornerHeight(x, z, height, false, false);
-            IncreaseTileCornerHeight(x, z + 1, height, false, false);
-            IncreaseTileCornerHeight(x + 1, z + 1, height, false, false);
-            IncreaseTileCornerHeight(x + 1, z, height, true, true);
+            int h0 = GetTileCornerHeight(x,     z);
+            int h1 = GetTileCornerHeight(x,     z + 1);
+            int h2 = GetTileCornerHeight(x + 1, z + 1);
+            int h3 = GetTileCornerHeight(x + 1, z);
+
+            SetTileCornerHeight(x,      z,      h0 + height);
+            SetTileCornerHeight(x,      z + 1,  h1 + height);
+            SetTileCornerHeight(x + 1,  z + 1,  h2 + height);
+            SetTileCornerHeight(x + 1,  z,      h3 + height);
         }
 
         /// <summary>
-        /// Decreases the height of a specific tile
+        /// Sets the height of a specific tile
         /// </summary>
-        public void DecreaseTileHeight(int x, int z, int height)
+        public void SetTileHeight(int x, int z, int height)
         {
-            IncreaseTileHeight(x, z, -height);
+            SetTileCornerHeight(x,      z,      height);
+            SetTileCornerHeight(x,      z + 1,  height);
+            SetTileCornerHeight(x + 1,  z + 1,  height);
+            SetTileCornerHeight(x + 1,  z,      height);
+        }
+
+        /// <summary>
+        /// Increases the height of a specific tile corner
+        /// </summary>
+        public void IncreaseTileCornerHeight(int x, int z, int height)
+        {
+            int h = GetTileCornerHeight(x, z);
+            SetTileCornerHeight(x, z, h + height);
         }
 
         /// <summary>
@@ -257,51 +318,13 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetTileCornerHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x, z, height, true, true);
-        }
+            SetTileCornerHeight(x, z, height, 0, false, false, true);
+            SetTileCornerHeight(x - 1, z, height, 3, false, false, true);
+            SetTileCornerHeight(x - 1, z - 1, height, 2, false, false, true);
+            SetTileCornerHeight(x, z - 1, height, 1, false, false, true);
 
-        /// <summary>
-        /// Sets the height of a specific point on the map
-        /// </summary>
-        public void SetTileCornerHeight(int x, int z, int height, bool updateChunks, bool refreshSelection)
-        {
-            SetTileCornerHeight(x, z, height, 0, false);
-            SetTileCornerHeight(x - 1, z, height, 3, false);
-            SetTileCornerHeight(x - 1, z - 1, height, 2, false);
-            SetTileCornerHeight(x, z - 1, height, 1, false);
-
-            if (refreshSelection)
-                SelectionRenderer.Instance.Refresh();
-
-            if (updateChunks)
-                UpdateChunks(x, z);
-        }
-
-        /// <summary>
-        /// Increases the height of a specific point on the map
-        /// </summary>
-        public void IncreaseTileCornerHeight(int x, int z, int amount)
-        {
-            IncreaseTileCornerHeight(x, z, amount, true, true);
-        }
-
-        /// <summary>
-        /// Increases the height of a specific point on the map
-        /// </summary>
-        public void IncreaseTileCornerHeight(int x, int z, int amount, bool updateChunks, bool refreshSelection)
-        {
-            int oldHeight = GetTileCornerHeight(x, z);
-            int newHeight = oldHeight + amount;
-
-            SetTileCornerHeight(x, z, newHeight, updateChunks, refreshSelection);
-        }
-
-        /// <summary>
-        /// Decreases the height of a specific point on the map
-        /// </summary>
-        public void DecreaseTileCornerHeight(int x, int z, int amount)
-        {
-            IncreaseTileCornerHeight(x, z, -amount);
+            SelectionRenderer.Instance.Refresh();
+            UpdateChunks(x, z);
         }
 
         /// <summary>
@@ -318,24 +341,6 @@ namespace Assets.Source.Game.Map
             ref Vertex vertex = ref _vertices[index];
 
             return (int)Mathf.Ceil(vertex.Y * 10f);
-        }
-
-
-        /// <summary>
-        /// Gets the height of a specific point on the map
-        /// </summary>
-        /// <returns>Point is inside of map bounds</returns>
-        public bool TryGetTileCornerHeight(int x, int z, out int height)
-        {
-            height = 0;
-            int index = PositionToIndex(x, z, IndexType.Vertice);
-
-            if (index < 0 || index >= _vertices.Length)
-                return false;
-
-            ref Vertex vertex = ref _vertices[index];
-            height = (int)(vertex.Y * 10);
-            return true;
         }
 
         /// <summary>
@@ -518,7 +523,7 @@ namespace Assets.Source.Game.Map
             return (x * depth + z) * (int)indexType;
         }
 
-        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks = true, bool refreshSelection = true)
+        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks, bool refreshSelection, bool refreshUVs)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
@@ -531,7 +536,8 @@ namespace Assets.Source.Game.Map
             ref Tile tile = ref _mapTiles.GetTile(x, z);
             tile.Z = (sbyte)height;
 
-            RefreshUVs(x, z, false);
+            if (refreshUVs)
+                RefreshUVs(x, z, false);
 
             if (refreshSelection)
                 SelectionRenderer.Instance.Refresh();
@@ -582,8 +588,8 @@ namespace Assets.Source.Game.Map
             {
                 MapChunk chunk = _chunks[i];
 
-                //if (!chunk.IsInBounds(x, z))
-                //    continue;
+                if (!chunk.IsInBounds(x, z))
+                    continue;
 
                 chunk.RefreshChunk();
             }
@@ -756,126 +762,6 @@ namespace Assets.Source.Game.Map
             }
         }
 
-        void LoadStatics()
-        {
-            //_stm = new SKMapGenerator.Ultima.StaticTileMatrix(StaticsFile, StaticsIdxFile, Width, Depth);
-            //_stm.Load();
-
-            //return;
-            unsafe
-            {
-                List<IDX> idx = new List<IDX>();
-                File.SetAttributes(StaticsIdxFile, FileAttributes.Normal);
-
-                using (FileStream stIdxStream = new FileStream(StaticsIdxFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                using (MemoryMappedFile stIdxMMF = MemoryMappedFile.CreateFromFile(stIdxStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
-                using (MemoryMappedViewAccessor stIdxAccessor = stIdxMMF.CreateViewAccessor())
-                {
-                    byte* stIdxStart = null;
-                    stIdxAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref stIdxStart);
-
-                    try
-                    {
-                        byte* end = stIdxStart + stIdxStream.Length;
-
-                        for(; stIdxStart < end; stIdxStart += 12)
-                        {
-                            idx.Add(*(IDX*)stIdxStart);
-                        }
-                    }
-                    finally
-                    {
-                        stIdxAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
-                    }
-                }
-
-                //idx = idx.OrderBy(i => i.Lookup).ToList();
-
-                File.SetAttributes(StaticsFile, FileAttributes.Normal);
-
-                using (FileStream stStream = new FileStream(StaticsFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                using (MemoryMappedFile stMMF = MemoryMappedFile.CreateFromFile(stStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
-                using (MemoryMappedViewAccessor stAccessor = stMMF.CreateViewAccessor())
-                {
-                    byte* stStart = null;
-                    stAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref stStart);
-
-                    StaticBlock[] staticBlocks = new StaticBlock[idx.Count];
-
-                    try
-                    {
-                        for (int i = 0; i < idx.Count; i++)
-                        {
-                            IDX index = idx[i];
-
-                            if (index.Lookup == -1 || index.Length < 7)
-                                continue;
-
-                            byte* cur = stStart + index.Lookup;
-                            Static[] statics = new Static[index.Length / 7];
-
-                            for (int x = 0; x < statics.Length; x++, cur += 7)
-                                statics[x] = *(Static*)cur;
-
-                            staticBlocks[i] = new StaticBlock(index.Lookup, statics);
-                        }
-                    }
-                    finally
-                    {
-                        stAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
-                    }
-
-                    _staticBlocks = staticBlocks;
-                }
-            }
-        }
-
-        void SaveStatics()
-        {
-            if (File.Exists(StaticsIdxFile))
-                File.Delete(StaticsIdxFile);
-
-            if (File.Exists(StaticsFile))
-                File.Delete(StaticsFile);
-
-            using (FileStream stIdxStream = new FileStream(StaticsIdxFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
-            using (FileStream stStream = new FileStream(StaticsFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
-            using (BinaryWriter idxWriter = new BinaryWriter(stIdxStream))
-            using (BinaryWriter stWriter = new BinaryWriter(stStream))
-            {
-                for (int i = 0; i < _staticBlocks.Length; i++)
-                {
-                    StaticBlock block = _staticBlocks[i];
-
-                    if (block == null)
-                    {
-                        idxWriter.Write(-1);
-                        idxWriter.Write(0);
-                        idxWriter.Write(0);
-                        continue;
-                    }
-
-                    idxWriter.Write(stStream.Position);
-                    idxWriter.Write(block.Statics.Length * 7);
-                    idxWriter.Write(0);
-
-                    for (int x = 0; x < block.Statics.Length; x++)
-                    {
-                        ref Static st = ref block.Statics[x];
-
-                        stWriter.Write(st.TileId);
-                        stWriter.Write(st.X);
-                        stWriter.Write(st.Y);
-                        stWriter.Write(st.Z);
-                        stWriter.Write(st.Hue);
-                    }
-                }
-
-                idxWriter.Flush();
-                stWriter.Flush();
-            }
-        }
-
         void SpawnStatics()
         {
             List<uint> missingModels = new List<uint>();
@@ -902,7 +788,7 @@ namespace Assets.Source.Game.Map
                     {
                         int wx = x * 8;
                         int wz = z * 8;
-                        StaticBlock sb = GetStaticBlock(wz, wx);
+                        StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
                         SpawnStaticBlock(sb, wx, wz);
                     }
                 }
@@ -1046,11 +932,6 @@ namespace Assets.Source.Game.Map
             return stObj;
         }
 
-        StaticBlock GetStaticBlock(int x, int y)
-        {
-            return _staticBlocks[(x >> 3) * BlockDepth + (y >> 3)];
-        }
-
         Vector2[] GetTileUVs(short tileId, bool getTexture)
         {
             Vector2[] artUVs = null;
@@ -1090,52 +971,6 @@ namespace Assets.Source.Game.Map
             None = 1,
             Vertice = 4,
             Index = 6,
-        }
-
-        class StaticBlock
-        {
-            public Static[] Statics { get; set; }
-            public long Lookup { get; set; }
-
-            public StaticBlock(long lookup, Static[] statics)
-            {
-                Lookup = lookup;
-                Statics = statics;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Static
-        {
-            public ushort TileId { get; set; }
-            public byte X { get; set; } // Ranges from 0 to 7
-            public byte Y { get; set; } // Ranges from 0 to 7
-            public sbyte Z { get; set; }
-            public short Hue { get; set; } // At one point this was the hue, but doesn't appear to be used anymore
-
-            public Static(ushort tileId, byte x, byte y, sbyte z, short hue) : this()
-            {
-                TileId = tileId;
-                X = x;
-                Y = y;
-                Z = z;
-                Hue = hue;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct IDX
-        {
-            public int Lookup { get; set; }
-            public int Length { get; set; }
-            public int Extra { get; set; }
-
-            public IDX(int lookup, int length, int extra) : this()
-            {
-                Lookup = lookup;
-                Length = length;
-                Extra = extra;
-            }
         }
     }
 

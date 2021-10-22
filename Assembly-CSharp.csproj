@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -60,8 +59,6 @@
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticUIBuilder.cs" />
-    <Compile Include="Assets\Source\IO\MapTiles.cs" />
-    <Compile Include="Assets\Source\Pointers.cs" />
     <Compile Include="Assets\Source\UI\MenuBar.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
     <Compile Include="Assets\Source\Client.cs" />
@@ -82,6 +79,7 @@
     <Compile Include="Assets\Source\UI\MappingTools.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\LegacyMulFileConverter.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Crypter.cs" />
+    <Compile Include="Assets\Source\IO\MapTiles.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\Verdata.cs" />
     <Compile Include="Assets\Source\ClassicUO\Game\Constants.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\RawList.cs" />
@@ -111,6 +109,7 @@
     <Compile Include="Assets\Source\UI\TileBrowser.cs" />
     <Compile Include="Assets\Source\UI\SettingsPanel.cs" />
     <Compile Include="Assets\Source\ClassicUO\Client.cs" />
+    <Compile Include="Assets\Source\IO\MapStatics.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonParser.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\PlatformHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\UInt16Converter.cs" />
@@ -130,11 +129,13 @@
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
     <Compile Include="Assets\Source\Game\Map\VertexMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileLoader.cs" />
+    <Compile Include="Assets\Source\Pointers.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiMapLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\ArtLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\MathHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibHeader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\CollectionHelper.cs" />
+    <Compile Include="Assets\Source\IO\MapBase.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Extensions.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoRecord.cs" />
     <Compile Include="Assets\Source\GameConfig.cs" />

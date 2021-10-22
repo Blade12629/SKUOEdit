@@ -89,7 +89,7 @@ namespace Assets.Source.UI
             int[] heights = ConvertImage(heightMap);
             int[] tiles = ConvertImage(tileMap);
 
-            Client.Instance.LoadMap(null, width, depth, GameMap.GenerationOption.Converted, heights, tiles);
+            Client.Instance.LoadMap(null, width, depth, GenerationOption.Converted, heights, tiles);
 
             int[] ConvertImage(string path)
             {

@@ -9,14 +9,8 @@ using System.Threading.Tasks;
 
 namespace Assets.Source.IO
 {
-    public unsafe class MapTiles
+    public unsafe class MapTiles : MapBase
     {
-        public int Width { get; private set; }
-        public int Depth { get; private set; }
-
-        public int BlockWidth { get; private set; }
-        public int BlockDepth { get; private set; }
-
         public TileBlock[] TileBlocks => _tileBlocks;
 
         static readonly int _headerStart = 4096;
@@ -48,10 +42,15 @@ namespace Assets.Source.IO
             {
                 LoadTiles(file);
             }
+
+            IsLoaded = true;
         }
 
         public void Save(string file, bool asUOP)
         {
+            if (!IsLoaded)
+                throw new OperationCanceledException("Cannot save unloaded maptiles");
+
             if (asUOP)
             {
                 FileInfo uopFile = new FileInfo(file);
@@ -249,14 +248,6 @@ namespace Assets.Source.IO
 
                 fstream.Flush();
             }
-        }
-
-        void SetSize(int width, int depth)
-        {
-            Width = width;
-            Depth = depth;
-            BlockWidth = width / 8;
-            BlockDepth = depth / 8;
         }
 
         void LoadTiles(string file)

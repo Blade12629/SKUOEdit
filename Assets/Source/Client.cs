@@ -22,7 +22,7 @@ namespace Assets.Source
             Instance = this;
         }
 
-        public void LoadMap(string path, int width, int depth, GameMap.GenerationOption option, int[] tileHeights, int[] tileIds)
+        public void LoadMap(string path, int width, int depth, GenerationOption option, int[] tileHeights, int[] tileIds)
         {
             if (_map != null)
             {

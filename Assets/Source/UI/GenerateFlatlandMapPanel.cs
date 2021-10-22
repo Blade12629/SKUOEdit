@@ -16,7 +16,7 @@ namespace Assets.Source.UI
                 return;
 
             gameObject.SetActive(false);
-            Client.Instance.LoadMap(null, w, d, GameMap.GenerationOption.Flatland, null, null);
+            Client.Instance.LoadMap(null, w, d, GenerationOption.Flatland, null, null);
         }
     }
 }

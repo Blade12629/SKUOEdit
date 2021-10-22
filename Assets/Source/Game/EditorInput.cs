@@ -257,7 +257,7 @@ namespace Assets.Source.Game
                     break;
 
                 case EditorAction.DecreaseVerticeHeight:
-                    InvokeVertexAction(GameMap.Instance.DecreaseTileCornerHeight);
+                    InvokeVertexAction((x_, z_, value_) => GameMap.Instance.IncreaseTileCornerHeight(x_, z_, -value_));
                     break;
 
                 case EditorAction.SetVerticeHeight:
@@ -269,7 +269,7 @@ namespace Assets.Source.Game
                     InvokeTileAction(GameMap.Instance.IncreaseTileHeight);
                     break;
                 case EditorAction.DecreaseTileHeight:
-                    InvokeTileAction(GameMap.Instance.DecreaseTileHeight);
+                    InvokeTileAction((x_, z_, value_) => GameMap.Instance.IncreaseTileHeight(x_, z_, -value_));
                     break;
                 case EditorAction.SetTileHeight:
                     InvokeTileAction(GameMap.Instance.SetTileHeight);
