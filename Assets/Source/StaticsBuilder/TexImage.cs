@@ -18,16 +18,14 @@ namespace Assets.Source.StaticsBuilder
         [SerializeField] RawImage _markerImg;
 
         Texture2D _markerTexture;
-        Vector2 _texImgSize;
-        Vector2 _texImgSizeHalf;
+        Vector2 _texImgSize => ((RectTransform)transform).sizeDelta;
+        Vector2 _texImgSizeHalf => _texImgSize / 2f;
 
         readonly Color _transparentColor = new Color(0, 0, 0, 0);
         readonly Color _markerColor = new Color(1, 0, 0, 1);
 
         void Start()
         {
-            _texImgSize = ((RectTransform)transform).sizeDelta;
-            _texImgSizeHalf = _texImgSize / 2f;
             CreatePositionMarker(11);
 
             _markerImg.rectTransform.sizeDelta = new Vector2(_markerTexture.width, _markerTexture.height);

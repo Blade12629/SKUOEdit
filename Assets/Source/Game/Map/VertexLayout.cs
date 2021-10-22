@@ -11,6 +11,7 @@ namespace Assets.Source.Game.Map
         /// Vertex Layout
         /// </summary>
         public static readonly VertexAttributeDescriptor[] Layout;
+        public static readonly int VertexByteSize = 20; //X, Y, Z, UVX, UVY
 
         static VertexLayout()
         {

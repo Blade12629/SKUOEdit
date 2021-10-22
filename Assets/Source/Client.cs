@@ -10,7 +10,10 @@ namespace Assets.Source
         public static Client Instance { get; private set; }
 
         public Material DefaultMaterial => _defaultMaterial;
+        public Material DefaultStaticMaterial => _defaultStaticMaterial;
+
         [SerializeField] Material _defaultMaterial;
+        [SerializeField] Material _defaultStaticMaterial;
 
         GameMap _map;
 

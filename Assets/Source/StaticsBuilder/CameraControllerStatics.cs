@@ -13,8 +13,11 @@ namespace Assets.Source.StaticsBuilder
 
         void Update()
         {
+            if (Input.GetKey(KeyCode.LeftControl))
+                return;
+            
             Vector3 dir = Vector3.zero;
-            float shiftScale = 1f;
+            float shiftScale = 2f;
 
             if (Input.GetKey(KeyCode.W))
             {
@@ -36,7 +39,7 @@ namespace Assets.Source.StaticsBuilder
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                shiftScale = 2f;
+                shiftScale = 4f;
             }
 
             if (!dir.Equals(Vector3.zero))

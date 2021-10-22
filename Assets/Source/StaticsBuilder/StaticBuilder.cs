@@ -78,6 +78,7 @@ namespace Assets.Source.StaticsBuilder
 
         [SerializeField] RawImage _texImg;
         [SerializeField] RectTransform _texImgTransform;
+        [SerializeField] RectTransform _texImgBackgroundTransform;
 
         [SerializeField] InputField _staticIdInput;
 
@@ -112,7 +113,7 @@ namespace Assets.Source.StaticsBuilder
 
         public void OnRowClick(int row)
         {
-            if (row >= _vertices.Count)
+            if (row >= _vertices.Count || row < 0)
                 return;
 
             if (_currentVertice < _rowPanels.Count)
@@ -272,7 +273,14 @@ namespace Assets.Source.StaticsBuilder
             _material = _renderer.sharedMaterial;
 
             if (tex != null)
+            {
                 _texImg.texture = _material.mainTexture = _texture = tex;
+                
+                Vector2 size = new Vector2(tex.width * 8, tex.height * 8);
+
+                _texImgTransform.sizeDelta = size;
+                _texImgBackgroundTransform.sizeDelta = size + new Vector2(6, 6);
+            }
             
             _mesh = _filter.mesh = new Mesh();
 
@@ -410,6 +418,41 @@ namespace Assets.Source.StaticsBuilder
             File.WriteAllText(filePath, sb.ToString());
         }
 
+        public void LoadMesh(Vertex[] vertices, int[] indices)
+        {
+            while (_rowPanels.Count > 0)
+            {
+                Destroy(_rowPanels[0].gameObject);
+                _rowPanels.RemoveAt(0);
+            }
+
+            _currentVertice = 0;
+
+            _vertices = new List<Vertex>(vertices);
+            _indices = new List<int>(indices);
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                AddRowPanel(i, vertices[i]);
+            }
+
+            _applyVertices = true;
+        }
+
+        public (Vertex[], int[]) GetMeshData()
+        {
+            Vertex[] resultA = new Vertex[_vertices.Count];
+            int[] resultB = new int[_indices.Count];
+
+            for (int i = 0; i < _vertices.Count; i++)
+                resultA[i] = _vertices[i];
+
+            for (int i = 0; i < _indices.Count; i++)
+                resultB[i] = _indices[i];
+
+            return (resultA, resultB);
+        }
+
         void AddRowPanel(int index, Vertex v)
         {
             GameObject rowPanelObj = Instantiate(_rowPanelPrefab);
@@ -453,6 +496,42 @@ namespace Assets.Source.StaticsBuilder
                 _mesh.SetVertexBufferData(_vertices, 0, 0, _vertices.Count);
                 _mesh.SetIndices(_indices, MeshTopology.Triangles, 0);
                 _mesh.RecalculateBounds();
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    if (!Input.GetKey(KeyCode.LeftShift))
+                        SaveStatic();
+
+                    _staticIdInput.SetTextWithoutNotify((--_staticId).ToString());
+                    LoadStatic();
+                }
+                else if (Input.GetKeyDown(KeyCode.E))
+                {
+                    if (!Input.GetKey(KeyCode.LeftShift))
+                        SaveStatic();
+
+                    _staticIdInput.SetTextWithoutNotify((++_staticId).ToString());
+                    LoadStatic();
+                }
+                else if (Input.GetKeyDown(KeyCode.Y))
+                {
+                    OnRowClick(_currentVertice - 1);
+                }
+                else if (Input.GetKeyDown(KeyCode.X))
+                {
+                    OnRowClick(_currentVertice + 1);
+                }
+                else if (Input.GetKeyDown(KeyCode.R))
+                {
+                    LoadStatic();
+                }
+                else if (Input.GetKeyDown(KeyCode.S))
+                {
+                    SaveStatic();
+                }
             }
         }
 

@@ -1,10 +1,12 @@
-﻿using Assets.Source.Textures;
+﻿using Assets.Source.IO;
+using Assets.Source.Textures;
 using Assets.Source.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +34,7 @@ namespace Assets.Source.Game.Map
         public bool IsMapLoaded { get; private set; }
 
         Vertex[] _vertices;
-        TileBlock[] _tileBlocks;
+        MapTiles _mapTiles;
         StaticBlock[] _staticBlocks;
 
         MapChunk[] _chunks;
@@ -81,7 +83,7 @@ namespace Assets.Source.Game.Map
             MapFile = null;
 
             _vertices = null;
-            _tileBlocks = null;
+            _mapTiles = null;
             _renderedArea = default;
 
             if (_chunks != null)
@@ -130,34 +132,37 @@ namespace Assets.Source.Game.Map
             {
                 Debug.Log("Loading map");
 
-                Debug.Log("Loading map blocks");
+                Debug.Log("Loading static blocks");
                 yield return new WaitForEndOfFrame();
 
                 int index = GetMapIndex(MapFile);
                 string dir = new FileInfo(MapFile).Directory.FullName;
 
-                StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
-                StaticsFile = Path.Combine(dir, $"statics{index}.mul");
+                //StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
+                //StaticsFile = Path.Combine(dir, $"statics{index}.mul");
 
-                LoadStatics();
+                //LoadStatics();
+
+                Debug.Log("Loading tile blocks");
+                yield return new WaitForEndOfFrame();
 
                 switch (genOption)
                 {
                     case GenerationOption.Default:
                         if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            LoadUOPMapBlocks(index);
+                            _mapTiles.Load(MapFile, true, width, depth);
                         }
                         else
-                            LoadMapBlocks();
+                            _mapTiles.Load(MapFile, false, width, depth);
                         break;
 
                     case GenerationOption.Flatland:
-                        GenerateFlatmap();
+                        _mapTiles.GenerateFlatland(width, depth);
                         break;
 
                     case GenerationOption.Converted:
-                        ConvertMapFromColors(tileHeights, tileIds);
+                        _mapTiles.GenerateConverted(tileHeights, tileIds, width, depth);
                         break;
                 }
 
@@ -177,6 +182,11 @@ namespace Assets.Source.Game.Map
 
                 LoadMapMesh();
                 IsMapLoaded = true;
+
+                //Debug.Log("Spawning Statics");
+                //yield return new WaitForEndOfFrame();
+
+                //SpawnStatics();
 
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
@@ -207,50 +217,9 @@ namespace Assets.Source.Game.Map
                 MapFile = file;
 
             if (file.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
-                SaveUOPMapBlocks(GetMapIndex(file));
+                _mapTiles.Save(file, true);
             else
-                SaveMapBlocks();
-        }
-
-        /// <summary>
-        /// Converts a map from colors to map blocks <see cref="IO.ColorStore"/>
-        /// </summary>
-        /// <param name="tileHeights"></param>
-        /// <param name="tileIds"></param>
-        public void ConvertMapFromColors(int[] tileHeights, int[] tileIds)
-        {
-            int headerStart = 4096;
-            TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
-
-            for (int xb = 0; xb < BlockWidth; xb++)
-            {
-                int wx = xb * 8;
-
-                for (int zb = 0; zb < BlockDepth; zb++)
-                {
-                    int blockIndex = xb * BlockDepth + zb;
-                    int wz = zb * 8;
-
-                    Tile[] tiles = new Tile[64];
-                    int tileIndex = 0;
-
-                    for (int x = 0; x < 8; x++)
-                    {
-                        for (int z = 0; z < 8; z++)
-                        {
-                            int srcIndex = (wx + x) * Depth + (wz + z);
-                            short tileId = (short)tileIds[srcIndex];
-                            sbyte height = (sbyte)tileHeights[srcIndex];
-
-                            tiles[tileIndex++] = new Tile(tileId, height);
-                        }
-                    }
-
-                    tileBlocks[blockIndex] = new TileBlock(headerStart + blockIndex, tiles);
-                }
-            }
-
-            _tileBlocks = tileBlocks;
+                _mapTiles.Save(file, false);
         }
 
         /// <summary>
@@ -379,7 +348,7 @@ namespace Assets.Source.Game.Map
             if (vertexIndex < 0 || vertexIndex >= _vertices.Length)
                 return;
 
-            ref Tile tileBL = ref GetTile(z, x);
+            ref Tile tileBL = ref _mapTiles.GetTile(x, z);
             tileBL.TileId = id;
 
             RefreshUVs(x, z);
@@ -536,7 +505,7 @@ namespace Assets.Source.Game.Map
             if (index < 0 || index >= _vertices.Length)
                 return 0;
 
-            ref Tile tile = ref GetTile(z, x);
+            ref Tile tile = ref _mapTiles.GetTile(x, z);
             return tile.TileId;
         }
 
@@ -559,7 +528,7 @@ namespace Assets.Source.Game.Map
             ref Vertex vertex = ref _vertices[index + indexOffset];
             vertex.Y = height * .1f;
 
-            ref Tile tile = ref GetTile(z, x);
+            ref Tile tile = ref _mapTiles.GetTile(x, z);
             tile.Z = (sbyte)height;
 
             RefreshUVs(x, z, false);
@@ -587,7 +556,7 @@ namespace Assets.Source.Game.Map
                               hBL == hTR &&
                               hBL == hBR;
 
-            ref Tile tileBL = ref GetTile(z, x);
+            ref Tile tileBL = ref _mapTiles.GetTile(x, z);
 
             Vector2[] tileUVs = GetTileUVs(tileBL.TileId, !isEvenTile);
 
@@ -623,163 +592,6 @@ namespace Assets.Source.Game.Map
         int PositionToIndex(int x, int z, IndexType indexType)
         {
             return (x * Width + z) * (int)indexType;
-        }
-
-        void LoadMapBlocks()
-        {
-            TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
-
-            unsafe
-            {
-                File.SetAttributes(MapFile, FileAttributes.Normal);
-
-                using (FileStream mapStream = new FileStream(MapFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                using (MemoryMappedFile mapMMF = MemoryMappedFile.CreateFromFile(mapStream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false))
-                using (MemoryMappedViewAccessor mapAccessor = mapMMF.CreateViewAccessor())
-                {
-                    byte* mapStart = null;
-                    mapAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref mapStart);
-
-                    try
-                    {
-                        LoadMapBlocks(mapStart, tileBlocks);
-                    }
-                    finally
-                    {
-                        mapAccessor.SafeMemoryMappedViewHandle.ReleasePointer();
-                    }
-                }
-            }
-
-            _tileBlocks = tileBlocks;
-        }
-
-        unsafe void LoadMapBlocks(byte* mapStart, TileBlock[] tileBlocks)
-        {
-            const int sizePerTile = 3;
-            const int sizePerBlock = 64 * 3 + 4;
-
-            long sizePerRow = sizePerBlock * BlockDepth;
-
-            Parallel.For(0, BlockWidth, bx =>
-            {
-                byte* xblockPtr = mapStart + bx * sizePerRow;
-                int xblockIndex = bx * BlockDepth;
-
-                for (int bz = 0; bz < BlockDepth; bz++)
-                {
-                    int header = *ReadPtr<int>(ref xblockPtr, 4);
-
-                    Tile[] tiles = new Tile[64];
-                    for (int i = 0; i < 64; i++)
-                        tiles[i] = *ReadPtr<Tile>(ref xblockPtr, sizePerTile);
-
-                    tileBlocks[xblockIndex++] = new TileBlock(header, tiles);
-                }
-            });
-
-            static unsafe T* ReadPtr<T>(ref byte* ptr, int length) where T : unmanaged
-            {
-                byte* cur = ptr;
-                ptr += length;
-
-                return (T*)cur;
-            }
-        }
-
-        void LoadUOPMapBlocks(int mapIndex = 10)
-        {
-            FileInfo uopFile = new FileInfo(MapFile);
-            FileInfo tempMulFile = new FileInfo(Path.Combine(uopFile.Directory.FullName, $"{uopFile.Name}.mul"));
-
-            DeleteFile(tempMulFile.FullName);
-
-            UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter converter = new UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter();
-            converter.FromUOP(uopFile.FullName, tempMulFile.FullName, mapIndex);
-
-            MapFile = tempMulFile.FullName;
-            LoadMapBlocks();
-            MapFile = uopFile.FullName;
-
-            DeleteFile(tempMulFile.FullName);
-        }
-
-        void SaveMapBlocks()
-        {
-            if (File.Exists(MapFile))
-                File.Delete(MapFile);
-
-            using (FileStream fstream = new FileStream(MapFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
-            using (BinaryWriter writer = new BinaryWriter(fstream))
-            {
-                for (int i = 0; i < _tileBlocks.Length; i++)
-                {
-                    ref TileBlock block = ref _tileBlocks[i];
-                    writer.Write(block.Header);
-
-                    for (int x = 0; x < block.Tiles.Length; x++)
-                    {
-                        ref Tile tile = ref block.Tiles[x];
-                        writer.Write(tile.TileId);
-                        writer.Write(tile.Z);
-                    }
-                }
-
-                fstream.Flush();
-            }
-        }
-
-        void SaveUOPMapBlocks(int mapIndex = 10)
-        {
-            FileInfo uopFile = new FileInfo(MapFile);
-            FileInfo tempMulFile = new FileInfo(Path.Combine(uopFile.Directory.FullName, $"{uopFile.Name}.mul"));
-
-            DeleteFile(tempMulFile.FullName);
-
-            MapFile = tempMulFile.FullName;
-            SaveMapBlocks();
-            MapFile = uopFile.FullName;
-
-            BackupFile(uopFile.FullName, 5);
-            UoFiddler.Plugin.UopPacker.Classes.LegacyMulFileConverter.ToUOP(tempMulFile.FullName, uopFile.FullName, mapIndex);
-
-            DeleteFile(tempMulFile.FullName);
-        }
-
-        void BackupFile(string file, int maxBackups)
-        {
-            if (!File.Exists(file))
-                return;
-
-            // count backups
-            for (int i = 0; i < maxBackups; i++)
-            {
-                // we have a backup slot available
-                if (!File.Exists(file + i))
-                {
-                    File.Move(file, file + i);
-                    return;
-                }
-            }
-
-            // we reached max backups, delete oldest backup
-            DeleteFile(file + (maxBackups - 1));
-
-            // move every backup one iteration higher (1 -> 2)
-            for (int i = maxBackups - 2; i > 0; i--)
-                File.Move(file + i, file + (i + 1));
-
-            // move file to iteration 0
-            File.Move(file, file + 0);
-        }
-
-        void DeleteFile(string file)
-        {
-            if (File.Exists(file))
-            {
-                File.SetAttributes(file, FileAttributes.Normal);
-                File.Delete(file);
-            }
         }
 
         int GetMapIndex(string fileName)
@@ -819,7 +631,7 @@ namespace Assets.Source.Game.Map
             {
                 Parallel.For(0, Width, z =>
                 {
-                    ref Tile tileBL = ref GetTile(z, x);
+                    ref Tile tileBL = ref _mapTiles.GetTile(x, z);
 
                     sbyte hTL = 0;
                     sbyte hTR = 0;
@@ -827,12 +639,12 @@ namespace Assets.Source.Game.Map
 
                     if (z < Width - 1)
                     {
-                        ref Tile tileTL = ref GetTile(z + 1, x);
+                        ref Tile tileTL = ref _mapTiles.GetTile(x, z + 1);
                         hTL = tileTL.Z;
 
                         if (x < Depth - 1)
                         {
-                            ref Tile tileTR = ref GetTile(z + 1, x + 1);
+                            ref Tile tileTR = ref _mapTiles.GetTile(x + 1, z + 1);
                             hTR = tileTR.Z;
                         }
                         else
@@ -843,7 +655,7 @@ namespace Assets.Source.Game.Map
 
                     if (x < Depth - 1)
                     {
-                        ref Tile tileBR = ref GetTile(z, x + 1);
+                        ref Tile tileBR = ref _mapTiles.GetTile(x + 1, z);
                         hBR = tileBR.Z;
                     }
                     else
@@ -909,7 +721,7 @@ namespace Assets.Source.Game.Map
             {
                 for (int z = 0; z < Width; z++)
                 {
-                    ref Tile tile = ref GetTile(z, x);
+                    ref Tile tile = ref _mapTiles.GetTile(x, z);
                     Minimap.Instance.SetMapTile(new Vector2(x, z), tile.TileId, false);
                 }
             }
@@ -946,6 +758,10 @@ namespace Assets.Source.Game.Map
 
         void LoadStatics()
         {
+            //_stm = new SKMapGenerator.Ultima.StaticTileMatrix(StaticsFile, StaticsIdxFile, Width, Depth);
+            //_stm.Load();
+
+            //return;
             unsafe
             {
                 List<IDX> idx = new List<IDX>();
@@ -973,6 +789,8 @@ namespace Assets.Source.Game.Map
                     }
                 }
 
+                //idx = idx.OrderBy(i => i.Lookup).ToList();
+
                 File.SetAttributes(StaticsFile, FileAttributes.Normal);
 
                 using (FileStream stStream = new FileStream(StaticsFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -990,7 +808,7 @@ namespace Assets.Source.Game.Map
                         {
                             IDX index = idx[i];
 
-                            if (index.Lookup == -1)
+                            if (index.Lookup == -1 || index.Length < 7)
                                 continue;
 
                             byte* cur = stStart + index.Lookup;
@@ -999,7 +817,7 @@ namespace Assets.Source.Game.Map
                             for (int x = 0; x < statics.Length; x++, cur += 7)
                                 statics[x] = *(Static*)cur;
 
-                            staticBlocks[i] = new StaticBlock(statics);
+                            staticBlocks[i] = new StaticBlock(index.Lookup, statics);
                         }
                     }
                     finally
@@ -1018,7 +836,7 @@ namespace Assets.Source.Game.Map
                 File.Delete(StaticsIdxFile);
 
             if (File.Exists(StaticsFile))
-                File.Delete(StaticsIdxFile);
+                File.Delete(StaticsFile);
 
             using (FileStream stIdxStream = new FileStream(StaticsIdxFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             using (FileStream stStream = new FileStream(StaticsFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
@@ -1027,7 +845,15 @@ namespace Assets.Source.Game.Map
             {
                 for (int i = 0; i < _staticBlocks.Length; i++)
                 {
-                    ref StaticBlock block = ref _staticBlocks[i];
+                    StaticBlock block = _staticBlocks[i];
+
+                    if (block == null)
+                    {
+                        idxWriter.Write(-1);
+                        idxWriter.Write(0);
+                        idxWriter.Write(0);
+                        continue;
+                    }
 
                     idxWriter.Write(stStream.Position);
                     idxWriter.Write(block.Statics.Length * 7);
@@ -1041,7 +867,7 @@ namespace Assets.Source.Game.Map
                         stWriter.Write(st.X);
                         stWriter.Write(st.Y);
                         stWriter.Write(st.Z);
-                        stWriter.Write(st.Unkown);
+                        stWriter.Write(st.Hue);
                     }
                 }
 
@@ -1050,43 +876,179 @@ namespace Assets.Source.Game.Map
             }
         }
 
-        void GenerateFlatmap()
+        void SpawnStatics()
         {
-            int headerStart = 4096;
-            TileBlock[] tileBlocks = new TileBlock[BlockWidth * BlockDepth];
+            List<uint> missingModels = new List<uint>();
 
-            Parallel.For(0, tileBlocks.Length, tb =>
-            {
-                Tile[] tiles = new Tile[64];
-
-                for (int i = 0; i < 64; i++)
-                    tiles[i] = new Tile(3, 0);
-
-                tileBlocks[tb] = new TileBlock(headerStart + tb, tiles);
-            });
-
-            _tileBlocks = tileBlocks;
-        }
-
-        ref TileBlock GetBlock(int x, int y)
-        {
             try
             {
-                return ref _tileBlocks[(x >> 3) * BlockDepth + (y >> 3)];
+                //for (int x = 0; x < BlockWidth; x++)
+                //{
+                //    for (int z = 0; z < BlockDepth; z++)
+                //    {
+                //        int wx = x * 8;
+                //        int wz = z * 8;
+                //        ref var sb = ref _stm.GetStaticBlock(wx, wz);
+
+                //        //StaticBlock sb = GetStaticBlock(wz, wx);
+                //        SpawnStaticBlock(ref sb, wx, wz);
+                //    }
+                //}
+
+                //Test for luna bank (malas) area
+                for (int x = 55; x <= 137; x++)
+                {
+                    for (int z = 55; z <= 137; z++)
+                    {
+                        int wx = x * 8;
+                        int wz = z * 8;
+                        StaticBlock sb = GetStaticBlock(wz, wx);
+                        SpawnStaticBlock(sb, wx, wz);
+                    }
+                }
+
+                //int bx = 61;
+                //int bz = 126;
+                //int wx = bx * 8;
+                //int wz = bz * 8;
+                //StaticBlock sb = GetStaticBlock(wz, wx);
+                //SpawnStaticBlock(sb, wx, wz);
+
+                // 63 128
+
             }
             catch (Exception ex)
             {
                 Debug.LogError(ex);
-                throw;
+                UnityEditor.EditorApplication.isPlaying = false;
+            }
+
+            if (missingModels.Count > 0)
+            {
+                missingModels = missingModels.OrderBy(i => i).ToList();
+                StringBuilder missingsb = new StringBuilder();
+
+                int lb = 0;
+                for (int i = 0; i < missingModels.Count; i++)
+                {
+                    missingsb.Append($"{missingModels[i]}, ");
+
+                    if (lb++ == 4)
+                    {
+                        missingsb.Remove(missingsb.Length - 2, 2);
+                        missingsb.AppendLine();
+                        lb = 0;
+                    }
+                }
+
+                if (lb != 0)
+                    missingsb.Remove(missingsb.Length - 2, 2);
+
+                int mapIndex = GetMapIndex(MapFile);
+                string missFile = Path.Combine(Environment.CurrentDirectory, $"missing{mapIndex}.txt");
+
+                if (File.Exists(missFile))
+                    File.Delete(missFile);
+
+                File.WriteAllText(missFile, missingsb.ToString());
+            }
+
+            //void SpawnStaticBlock(ref SKMapGenerator.Ultima.StaticBlock sb, int wx, int wz)
+            void SpawnStaticBlock(StaticBlock sb, int wx, int wz)
+            {
+                //if (sb.Lookup == -1)
+                if (sb == null)
+                    return;
+
+                GameObject stchunk = new GameObject($"{wx / 8}/{wz / 8}");
+
+                for (int i = 0; i < sb.Statics.Length; i++)
+                {
+                    ref var st = ref sb.Statics[i];
+                    GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
+
+                    if (stObj == null)
+                    {
+                        //    if (!missingModels.Contains(st.TileId))
+                        //        missingModels.Add(st.TileId);
+                    }
+                    //else
+                        //stObj.transform.SetParent(stchunk.transform);
+                }
             }
         }
 
-        ref Tile GetTile(int x, int y)
+        GameObject LoadStatic(uint stId, Vector3 pos)
         {
-            ref TileBlock block = ref GetBlock(x, y);
-            Tile[] tiles = block.Tiles;
+            string staticInfoFile = Path.Combine($"Statics", $"{stId}.stinfo");
 
-            return ref tiles[((y & 0x7) << 3) + (x & 0x7)];
+            if (!File.Exists(staticInfoFile))
+                return null;
+
+            GameObject stObj = new GameObject($"Static {stId}", typeof(MeshRenderer), typeof(MeshFilter));
+            stObj.transform.rotation = Quaternion.Euler(0, -90, 0);
+            //stObj.SetActive(false);
+            MeshFilter filter = stObj.GetComponent<MeshFilter>();
+            MeshRenderer renderer = stObj.GetComponent<MeshRenderer>();
+            Mesh mesh = filter.mesh = new Mesh();
+            List<int> indices = new List<int>();
+            List<Vertex> vertices = new List<Vertex>();
+
+            string[] lines = File.ReadAllLines(staticInfoFile);
+            bool isvertice = true;
+            int skippedLines = 0;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i];
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    skippedLines++;
+                    continue;
+                }
+
+                if (isvertice)
+                {
+                    if (line.Equals("---"))
+                    {
+                        isvertice = false;
+                        continue;
+                    }
+
+                    string[] vertSplit = line.Split(',');
+                    Vertex v = new Vertex(float.Parse(vertSplit[0]),
+                                          float.Parse(vertSplit[1]),
+                                          float.Parse(vertSplit[2]),
+                                          float.Parse(vertSplit[3]),
+                                          float.Parse(vertSplit[4]));
+
+                    vertices.Add(v);
+                }
+                else
+                {
+                    string[] indicesSplit = line.Split(',');
+
+                    for (int x = 0; x < indicesSplit.Length; x++)
+                        indices.Add(int.Parse(indicesSplit[x]));
+                }
+            }
+
+            mesh.SetVertexBufferParams(vertices.Count, VertexLayout.Layout);
+            mesh.SetVertexBufferData(vertices, 0, 0, vertices.Count);
+            mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            mesh.RecalculateBounds();
+
+            renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
+            renderer.material.mainTexture = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(stId);
+            stObj.transform.position = pos;
+
+            return stObj;
+        }
+
+        StaticBlock GetStaticBlock(int x, int y)
+        {
+            return _staticBlocks[(x >> 3) * BlockDepth + (y >> 3)];
         }
 
         Vector2[] GetTileUVs(short tileId, bool getTexture)
@@ -1123,13 +1085,6 @@ namespace Assets.Source.Game.Map
             EditorInput.UpdateInput();
         }
 
-        public enum GenerationOption
-        {
-            Default,
-            Flatland,
-            Converted
-        }
-
         enum IndexType
         {
             None = 1,
@@ -1137,57 +1092,34 @@ namespace Assets.Source.Game.Map
             Index = 6,
         }
 
-        struct TileBlock
-        {
-            public int Header { get; set; }
-            public Tile[] Tiles { get; set; }
-
-            public TileBlock(int header, Tile[] tiles) : this()
-            {
-                Header = header;
-                Tiles = tiles;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct Tile
-        {
-            public short TileId { get; set; }
-            public sbyte Z { get; set; }
-
-            public Tile(short tileId, sbyte z) : this()
-            {
-                TileId = tileId;
-                Z = z;
-            }
-        }
-
-        struct StaticBlock
+        class StaticBlock
         {
             public Static[] Statics { get; set; }
+            public long Lookup { get; set; }
 
-            public StaticBlock(Static[] statics) : this()
+            public StaticBlock(long lookup, Static[] statics)
             {
+                Lookup = lookup;
                 Statics = statics;
             }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Static
         {
-            public short TileId { get; set; }
+            public ushort TileId { get; set; }
             public byte X { get; set; } // Ranges from 0 to 7
             public byte Y { get; set; } // Ranges from 0 to 7
             public sbyte Z { get; set; }
-            public short Unkown { get; set; } // At one point this was the hue, but doesn't appear to be used anymore
+            public short Hue { get; set; } // At one point this was the hue, but doesn't appear to be used anymore
 
-            public Static(short tileId, byte x, byte y, sbyte z, short unkown) : this()
+            public Static(ushort tileId, byte x, byte y, sbyte z, short hue) : this()
             {
                 TileId = tileId;
                 X = x;
                 Y = y;
                 Z = z;
-                Unkown = unkown;
+                Hue = hue;
             }
         }
 
@@ -1205,5 +1137,12 @@ namespace Assets.Source.Game.Map
                 Extra = extra;
             }
         }
+    }
+
+    public enum GenerationOption
+    {
+        Default,
+        Flatland,
+        Converted
     }
 }
