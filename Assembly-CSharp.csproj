@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -52,9 +53,6 @@
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2021.1.22f1</UnityVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Analyzer Include="D:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Source\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\ClassicUO\ClientVersion.cs" />
@@ -858,10 +856,6 @@
     <ProjectReference Include="SimpleFileBrowser.Runtime.csproj">
       <Project>{0B2DD61D-3F80-C503-A134-D35D2A4F9CA6}</Project>
       <Name>SimpleFileBrowser.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="PluginSystem.Runtime.csproj">
-      <Project>{7E667245-2ED1-AC70-A5B5-0CAB5B534B52}</Project>
-      <Name>PluginSystem.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

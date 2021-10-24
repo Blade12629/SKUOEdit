@@ -152,7 +152,9 @@ namespace Assets.Source.Game.Map
                 catch (Exception ex)
                 {
                     Debug.LogError(ex);
+#if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
+#endif
                 }
 
                 Debug.Log("Loading tile blocks");
@@ -204,7 +206,9 @@ namespace Assets.Source.Game.Map
                 catch (Exception ex)
                 {
                     Debug.LogError(ex);
+#if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
+#endif
                 }
 
                 Debug.Log("Finished generating map");
