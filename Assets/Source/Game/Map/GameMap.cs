@@ -12,6 +12,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 namespace Assets.Source.Game.Map
@@ -41,6 +43,8 @@ namespace Assets.Source.Game.Map
 
         MapChunk[] _chunks;
         Rect _renderedArea;
+
+        Dictionary<Vector2, List<GameObject>> _statics;
 
         [SerializeField] bool _toggleGrid;
 
@@ -130,6 +134,8 @@ namespace Assets.Source.Game.Map
             Debug.Log("Initializing minimap");
             Minimap.Instance.Initialize(width, depth);
 
+            _statics = new Dictionary<Vector2, List<GameObject>>(width * depth);
+
             StartCoroutine(LoadMap());
 
             IEnumerator LoadMap()
@@ -145,17 +151,7 @@ namespace Assets.Source.Game.Map
                 StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
                 StaticsFile = Path.Combine(dir, $"statics{index}.mul");
 
-                try
-                {
-                    _mapStatics.Load(StaticsFile, StaticsIdxFile, width, depth);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError(ex);
-#if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
-#endif
-                }
+                _mapStatics.Load(StaticsFile, StaticsIdxFile, width, depth);
 
                 Debug.Log("Loading tile blocks");
                 yield return new WaitForEndOfFrame();
@@ -199,17 +195,7 @@ namespace Assets.Source.Game.Map
                 Debug.Log("Spawning Statics");
                 yield return new WaitForEndOfFrame();
 
-                try
-                {
-                    SpawnStatics();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError(ex);
-#if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
-#endif
-                }
+                SpawnStatics();
 
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
@@ -785,33 +771,18 @@ namespace Assets.Source.Game.Map
 
         void SpawnStatics()
         {
-            //for (int bx = 0; bx < BlockWidth; bx++)
-            //{
-            //    int wx = bx * 8;
-
-            //    for (int bz = 0; bz < BlockDepth; bz++)
-            //    {
-            //        int wz = bz * 8;
-            //        StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
-
-            //        if (sb == null)
-            //            continue;
-
-            //        for (int i = 0; i < sb.Statics.Length; i++)
-            //        {
-            //            ref var st = ref sb.Statics[i];
-            //            GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
-            //        }
-            //    }
-            //}
-
-            //Test for luna bank (malas) area
-            for (int x = 55; x <= 137; x++)
+            foreach (var statics in _statics.Values)
             {
-                for (int z = 55; z <= 137; z++)
+                StaticPool.ReturnRange(statics, true);
+            }
+
+            for (int bx = 0; bx < BlockWidth; bx++)
+            {
+                int wx = bx * 8;
+
+                for (int bz = 0; bz < BlockDepth; bz++)
                 {
-                    int wx = x * 8;
-                    int wz = z * 8;
+                    int wz = bz * 8;
                     StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
 
                     if (sb == null)
@@ -820,7 +791,7 @@ namespace Assets.Source.Game.Map
                     for (int i = 0; i < sb.Statics.Length; i++)
                     {
                         ref var st = ref sb.Statics[i];
-                        GameObject stObj = LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
+                        LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
                     }
                 }
             }
@@ -833,9 +804,8 @@ namespace Assets.Source.Game.Map
             if (entry == null)
                 return null;
 
-            // TODO: track gameobject so we can return it to the pool
-            // TODO: return all objects to the pool when the map gets destroyed
-            GameObject staticObj = StaticPool.Rent(); 
+            GameObject staticObj = StaticPool.Rent();
+            staticObj.SetActive(true);
             staticObj.name = stId.ToString();
             Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
 
@@ -849,6 +819,12 @@ namespace Assets.Source.Game.Map
             renderer.material.mainTexture = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(stId);
             staticObj.transform.position = pos;
 
+
+            Vector2 staticDictPos = new Vector2(pos.x, pos.z);
+            if (!_statics.TryGetValue(staticDictPos, out List<GameObject> statics))
+                _statics.Add(staticDictPos, statics = new List<GameObject>(100));
+            
+            statics.Add(staticObj);
             return staticObj;
         }
 

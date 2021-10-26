@@ -47,6 +47,22 @@ namespace Assets.Source.Game.Map
             _pool.Enqueue(obj);
         }
 
+        public static void ReturnRange(List<GameObject> obj, bool disableObject)
+        {
+            for (int i = 0; i < obj.Count; i++)
+            {
+                Return(obj[i], disableObject);
+            }
+        }
+
+        public static void ReturnRange(List<GameObject> obj)
+        {
+            for (int i = 0; i < obj.Count; i++)
+            {
+                Return(obj[i]);
+            }
+        }
+
         static void Grow()
         {
             for (int i = 0; i < _growSize; i++)
@@ -55,8 +71,8 @@ namespace Assets.Source.Game.Map
 
         static GameObject CreatePoolObject()
         {
-            GameObject result = new GameObject("Static", typeof(MeshRenderer), typeof(MeshFilter));
-            //result.SetActive(false);
+            GameObject result = new GameObject("Static", typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider));
+            result.SetActive(false);
             result.transform.rotation = _defaultStaticRot;
 
             result.GetComponent<MeshFilter>().mesh = new Mesh();
