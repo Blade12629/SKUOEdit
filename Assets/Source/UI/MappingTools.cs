@@ -44,6 +44,7 @@ namespace Assets.Source.UI
 
             selectionAreaSize = Math.Max(1, Math.Min(selectionAreaSize, SelectionRenderer.MaxAreaSize));
 
+            Game.Map.GameMap.Instance.SetGridSize(selectionAreaSize);
             EditorInput.CurrentSize = selectionAreaSize;
             SelectionRenderer.Instance.AreaSize = selectionAreaSize;
             _selectionAreaSize.SetTextWithoutNotify(selectionAreaSize.ToString());

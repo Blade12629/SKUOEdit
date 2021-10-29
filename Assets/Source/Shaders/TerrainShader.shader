@@ -87,12 +87,12 @@ Shader "CustomShaders/TerrainShader"
                                                                                                                           // and move your cursor around
                 if (_EnableSelectedRendering)
                 {
-                    float xMin = (int)_SelectedPos.x - _SelectedAreaSize;
+                    float xMin = (int)_SelectedPos.x;
                     float xMax = (int)_SelectedPos.x + _SelectedAreaSize;
 
                     if (xMin <= i.worldPos.x && xMax >= i.worldPos.x)
                     {
-                        float zMin = (int)_SelectedPos.z - _SelectedAreaSize;
+                        float zMin = (int)_SelectedPos.z;
                         float zMax = (int)_SelectedPos.z + _SelectedAreaSize;
 
                         if (zMin <= i.worldPos.z && zMax >= i.worldPos.z &&

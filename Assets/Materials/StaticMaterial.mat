@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: StaticMaterial
-  m_Shader: {fileID: 4800000, guid: 604c70c0b7bbc4841a1b715ab506cffe, type: 3}
+  m_Shader: {fileID: 4800000, guid: c84ecf3b9a4282646a3e5f5af38976f7, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
@@ -78,6 +78,7 @@ Material:
     - _DistortionStrengthScaled: 0
     - _DstBlend: 0
     - _EmissionEnabled: 0
+    - _EnableSelectedRendering: 0
     - _FlipbookBlending: 0
     - _FlipbookMode: 0
     - _GlossMapScale: 1
@@ -106,6 +107,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SelectedColor: {r: 0.17254902, g: 0.8117647, b: 0.16470589, a: 1}
     - _SelectedPosition: {r: 1, g: 0, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

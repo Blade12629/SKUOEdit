@@ -85,7 +85,7 @@ Material:
     - _DrawGrid: 0
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
-    - _EnableSelectedRendering: 0
+    - _EnableSelectedRendering: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

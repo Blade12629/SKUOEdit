@@ -44,6 +44,8 @@ namespace Assets.Source.Game.Map
         MapChunk[] _chunks;
         Rect _renderedArea;
 
+        GameObject _lastSelectedStatic;
+
         Dictionary<Vector2, List<GameObject>> _statics;
 
         [SerializeField] bool _toggleGrid;
@@ -426,6 +428,40 @@ namespace Assets.Source.Game.Map
                 _chunks[i]?.DisableGrid();
         }
 
+        public void EnableSelectedGrid()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.EnableSelectionRendering();
+        }
+
+        public void DisableSelectedGrid()
+        {
+            for (int i = 0; i < _chunks.Length; i++)
+                _chunks[i]?.DisableSelectionRendering();
+        }
+
+        public void SetSelectedStatic(GameObject st)
+        {
+            if (_lastSelectedStatic != null)
+            {
+                if (st.Equals(_lastSelectedStatic))
+                    return;
+
+                _lastSelectedStatic.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 0);
+            }
+
+            st.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 1);
+            _lastSelectedStatic = st;
+        }
+
+        public void UnsetSelectedStatic()
+        {
+            if (_lastSelectedStatic == null)
+                return;
+
+            _lastSelectedStatic.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 0);
+        }
+
         /// <summary>
         /// Sets the map grid color
         /// </summary>
@@ -804,8 +840,7 @@ namespace Assets.Source.Game.Map
             if (entry == null)
                 return null;
 
-            GameObject staticObj = StaticPool.Rent();
-            staticObj.SetActive(true);
+            GameObject staticObj = StaticPool.Rent(true);
             staticObj.name = stId.ToString();
             Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
 
@@ -818,6 +853,10 @@ namespace Assets.Source.Game.Map
             renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
             renderer.material.mainTexture = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(stId);
             staticObj.transform.position = pos;
+
+            MeshCollider collider = staticObj.GetComponent<MeshCollider>();
+            // Force rebuild of collider
+            collider.sharedMesh = mesh;
 
 
             Vector2 staticDictPos = new Vector2(pos.x, pos.z);

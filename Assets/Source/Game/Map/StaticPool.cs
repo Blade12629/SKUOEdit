@@ -29,6 +29,20 @@ namespace Assets.Source.Game.Map
         }
 
         /// <summary>
+        /// Rent a new object, if no objects available the pool will grow by 100 objects
+        /// <para>optionally you can choose to enable the gameobject before it is returned</para>
+        /// </summary>
+        public static GameObject Rent(bool enableObject)
+        {
+            GameObject obj = Rent();
+
+            if (!obj.activeSelf && enableObject)
+                obj.SetActive(true);
+
+            return obj;
+        }
+
+        /// <summary>
         /// Returns the object back to the pool and disable it
         /// </summary>
         public static void Return(GameObject obj)

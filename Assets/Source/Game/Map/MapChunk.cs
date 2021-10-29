@@ -114,6 +114,16 @@ namespace Assets.Source.Game.Map
             _renderer.material.SetInt("_SelectedAreaSize", size);
         }
 
+        public void EnableSelectionRendering()
+        {
+            _renderer.material.SetInt("_EnableSelectedRendering", 1);
+        }
+
+        public void DisableSelectionRendering()
+        {
+            _renderer.material.SetInt("_EnableSelectedRendering", 0);
+        }
+
         public bool IsGridEnabled()
         {
             return _renderer.material.GetInt("_DrawGrid") != 0;

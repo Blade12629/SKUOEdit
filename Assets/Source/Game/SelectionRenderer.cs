@@ -14,6 +14,8 @@ namespace Assets.Source.Game
         public static int MaxAreaSize => 20;
         public static SelectionRenderer Instance { get; private set; }
 
+        static readonly Quaternion _staticRotation = Quaternion.Euler(0, -90, 0);
+
         public int AreaSize
         {
             get => _areaSize;
@@ -76,6 +78,36 @@ namespace Assets.Source.Game
 
             _renderer.positionCount = linePoints.Count;
             _renderer.SetPositions(linePoints.ToArray());
+        }
+
+        public void SetStatic(GameObject st)
+        {
+            if (st.transform.position.Equals(_lastPos))
+                return;
+
+            Mesh m = st.GetComponent<MeshFilter>()?.mesh;
+
+            if (m == null)
+                return;
+
+            _lastPos = st.transform.position;
+
+            List<Vector3> verts = new List<Vector3>();
+            m.GetVertices(verts);
+
+            Vector3[] renderVerts = new Vector3[verts.Count / 4];
+            Vector3 center = st.transform.position + new Vector3(.5f, .5f, .5f);
+
+            for (int i = 0; i < renderVerts.Length; i++)
+            {
+                Vector3 v = _staticRotation * ((verts[i * 4] + st.transform.position) - center) + center;
+                v.x--;
+
+                renderVerts[i] = v;
+            }
+
+            _renderer.positionCount = renderVerts.Length;
+            _renderer.SetPositions(renderVerts);
         }
 
         void AddDirection(List<Vector3> linePoints, int x, int z, int count, int xStep, int zStep)

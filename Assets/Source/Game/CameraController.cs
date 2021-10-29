@@ -155,10 +155,25 @@ namespace Assets.Source.Game
         void FixedUpdate()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 100000f, _terrainLayerMask))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100000f))
             {
                 GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
-                SelectionRenderer.Instance.SetPosition(hit.point);
+
+                if (hit.collider.gameObject.GetComponent<MapChunk>() != null)
+                {
+                    GameMap.Instance.UnsetSelectedStatic();
+                    GameMap.Instance.EnableSelectedGrid();
+                    GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
+                }
+                else
+                {
+                    GameMap.Instance.DisableSelectedGrid();
+                    GameMap.Instance.SetSelectedStatic(hit.collider.gameObject);
+                }
+                //if (hit.collider.gameObject.GetComponent<MapChunk>() != null)
+                //    SelectionRenderer.Instance.SetPosition(hit.point);
+                //else
+                //    SelectionRenderer.Instance.SetStatic(hit.collider.gameObject);
             }
         }
     }
