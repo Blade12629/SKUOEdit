@@ -39,7 +39,8 @@ namespace Assets.Source.Game.Map
 
         Vertex[] _vertices;
         MapTiles _mapTiles;
-        MapStatics _mapStatics;
+
+        StaticMap _staticMap;
 
         MapChunk[] _chunks;
         Rect _renderedArea;
@@ -129,7 +130,7 @@ namespace Assets.Source.Game.Map
 
             _chunks = new MapChunk[3 * 3];
             _mapTiles = new MapTiles();
-            _mapStatics = new MapStatics();
+            _staticMap = new StaticMap();
 
             EditorInput.InitializeUIPart();
 
@@ -153,7 +154,7 @@ namespace Assets.Source.Game.Map
                 StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
                 StaticsFile = Path.Combine(dir, $"statics{index}.mul");
 
-                _mapStatics.Load(StaticsFile, StaticsIdxFile, width, depth);
+                _staticMap.LoadMap(StaticsFile, StaticsIdxFile, width, depth);
 
                 Debug.Log("Loading tile blocks");
                 yield return new WaitForEndOfFrame();
@@ -197,7 +198,7 @@ namespace Assets.Source.Game.Map
                 Debug.Log("Spawning Statics");
                 yield return new WaitForEndOfFrame();
 
-                SpawnStatics();
+                _staticMap.SpawnStatics();
 
                 Debug.Log("Finished generating map");
                 yield return new WaitForEndOfFrame();
@@ -442,24 +443,12 @@ namespace Assets.Source.Game.Map
 
         public void SetSelectedStatic(GameObject st)
         {
-            if (_lastSelectedStatic != null)
-            {
-                if (st.Equals(_lastSelectedStatic))
-                    return;
-
-                _lastSelectedStatic.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 0);
-            }
-
-            st.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 1);
-            _lastSelectedStatic = st;
+            _staticMap.SetSelectedStatic(st);
         }
 
         public void UnsetSelectedStatic()
         {
-            if (_lastSelectedStatic == null)
-                return;
-
-            _lastSelectedStatic.GetComponent<MeshRenderer>().material.SetInt("_EnableSelectedRendering", 0);
+            _staticMap.UnsetSelectedStatic();  
         }
 
         /// <summary>
@@ -803,68 +792,6 @@ namespace Assets.Source.Game.Map
                     _chunks[index] = chunk;
                 }
             }
-        }
-
-        void SpawnStatics()
-        {
-            foreach (var statics in _statics.Values)
-            {
-                StaticPool.ReturnRange(statics, true);
-            }
-
-            for (int bx = 0; bx < BlockWidth; bx++)
-            {
-                int wx = bx * 8;
-
-                for (int bz = 0; bz < BlockDepth; bz++)
-                {
-                    int wz = bz * 8;
-                    StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
-
-                    if (sb == null)
-                        continue;
-
-                    for (int i = 0; i < sb.Statics.Length; i++)
-                    {
-                        ref var st = ref sb.Statics[i];
-                        LoadStatic(st.TileId, new Vector3(wx + st.Y, st.Z * .1f, wz + st.X));
-                    }
-                }
-            }
-        }
-
-        GameObject LoadStatic(uint stId, Vector3 pos)
-        {
-            StaticCacheEntry entry = StaticCache.Get(stId);
-
-            if (entry == null)
-                return null;
-
-            GameObject staticObj = StaticPool.Rent(true);
-            staticObj.name = stId.ToString();
-            Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
-
-            mesh.SetVertexBufferParams(entry.Vertices.Length, VertexLayout.Layout);
-            mesh.SetVertexBufferData(entry.Vertices, 0, 0, entry.Vertices.Length);
-            mesh.SetIndices(entry.Indices, MeshTopology.Triangles, 0);
-            mesh.RecalculateBounds();
-
-            MeshRenderer renderer = staticObj.GetComponent<MeshRenderer>();
-            renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
-            renderer.material.mainTexture = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(stId);
-            staticObj.transform.position = pos;
-
-            MeshCollider collider = staticObj.GetComponent<MeshCollider>();
-            // Force rebuild of collider
-            collider.sharedMesh = mesh;
-
-
-            Vector2 staticDictPos = new Vector2(pos.x, pos.z);
-            if (!_statics.TryGetValue(staticDictPos, out List<GameObject> statics))
-                _statics.Add(staticDictPos, statics = new List<GameObject>(100));
-            
-            statics.Add(staticObj);
-            return staticObj;
         }
 
         Vector2[] GetTileUVs(short tileId, bool getTexture)
