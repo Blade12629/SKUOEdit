@@ -26,6 +26,17 @@ namespace Assets.Source.Game
         [SerializeField] Vector3 _cameraOffset;
         [SerializeField] Camera _camera;
 
+        // TODO: allow switching between perspective (3d) and ortographic (2d)
+        /*
+         * Perspective:
+         *      Rot: 60, 235, 0
+         *      
+         *      
+         * Ortographic:
+         *      Rot: 38, 225, 0
+         *      Size == view height -> 10-15 is a good value
+         */
+
         int _terrainLayerMask;
 
         public CameraController()

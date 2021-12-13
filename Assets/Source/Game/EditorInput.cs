@@ -1,4 +1,5 @@
 ﻿using Assets.Source.Game.Map;
+using Assets.Source.Game.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,15 @@ namespace Assets.Source.Game
         static List<CachedInputAction> _actions = new List<CachedInputAction>(500);
         static int _actionIndex = -1;
 
+        static MappingBrush _brush;
+        static readonly MappingBrush _defaultBrush = new PlaneBrush();
+
         static readonly int _terrainLayerMask = 1 << 0;
+
+        static EditorInput()
+        {
+            _brush = _defaultBrush;
+        }
 
         public static void InitializeUIPart()
         {
@@ -68,6 +77,18 @@ namespace Assets.Source.Game
             }
         }
 
+        /// <summary>
+        /// Sets the current brush, if null sets the default brush
+        /// </summary>
+        /// <param name="brush"></param>
+        public static void SetBrush(MappingBrush brush)
+        {
+            if (brush == null)
+                brush = _defaultBrush;
+
+            _brush = brush;
+        }
+
         static void ExecuteInput(int xStart, int zStart)
         {
             List<int> oldValues = new List<int>();
@@ -110,18 +131,21 @@ namespace Assets.Source.Game
                 }
             }
 
-            int xEnd = xStart + sizew;
-            int zEnd = zStart + sizeh;
+            Vector3[] points = _brush.GetAllPointsWithLinePoints(new Vector3(xStart, 0, zStart));
 
-            for (int x = xStart; x < xEnd; x++)
+            unsafe
             {
-                for (int z = zStart; z < zEnd; z++)
+                fixed(Vector3* pointsp = points)
                 {
-                    ExecuteAction(action, x, z, CurrentAction == EditorAction.SetTileId ? CurrentTileId : CurrentHeightValue, oldValues, newValues);
+                    for (int i = 0; i < points.Length; i++)
+                    {
+                        Vector3 point = pointsp[i];
+                        ExecuteAction(action, (int)point.x, (int)point.z, CurrentAction == EditorAction.SetTileId ? CurrentTileId : CurrentHeightValue, oldValues, newValues);
+                    }
                 }
             }
 
-            AddAction(new CachedInputAction(action, xStart, zStart, sizew, sizeh, oldValues.ToArray(), newValues.ToArray()));
+            AddAction(new CachedInputAction(action, _brush, xStart, zStart, sizew, sizeh, oldValues.ToArray(), newValues.ToArray()));
         }
 
         static void UndoAction()
@@ -320,9 +344,12 @@ namespace Assets.Source.Game
             public int[] OldValues { get; }
             public int[] NewValues { get; }
 
-            public CachedInputAction(EditorAction action, int x, int z, int sizew, int sizeh, int[] oldValues, int[] newValues)
+            public MappingBrush Brush { get; }
+
+            public CachedInputAction(EditorAction action, MappingBrush brush, int x, int z, int sizew, int sizeh, int[] oldValues, int[] newValues)
             {
                 Action = action;
+                Brush = brush;
                 X = x;
                 Z = z;
                 SizeW = sizew;
