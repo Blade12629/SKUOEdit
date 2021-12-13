@@ -14,6 +14,7 @@ namespace Assets.Source
 
         [SerializeField] Material _defaultMaterial;
         [SerializeField] Material _defaultStaticMaterial;
+        [SerializeField] LoadingBar _loadingbar;
 
         GameMap _map;
 
@@ -24,6 +25,9 @@ namespace Assets.Source
 
         public void LoadMap(string path, int width, int depth, GenerationOption option, int[] tileHeights, int[] tileIds)
         {
+            _loadingbar.gameObject.SetActive(true);
+            _loadingbar.Text = "Loading Map";
+
             if (_map != null)
             {
                 _map.Destroy();
@@ -31,7 +35,7 @@ namespace Assets.Source
             }
 
             _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
-            _map.Load(path, width, depth, option, tileHeights, tileIds);
+            _map.Load(path, width, depth, option, tileHeights, tileIds, _loadingbar);
         }
 
         public void SaveMap(string path)

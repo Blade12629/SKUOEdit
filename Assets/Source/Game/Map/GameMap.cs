@@ -40,14 +40,8 @@ namespace Assets.Source.Game.Map
         Vertex[] _vertices;
         MapTiles _mapTiles;
 
-        StaticMap _staticMap;
-
-        MapChunk[] _chunks;
+        Chunk[] _chunks;
         Rect _renderedArea;
-
-        GameObject _lastSelectedStatic;
-
-        Dictionary<Vector2, List<GameObject>> _statics;
 
         [SerializeField] bool _toggleGrid;
 
@@ -72,7 +66,7 @@ namespace Assets.Source.Game.Map
 
             for (int i = 0; i < _chunks.Length; i++)
             {
-                MapChunk chunk = _chunks[i];
+                Chunk chunk = _chunks[i];
                 Rect chunkRenderedArea = chunk.RenderedArea;
 
                 chunk.MoveToWorld(new Vector3(chunkRenderedArea.x + xDiff, 0, chunkRenderedArea.y + zDiff));
@@ -98,7 +92,7 @@ namespace Assets.Source.Game.Map
             if (_chunks != null)
             {
                 for (int i = 0; i < _chunks.Length; i++)
-                    _chunks[i].DestroyChunk();
+                    _chunks[i].Destroy();
 
                 _chunks = null;
             }
@@ -120,7 +114,7 @@ namespace Assets.Source.Game.Map
         /// <param name="genOption">Generation option</param>
         /// <param name="tileHeights">Only used with <see cref="GenerationOption.Converted"/></param>
         /// <param name="tileIds">Only used with <see cref="GenerationOption.Converted"/></param>
-        public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds)
+        public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds, LoadingBar loadingbar)
         {
             MapFile = file;
             Width = width;
@@ -128,79 +122,68 @@ namespace Assets.Source.Game.Map
             Depth = depth;
             BlockDepth = depth / 8;
 
-            _chunks = new MapChunk[3 * 3];
-            _mapTiles = new MapTiles();
-            _staticMap = new StaticMap();
-
-            EditorInput.InitializeUIPart();
-
-            Debug.Log("Initializing minimap");
-            Minimap.Instance.Initialize(width, depth);
-
-            _statics = new Dictionary<Vector2, List<GameObject>>(width * depth);
-
             StartCoroutine(LoadMap());
 
             IEnumerator LoadMap()
             {
-                Debug.Log("Loading map");
-
-                Debug.Log("Loading static blocks");
+                loadingbar.Setup(0, 8, 0, "Loading map");
                 yield return new WaitForEndOfFrame();
 
-                int index = GetMapIndex(MapFile);
-                string dir = new FileInfo(MapFile).Directory.FullName;
+                _chunks = new Chunk[3 * 3];
+                _mapTiles = new MapTiles();
 
-                StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
-                StaticsFile = Path.Combine(dir, $"statics{index}.mul");
-
-                _staticMap.LoadMap(StaticsFile, StaticsIdxFile, width, depth);
-
-                Debug.Log("Loading tile blocks");
+                loadingbar.Increment("Initializing UI...");
                 yield return new WaitForEndOfFrame();
+
+                EditorInput.InitializeUIPart(); // loadingbar: 1
+
+                loadingbar.Increment("Initializing minimap...");
+                yield return new WaitForEndOfFrame();
+                Minimap.Instance.Initialize(width, depth); // loadingbar: 2
 
                 switch (genOption)
                 {
                     case GenerationOption.Default:
                         if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                         {
+                            loadingbar.Increment("Loading uop map file...");
                             _mapTiles.Load(MapFile, true, width, depth);
                         }
                         else
+                        {
+                            loadingbar.Increment("Loading mul map file...");
                             _mapTiles.Load(MapFile, false, width, depth);
+                        }
                         break;
 
                     case GenerationOption.Flatland:
+                        loadingbar.Increment("Generating flatland...");
                         _mapTiles.GenerateFlatland(width, depth);
                         break;
 
                     case GenerationOption.Converted:
+                        loadingbar.Increment("Converting map...");
                         _mapTiles.GenerateConverted(tileHeights, tileIds, width, depth);
                         break;
                 }
 
-                Debug.Log("Loading map vertices");
+                loadingbar.Increment("Loading map vertices...");
                 yield return new WaitForEndOfFrame();
 
-                LoadMapVertices();
+                LoadMapVertices(); // loadingbar: 4
 
-                Debug.Log("Loading minimap");
+                loadingbar.Increment("Loading minimap...");
                 yield return new WaitForEndOfFrame();
 
-                LoadMinimap();
+                LoadMinimap(); // loadingbar: 5
 
-                Debug.Log("Loading map mesh");
+                loadingbar.Increment("Loading map mesh...");
                 yield return new WaitForEndOfFrame();
 
-                LoadMapMesh();
+                LoadMapMesh(); // loadingbar: 6
                 IsMapLoaded = true;
 
-                Debug.Log("Spawning Statics");
-                yield return new WaitForEndOfFrame();
-
-                _staticMap.SpawnStatics();
-
-                Debug.Log("Finished generating map");
+                loadingbar.Increment("Finished map generation, initializing defaults...");  // loadingbar: 7
                 yield return new WaitForEndOfFrame();
 
                 if (_firstMapCreation)
@@ -216,6 +199,9 @@ namespace Assets.Source.Game.Map
 
                 OnMapFinishLoading?.Invoke();
                 CameraController.Instance.InitializePosition();
+
+                yield return new WaitForEndOfFrame();
+                loadingbar.gameObject.SetActive(false);
             }
         }
 
@@ -441,16 +427,6 @@ namespace Assets.Source.Game.Map
                 _chunks[i]?.DisableSelectionRendering();
         }
 
-        public void SetSelectedStatic(GameObject st)
-        {
-            _staticMap.SetSelectedStatic(st);
-        }
-
-        public void UnsetSelectedStatic()
-        {
-            _staticMap.UnsetSelectedStatic();  
-        }
-
         /// <summary>
         /// Sets the map grid color
         /// </summary>
@@ -618,12 +594,12 @@ namespace Assets.Source.Game.Map
 
             for (int i = 0; i < _chunks.Length; i++)
             {
-                MapChunk chunk = _chunks[i];
+                Chunk chunk = _chunks[i];
 
                 if (!chunk.IsInBounds(x, z))
                     continue;
 
-                chunk.RefreshChunk();
+                chunk.Refresh();
             }
         }
 
@@ -769,25 +745,25 @@ namespace Assets.Source.Game.Map
 
         void LoadMapMesh()
         {
-            _renderedArea = new Rect(0, 0, MapChunk.MeshSize * 3, MapChunk.MeshSize * 3);
+            _renderedArea = new Rect(0, 0, Chunk.MeshSize * 3, Chunk.MeshSize * 3);
 
             for (int x = 0; x < 3; x++)
             {
                 for (int z = 0; z < 3; z++)
                 {
                     int index = x * 3 + z;
-                    int xRender = x * MapChunk.MeshSize;
-                    int zRender = z * MapChunk.MeshSize;
+                    int xRender = x * Chunk.MeshSize;
+                    int zRender = z * Chunk.MeshSize;
 
                     if (xRender >= Width || zRender >= Depth)
                         continue;
 
-                    GameObject chunkObj = new GameObject($"Chunk {x}/{z}", typeof(MapChunk), typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
-                    MapChunk chunk = chunkObj.GetComponent<MapChunk>();
+                    GameObject chunkObj = new GameObject($"Chunk {x}/{z}", typeof(Chunk), typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
+                    Chunk chunk = chunkObj.GetComponent<Chunk>();
 
-                    Rect areaToRender = new Rect(xRender, zRender, MapChunk.MeshSize, MapChunk.MeshSize);
+                    Rect areaToRender = new Rect(xRender, zRender, Chunk.MeshSize, Chunk.MeshSize);
 
-                    chunk.BuildChunk(areaToRender);
+                    chunk.Build(areaToRender);
 
                     _chunks[index] = chunk;
                 }

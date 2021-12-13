@@ -3,20 +3,22 @@ using UnityEngine;
 
 namespace Assets.Source.Game.Map
 {
-    public sealed class MapChunk : MonoBehaviour
+    public sealed class Chunk : MonoBehaviour
     {
         public static int MeshSize = 32;
-        public Rect RenderedArea => _renderedArea;
+        public Rect RenderedArea { get; private set; }
 
-        Rect _renderedArea;
         Vertex[] _vertices;
         Mesh _mesh;
         MeshCollider _collider;
         MeshRenderer _renderer;
 
-        public void BuildChunk(Rect areaToRender)
+        /// <summary>
+        /// Builds the chunk with the specified bounds
+        /// </summary>
+        public void Build(Rect areaToRender)
         {
-            _renderedArea = areaToRender;
+            RenderedArea = areaToRender;
             _vertices = new Vertex[MeshSize * MeshSize * 4];
             _mesh = GetComponent<MeshFilter>().mesh = new Mesh();
             _collider = GetComponent<MeshCollider>();
@@ -26,7 +28,7 @@ namespace Assets.Source.Game.Map
             _renderer.material.mainTexture = Textures.GameTextures.GameTexture;
 
             _mesh.SetVertexBufferParams(_vertices.Length, VertexLayout.Layout);
-            RefreshChunk();
+            Refresh();
 
             int width = (int)areaToRender.width;
             int depth = (int)areaToRender.height;
@@ -54,21 +56,21 @@ namespace Assets.Source.Game.Map
             _collider.sharedMesh = _mesh;
         }
 
-        public void DestroyChunk()
+        /// <summary>
+        /// Destroys the <see cref="GameObject"/> of the chunk
+        /// </summary>
+        public void Destroy()
         {
             Debug.Log($"Destroying chunk {name}");
             GameObject.Destroy(gameObject);
         }
 
-        public void MoveToWorld(Vector3 newPos)
+        /// <summary>
+        /// Refreshes the chunk and updates the mesh with fresh vertices
+        /// </summary>
+        public void Refresh()
         {
-            _renderedArea = new Rect(newPos.x, newPos.z, _renderedArea.width, _renderedArea.height);
-            RefreshChunk();
-        }
-
-        public void RefreshChunk()
-        {
-            GameMap.Instance.CopyAreaVertices(_vertices, (int)_renderedArea.x, (int)_renderedArea.y, (int)_renderedArea.width, (int)_renderedArea.height);
+            GameMap.Instance.CopyAreaVertices(_vertices, (int)RenderedArea.x, (int)RenderedArea.y, (int)RenderedArea.width, (int)RenderedArea.height);
 
             using (NativeArray<Vertex> nvertices = new NativeArray<Vertex>(_vertices, Allocator.Temp))
             {
@@ -79,9 +81,18 @@ namespace Assets.Source.Game.Map
             _collider.sharedMesh = _mesh;
         }
 
+        /// <summary>
+        /// Sets the position where the chunk should start
+        /// </summary>
+        public void MoveToWorld(Vector3 pos)
+        {
+            RenderedArea = new Rect(pos.x, pos.z, RenderedArea.width, RenderedArea.height);
+            Refresh();
+        }
+
         public bool IsInBounds(int x, int z)
         {
-            return _renderedArea.Contains(new Vector2(x, z), false);
+            return RenderedArea.Contains(new Vector2(x, z), false);
         }
 
         public void EnableGrid()

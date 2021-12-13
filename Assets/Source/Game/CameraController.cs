@@ -159,16 +159,16 @@ namespace Assets.Source.Game
             {
                 GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
 
-                if (hit.collider.gameObject.GetComponent<MapChunk>() != null)
+                if (hit.collider.gameObject.GetComponent<Chunk>() != null)
                 {
-                    GameMap.Instance.UnsetSelectedStatic();
+                    //GameMap.Instance.UnsetSelectedStatic();
                     GameMap.Instance.EnableSelectedGrid();
                     GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
                 }
                 else
                 {
                     GameMap.Instance.DisableSelectedGrid();
-                    GameMap.Instance.SetSelectedStatic(hit.collider.gameObject);
+                    //GameMap.Instance.SetSelectedStatic(hit.collider.gameObject);
                 }
                 //if (hit.collider.gameObject.GetComponent<MapChunk>() != null)
                 //    SelectionRenderer.Instance.SetPosition(hit.point);
