@@ -37,8 +37,11 @@ namespace Assets.Source.Game.Map
 
         public bool IsMapLoaded { get; private set; }
 
+        StaticMap _staticMap;
         Vertex[] _vertices;
         MapTiles _mapTiles;
+
+        Dictionary<Vector2, List<GameObject>> _statics;
 
         Chunk[] _chunks;
         Rect _renderedArea;
@@ -131,6 +134,7 @@ namespace Assets.Source.Game.Map
 
                 _chunks = new Chunk[3 * 3];
                 _mapTiles = new MapTiles();
+                _staticMap = new StaticMap();
 
                 loadingbar.Increment("Initializing UI...");
                 yield return new WaitForEndOfFrame();
@@ -140,6 +144,16 @@ namespace Assets.Source.Game.Map
                 loadingbar.Increment("Initializing minimap...");
                 yield return new WaitForEndOfFrame();
                 Minimap.Instance.Initialize(width, depth); // loadingbar: 2
+
+                _statics = new Dictionary<Vector2, List<GameObject>>(width * depth);
+
+                int index = GetMapIndex(MapFile);
+                string dir = new FileInfo(MapFile).Directory.FullName;
+
+                StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
+                StaticsFile = Path.Combine(dir, $"statics{index}.mul");
+
+                _staticMap.LoadMap(StaticsFile, StaticsIdxFile, width, depth);
 
                 switch (genOption)
                 {
@@ -182,6 +196,12 @@ namespace Assets.Source.Game.Map
 
                 LoadMapMesh(); // loadingbar: 6
                 IsMapLoaded = true;
+
+                Debug.Log("Spawning Statics");
+                yield return new WaitForEndOfFrame();
+
+                _staticMap.SpawnStatics();
+
 
                 loadingbar.Increment("Finished map generation, initializing defaults...");  // loadingbar: 7
                 yield return new WaitForEndOfFrame();

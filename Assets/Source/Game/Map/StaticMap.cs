@@ -64,13 +64,13 @@ namespace Assets.Source.Game.Map
                 StaticPool.ReturnRange(statics, true);
             }
 
-            for (int bx = 56; bx < 75; bx++)
-            //for (int bx = 0; bx < BlockWidth; bx++)
+            //for (int bx = 56; bx < 75; bx++)
+            for (int bx = 0; bx < BlockWidth; bx++)
             {
                 int wx = bx * 8;
 
-                for (int bz = 112; bz < 138; bz++)
-                //for (int bz = 0; bz < BlockDepth; bz++)
+                //for (int bz = 112; bz < 138; bz++)
+                for (int bz = 0; bz < BlockDepth; bz++)
                 {
                     int wz = bz * 8;
                     StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
@@ -121,9 +121,9 @@ namespace Assets.Source.Game.Map
             renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
 
             renderer.material.mainTexture = staticTex;
-            staticObj.transform.position = new Vector3(pos.x + 1.5f, pos.y + .1f, pos.z + .5f);
-            staticObj.transform.rotation = Quaternion.Euler(new Vector3(0, 225, 0));
-            staticObj.transform.localScale = new Vector3(staticTex.width / 31f, 0, staticTex.height / 31f);
+            staticObj.transform.position = new Vector3(pos.x + 2f, pos.y + .49f, pos.z + .91f);
+            staticObj.transform.rotation = Quaternion.Euler(new Vector3(0, -138, 0));
+            staticObj.transform.localScale = new Vector3(staticTex.width / 29.333333333f, 0, staticTex.height / 32.5f); // TODO: fix these values someday
 
             MeshCollider collider = staticObj.GetComponent<MeshCollider>();
             // Force rebuild of collider

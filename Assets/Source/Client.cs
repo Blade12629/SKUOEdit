@@ -1,4 +1,5 @@
 ﻿using Assets.Source.Game.Map;
+using Assets.Source.Threading;
 using Assets.Source.UI;
 using System.Collections;
 using UnityEngine;
@@ -27,6 +28,10 @@ namespace Assets.Source
         {
             _loadingbar.gameObject.SetActive(true);
             _loadingbar.Text = "Loading Map";
+
+            //StaticMap sm = new StaticMap();
+            //sm.LoadMap("Test\\statics3.mul", "Test\\staidx3.mul", width, depth);
+            //sm.SpawnStatics();
 
             if (_map != null)
             {
@@ -60,6 +65,9 @@ namespace Assets.Source
 
                 return;
             }
+
+            GameObject uthreader = new GameObject("UThreading");
+            uthreader.AddComponent(typeof(UThreading));
 
             GameFiles.LoadClientFiles();
             TileBrowser.Instance.LoadTiles();

@@ -68,6 +68,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\QueuedPool.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StringHelper.cs" />
     <Compile Include="Assets\Source\Game\Map\ImageMesh.cs" />
+    <Compile Include="Assets\Source\UI\LoadingBar.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\LightsLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Deque.cs" />
     <Compile Include="Assets\Source\Extensions.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\RandomHelper.cs" />
     <Compile Include="Assets\Source\Game\Map\StaticMap.cs" />
     <Compile Include="Assets\Source\Game\Statics\Item.cs" />
+    <Compile Include="Assets\Source\Threading\UThreading.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\UnsafeMemoryManager.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\ReadOnlyArrayView.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\OrderedDictionary.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\FindState.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultEncoder.cs" />
     <Compile Include="Assets\Source\Input.cs" />
+    <Compile Include="Assets\Source\Utils.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\FileSystemHelper.cs" />
     <Compile Include="Assets\Source\Game\SelectionRenderer.cs" />
@@ -142,6 +145,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\MathHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\ZLibHeader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\CollectionHelper.cs" />
+    <Compile Include="Assets\Source\Common\SimplePool.cs" />
     <Compile Include="Assets\Source\IO\MapBase.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Extensions.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoRecord.cs" />
@@ -162,7 +166,7 @@
     <Compile Include="Assets\Source\StaticsBuilder\TexImage.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ValueStringBuilder.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\CameraControllerStatics.cs" />
-    <Compile Include="Assets\Source\Game\Map\MapChunk.cs" />
+    <Compile Include="Assets\Source\Game\Map\Chunk.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonBuilder.cs" />
     <Compile Include="Assets\Source\Game\CameraController.cs" />
     <Compile Include="Assets\Source\UI\LoadMapPanel.cs" />
