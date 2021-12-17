@@ -21,6 +21,12 @@ namespace Assets.Source.Threading
         SimplePool<EventWaitHandle> _handlePool;
         ConcurrentQueue<(Action, EventWaitHandle)> _toInvoke;
         
+        public static void Init()
+        { 
+            GameObject uthreader = new GameObject("UThreading");
+            uthreader.AddComponent(typeof(UThreading));
+        }
+
         /// <summary>
         /// Executes an action on the unity thread
         /// </summary>

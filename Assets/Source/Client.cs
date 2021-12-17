@@ -66,8 +66,7 @@ namespace Assets.Source
                 return;
             }
 
-            GameObject uthreader = new GameObject("UThreading");
-            uthreader.AddComponent(typeof(UThreading));
+            UThreading.Init();
 
             GameFiles.LoadClientFiles();
             TileBrowser.Instance.LoadTiles();
