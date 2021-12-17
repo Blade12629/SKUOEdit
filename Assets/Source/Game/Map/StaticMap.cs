@@ -64,13 +64,13 @@ namespace Assets.Source.Game.Map
                 StaticPool.ReturnRange(statics, true);
             }
 
-            //for (int bx = 56; bx < 75; bx++)
-            for (int bx = 0; bx < BlockWidth; bx++)
+            for (int bx = 56; bx < 75; bx++)
+            //for (int bx = 0; bx < BlockWidth; bx++)
             {
                 int wx = bx * 8;
 
-                //for (int bz = 112; bz < 138; bz++)
-                for (int bz = 0; bz < BlockDepth; bz++)
+                for (int bz = 112; bz < 138; bz++)
+                //for (int bz = 0; bz < BlockDepth; bz++)
                 {
                     int wz = bz * 8;
                     StaticBlock sb = _mapStatics.GetStaticBlock(wx, wz);
@@ -107,27 +107,17 @@ namespace Assets.Source.Game.Map
 
             GameObject staticObj = StaticPool.Rent(true);
             staticObj.name = staticId.ToString();
-            Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
 
-            mesh.SetVertexBufferParams(_imageVerts.Length, VertexLayout.Layout);
-            mesh.SetVertexBufferData(_imageVerts, 0, 0, _imageVerts.Length);
-            mesh.SetIndices(_imageInds, MeshTopology.Triangles, 0);
-            //mesh.SetVertexBufferParams(entry.Vertices.Length, VertexLayout.Layout);
-            //mesh.SetVertexBufferData(entry.Vertices, 0, 0, entry.Vertices.Length);
-            //mesh.SetIndices(entry.Indices, MeshTopology.Triangles, 0);
-            mesh.RecalculateBounds();
+            Rect spriteRect = new Rect(0, 0, staticTex.width, staticTex.height);
+            Vector2 spritePivot = new Vector2(0, 0);
 
-            MeshRenderer renderer = staticObj.GetComponent<MeshRenderer>();
-            renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
+            SpriteRenderer renderer = staticObj.GetComponent<SpriteRenderer>();
+            renderer.sprite = Sprite.Create(staticTex, spriteRect, spritePivot, staticTex.width);
+            renderer.spriteSortPoint = SpriteSortPoint.Pivot;
 
-            renderer.material.mainTexture = staticTex;
-            staticObj.transform.position = new Vector3(pos.x + 2f, pos.y + .49f, pos.z + .91f);
-            staticObj.transform.rotation = Quaternion.Euler(new Vector3(0, -138, 0));
-            staticObj.transform.localScale = new Vector3(staticTex.width / 29.333333333f, 0, staticTex.height / 32.5f); // TODO: fix these values someday
-
-            MeshCollider collider = staticObj.GetComponent<MeshCollider>();
-            // Force rebuild of collider
-            collider.sharedMesh = mesh;
+            staticObj.transform.position = new Vector3(pos.x + 2f, pos.y + .48f, pos.z + .91f);
+            staticObj.transform.rotation = Quaternion.Euler(new Vector3(90, 225, 0));
+            staticObj.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
 
             Vector2 staticDictPos = new Vector2(pos.x, pos.z);
 
@@ -136,6 +126,43 @@ namespace Assets.Source.Game.Map
 
             statics.Add(staticObj);
         }
+        
+        //void SpawnStatic(uint staticId, Vector3 pos)
+        //{
+        //    Texture2D staticTex = ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(staticId);
+
+        //    GameObject staticObj = StaticPool.Rent(true);
+        //    staticObj.name = staticId.ToString();
+        //    Mesh mesh = staticObj.GetComponent<MeshFilter>().mesh = new Mesh();
+
+        //    mesh.SetVertexBufferParams(_imageVerts.Length, VertexLayout.Layout);
+        //    mesh.SetVertexBufferData(_imageVerts, 0, 0, _imageVerts.Length);
+        //    mesh.SetIndices(_imageInds, MeshTopology.Triangles, 0);
+        //    //mesh.SetVertexBufferParams(entry.Vertices.Length, VertexLayout.Layout);
+        //    //mesh.SetVertexBufferData(entry.Vertices, 0, 0, entry.Vertices.Length);
+        //    //mesh.SetIndices(entry.Indices, MeshTopology.Triangles, 0);
+        //    mesh.RecalculateBounds();
+
+        //    MeshRenderer renderer = staticObj.GetComponent<MeshRenderer>();
+        //    renderer.material = new Material(Client.Instance.DefaultStaticMaterial);
+
+        //    renderer.material.mainTexture = staticTex;
+        //    staticObj.transform.position = new Vector3(pos.x + 2f, pos.y + .49f, pos.z + .91f);
+        //    staticObj.transform.rotation = Quaternion.Euler(new Vector3(0, -138, 0));
+        //    staticObj.transform.localScale = new Vector3(staticTex.width / 29.333333333f, 0, staticTex.height / 32.5f); // TODO: fix these values someday
+
+        //    MeshCollider collider = staticObj.GetComponent<MeshCollider>();
+        //    // Force rebuild of collider
+        //    collider.sharedMesh = mesh;
+
+        //    Vector2 staticDictPos = new Vector2(pos.x, pos.z);
+
+        //    if (!_statics.TryGetValue(staticDictPos, out List<GameObject> statics))
+        //        _statics.Add(staticDictPos, statics = new List<GameObject>(100));
+
+        //    statics.Add(staticObj);
+        //}
+
         //void SpawnStatic(uint staticId, Vector3 pos)
         //{
         //    StaticCacheEntry entry = StaticCache.Get(staticId);

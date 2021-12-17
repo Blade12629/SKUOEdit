@@ -85,11 +85,12 @@ namespace Assets.Source.Game.Map
 
         static GameObject CreatePoolObject()
         {
-            GameObject result = new GameObject("Static", typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider));
+            GameObject result = new GameObject("Static", typeof(SpriteRenderer));
+            //GameObject result = new GameObject("Static", typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider));
             result.SetActive(false);
             result.transform.rotation = _defaultStaticRot;
 
-            result.GetComponent<MeshFilter>().mesh = new Mesh();
+            //result.GetComponent<MeshFilter>().mesh = new Mesh();
 
             return result;
         }
