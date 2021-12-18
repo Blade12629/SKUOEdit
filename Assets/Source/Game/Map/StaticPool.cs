@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Source.Common;
 
 namespace Assets.Source.Game.Map
 {
@@ -13,19 +14,15 @@ namespace Assets.Source.Game.Map
     /// </summary>
     public static class StaticPool
     {
-        static readonly Queue<GameObject> _pool = new Queue<GameObject>(_growSize);
-        static readonly int _growSize = 100;
-        static readonly Quaternion _defaultStaticRot = Quaternion.Euler(0, -90, 0);
+        static readonly SimplePool<GameObject> _pool = new SimplePool<GameObject>(25, CreatePoolObject);
+        static readonly Quaternion _defaultStaticRotOrtographic = Quaternion.Euler(90, 225, 0);
+        static readonly Quaternion _defaultStaticRotPerspective = Quaternion.Euler(0, -90, 0);
 
-        /// <summary>
-        /// Rent a new object, if no objects available the pool will grow by 100 objects
-        /// </summary>
+        static readonly Vector3 _defaultScaleOrtographic = new Vector3(1.5f, 1.5f, 1f);
+
         public static GameObject Rent()
         {
-            if (_pool.Count == 0)
-                Grow();
-
-            return _pool.Dequeue();
+            return _pool.Rent();
         }
 
         /// <summary>
@@ -41,7 +38,6 @@ namespace Assets.Source.Game.Map
 
             return obj;
         }
-
         /// <summary>
         /// Returns the object back to the pool and disable it
         /// </summary>
@@ -58,7 +54,7 @@ namespace Assets.Source.Game.Map
             if (disableObject && obj.activeSelf)
                 obj.SetActive(false);
 
-            _pool.Enqueue(obj);
+            _pool.Return(obj);
         }
 
         public static void ReturnRange(List<GameObject> obj, bool disableObject)
@@ -77,20 +73,12 @@ namespace Assets.Source.Game.Map
             }
         }
 
-        static void Grow()
-        {
-            for (int i = 0; i < _growSize; i++)
-                _pool.Enqueue(CreatePoolObject());
-        }
-
         static GameObject CreatePoolObject()
         {
             GameObject result = new GameObject("Static", typeof(SpriteRenderer));
-            //GameObject result = new GameObject("Static", typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider));
             result.SetActive(false);
-            result.transform.rotation = _defaultStaticRot;
-
-            //result.GetComponent<MeshFilter>().mesh = new Mesh();
+            result.transform.rotation = _defaultStaticRotOrtographic;
+            result.transform.localScale = _defaultScaleOrtographic;
 
             return result;
         }
