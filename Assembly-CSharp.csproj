@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -64,13 +65,12 @@
     <Compile Include="Assets\Source\ClassicUO\IO\UOFilesOverrideMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\QueuedPool.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StringHelper.cs" />
-    <Compile Include="Assets\Source\Game\Map\ImageMesh.cs" />
     <Compile Include="Assets\Source\UI\LoadingBar.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\LightsLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Deque.cs" />
     <Compile Include="Assets\Source\Extensions.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\TexmapsLoader.cs" />
-    <Compile Include="Assets\Source\Game\Map\StaticCache.cs" />
+    <Compile Include="Assets\Source\Game\Map\Statics\StaticCache.cs" />
     <Compile Include="Assets\Source\UI\GenerateFlatlandMapPanel.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonAttributes.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Json.cs" />
@@ -96,7 +96,7 @@
     <Compile Include="Assets\Source\Game\Statics\StaticInfo.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\TextEditRow.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\RandomHelper.cs" />
-    <Compile Include="Assets\Source\Game\Map\StaticMap.cs" />
+    <Compile Include="Assets\Source\Game\Map\Statics\StaticMap.cs" />
     <Compile Include="Assets\Source\Game\Statics\Item.cs" />
     <Compile Include="Assets\Source\Threading\UThreading.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\UnsafeMemoryManager.cs" />
@@ -130,7 +130,7 @@
     <Compile Include="Assets\Source\Game\Map\VertexLayout.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\DataReader.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\OnClickEvent.cs" />
-    <Compile Include="Assets\Source\Game\Map\StaticPool.cs" />
+    <Compile Include="Assets\Source\Game\Map\Statics\StaticPool.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiLoader.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\FileType.cs" />
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\Native.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Extensions.cs" />
     <Compile Include="Assets\Source\Game\Mapping\MappingBrush.cs" />
-    <Compile Include="Assets\Source\Game\Map\Statics\StaticUtility.cs" />
     <Compile Include="Assets\Source\TestImageObj.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\TileDataLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\HuesLoader.cs" />

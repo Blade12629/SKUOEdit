@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Source.Game.Map
+namespace Assets.Source.Game.Map.Statics
 {
     /// <summary>
     /// Simple class which allows to get static entries while only loading each static id once

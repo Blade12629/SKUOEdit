@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Source.Game.Map
+namespace Assets.Source.Game.Map.Statics
 {
     public class StaticMap
     {

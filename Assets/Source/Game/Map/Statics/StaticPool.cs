@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Assets.Source.Common;
 
-namespace Assets.Source.Game.Map
+namespace Assets.Source.Game.Map.Statics
 {
     /// <summary>
     /// A pool which allows to reuse statics
