@@ -24,8 +24,6 @@ namespace Assets.Source.Game.Map
         public static event Action OnMapFinishLoading;
         public static event Action OnMapDestroyed;
 
-        static readonly FileShare FileShareFlags = FileShare.ReadWrite | FileShare.Delete;
-
         public int Width { get; private set; }
         public int BlockWidth { get; private set; }
         public int Depth { get; private set; }
@@ -37,18 +35,14 @@ namespace Assets.Source.Game.Map
 
         public bool IsMapLoaded { get; private set; }
 
-        //StaticMap _staticMap;
-        Vertex[] _vertices;
-        MapTiles _mapTiles;
-
-        //Dictionary<Vector2, List<GameObject>> _statics;
+        bool _toggleGrid;
+        bool _firstMapCreation;
 
         Chunk[] _chunks;
         Rect _renderedArea;
 
-        [SerializeField] bool _toggleGrid;
-
-        bool _firstMapCreation;
+        Vertex[] _vertices;
+        MapTiles _mapTiles;
 
         public GameMap()
         {
@@ -251,16 +245,14 @@ namespace Assets.Source.Game.Map
             {
                 for (; z < zend; z++)
                 {
-                    SetTileCornerHeight(x,      z,      height, 0, false, false, true);
-                    SetTileCornerHeight(x - 1,  z,      height, 3, false, false, true);
-                    SetTileCornerHeight(x - 1,  z - 1,  height, 2, false, false, true);
-                    SetTileCornerHeight(x,      z - 1,  height, 1, false, false, true);
+                    SetTileCornerHeight(x,      z,      height, 0, false, true);
+                    SetTileCornerHeight(x - 1,  z,      height, 3, false, true);
+                    SetTileCornerHeight(x - 1,  z - 1,  height, 2, false, true);
+                    SetTileCornerHeight(x,      z - 1,  height, 1, false, true);
 
                     UpdateChunks(x, z);
                 }
             }
-
-            SelectionRenderer.Instance.Refresh();
         }
 
         /// <summary>
@@ -280,16 +272,14 @@ namespace Assets.Source.Game.Map
                     int h2 = GetTileCornerHeight(x - 1, z - 1);
                     int h3 = GetTileCornerHeight(x,     z - 1);
 
-                    SetTileCornerHeight(x,      z,      h0 + height, 0, false, false, true);
-                    SetTileCornerHeight(x - 1,  z,      h1 + height, 3, false, false, true);
-                    SetTileCornerHeight(x - 1,  z - 1,  h2 + height, 2, false, false, true);
-                    SetTileCornerHeight(x,      z - 1,  h3 + height, 1, false, false, true);
+                    SetTileCornerHeight(x,      z,      h0 + height, 0, false, true);
+                    SetTileCornerHeight(x - 1,  z,      h1 + height, 3, false, true);
+                    SetTileCornerHeight(x - 1,  z - 1,  h2 + height, 2, false, true);
+                    SetTileCornerHeight(x,      z - 1,  h3 + height, 1, false, true);
 
                     UpdateChunks(x, z);
                 }
             }
-
-            SelectionRenderer.Instance.Refresh();
         }
 
         /// <summary>
@@ -333,12 +323,11 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetTileCornerHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x, z, height, 0, false, false, true);
-            SetTileCornerHeight(x - 1, z, height, 3, false, false, true);
-            SetTileCornerHeight(x - 1, z - 1, height, 2, false, false, true);
-            SetTileCornerHeight(x, z - 1, height, 1, false, false, true);
+            SetTileCornerHeight(x, z, height, 0, false, true);
+            SetTileCornerHeight(x - 1, z, height, 3, false, true);
+            SetTileCornerHeight(x - 1, z - 1, height, 2, false, true);
+            SetTileCornerHeight(x, z - 1, height, 1, false, true);
 
-            SelectionRenderer.Instance.Refresh();
             UpdateChunks(x, z);
         }
 
@@ -550,7 +539,7 @@ namespace Assets.Source.Game.Map
             return (x * depth + z) * (int)indexType;
         }
 
-        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks, bool refreshSelection, bool refreshUVs)
+        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks, bool refreshUVs)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
@@ -565,9 +554,6 @@ namespace Assets.Source.Game.Map
 
             if (refreshUVs)
                 RefreshUVs(x, z, false);
-
-            if (refreshSelection)
-                SelectionRenderer.Instance.Refresh();
 
             if (updateChunks)
                 UpdateChunks(x, z);
@@ -625,34 +611,6 @@ namespace Assets.Source.Game.Map
         int PositionToIndex(int x, int z, IndexType indexType)
         {
             return (x * Width + z) * (int)indexType;
-        }
-
-        int GetMapIndex(string fileName)
-        {
-            StringBuilder sb = new StringBuilder(2);
-
-            bool wasNumber = false;
-            for (int i = fileName.Length - 1; i >= 0; i--)
-            {
-                char c = fileName[i];
-
-                if (!char.IsNumber(c))
-                {
-                    if (wasNumber)
-                        break;
-                }
-                else
-                {
-                    wasNumber = true;
-
-                    if (sb.Length == 0)
-                        sb.Append(c);
-                    else
-                        sb.Insert(0, c);
-                }
-            }
-
-            return int.Parse(sb.ToString());
         }
 
         void LoadMapVertices()

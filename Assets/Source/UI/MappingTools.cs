@@ -42,11 +42,10 @@ namespace Assets.Source.UI
             if (!int.TryParse(_selectionAreaSize.text, out int selectionAreaSize))
                 return;
 
-            selectionAreaSize = Math.Max(1, Math.Min(selectionAreaSize, SelectionRenderer.MaxAreaSize));
+            selectionAreaSize = Math.Max(1, Math.Min(selectionAreaSize, 20));
 
             Game.Map.GameMap.Instance.SetGridSize(selectionAreaSize);
             EditorInput.CurrentSize = selectionAreaSize;
-            SelectionRenderer.Instance.AreaSize = selectionAreaSize;
             _selectionAreaSize.SetTextWithoutNotify(selectionAreaSize.ToString());
         }
 

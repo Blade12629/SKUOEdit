@@ -131,7 +131,7 @@ namespace Assets.Source.Game
                 }
             }
 
-            Vector3[] points = _brush.GetAllPointsWithLinePoints(new Vector3(xStart, 0, zStart));
+            Vector3[] points = _brush.GetBrushPoints(new Vector3(xStart, 0, zStart));
 
             unsafe
             {

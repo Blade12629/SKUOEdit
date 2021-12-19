@@ -9,57 +9,25 @@ namespace Assets.Source.Game.Mapping
 {
     public sealed class PlaneBrush : MappingBrush
     {
-        static readonly Vector3[] _baseBrushPoints = new Vector3[]
+        public PlaneBrush(int size) : base(size, GlobalMinSize, GlobalMaxSize)
         {
-            new Vector3(0, 0, 0),
-            new Vector3(0, 0, 1),
-            new Vector3(1, 0, 1),
-            new Vector3(1, 0, 0),
-        };
+        }
 
-        public PlaneBrush(int size) : base(size)
+        public PlaneBrush() : this(GlobalMinSize)
         {
 
         }
 
-        public PlaneBrush() : this(1)
+        public override Vector3[] GetBrushPoints(Vector3 offset)
         {
+            Vector3[] result = new Vector3[Size * Size];
+            int offsetX = (int)offset.x;
+            int offsetZ = (int)offset.z;
 
-        }
-
-        public override Vector3[] GetBrushPoints()
-        {
-            Vector3[] result = new Vector3[_baseBrushPoints.Length];
-            Array.Copy(_baseBrushPoints, result, result.Length);
-
-            if (Size <= 1)
-                return result;
-
-            unsafe
-            {
-                fixed(Vector3* rp = result)
-                {
-                    for (int i = 0; i < result.Length; i++)
-                    {
-                        Vector3* v = rp + i;
-
-                        if (v->x > 0)
-                            v->x += Size;
-                        else if (v->x < 0)
-                            v->x -= Size;
-
-                        if (v->y > 0)
-                            v->y += Size;
-                        else if (v->y < 0)
-                            v->y -= Size;
-
-                        if (v->z > 0)
-                            v->z += Size;
-                        else if (v->z < 0)
-                            v->z -= Size;
-                    }
-                }
-            }
+            int index = 0;
+            for (int x = 0; x < Size; x++)
+                for (int z = 0; z < Size; z++)
+                    result[index++] = new Vector3(x + offsetX, 0, z + offsetZ);
 
             return result;
         }

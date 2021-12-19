@@ -83,8 +83,6 @@ Shader "CustomShaders/TerrainShader"
                 }
 
                 // Selected Tile
-                // for some reason this does not work correctly, maybe someone who is better at this could help me out here (pretty easy to see what i'm talking about once you have loaded any map in
-                                                                                                                          // and move your cursor around
                 if (_EnableSelectedRendering)
                 {
                     float xMin = (int)_SelectedPos.x;
@@ -97,7 +95,7 @@ Shader "CustomShaders/TerrainShader"
 
                         if (zMin <= i.worldPos.z && zMax >= i.worldPos.z &&
                             (wxmod < _GridSize || wxmod > 1 - _GridSize ||
-                                wzmod < _GridSize || wzmod > 1 - _GridSize))
+                             wzmod < _GridSize || wzmod > 1 - _GridSize))
                         {
                             result = 2;
                         }
