@@ -35,10 +35,12 @@ namespace Assets.Source.Game.Map
 
         public bool IsMapLoaded { get; private set; }
 
+        public MapChunk Chunk => _chunk;
+
         bool _toggleGrid;
         bool _firstMapCreation;
 
-        Chunk[] _chunks;
+        MapChunk _chunk;
         Rect _renderedArea;
 
         Vertex[] _vertices;
@@ -61,13 +63,7 @@ namespace Assets.Source.Game.Map
             if (!IsMapLoaded)
                 return;
 
-            for (int i = 0; i < _chunks.Length; i++)
-            {
-                Chunk chunk = _chunks[i];
-                Rect chunkRenderedArea = chunk.RenderedArea;
-
-                chunk.MoveToWorld(new Vector3(chunkRenderedArea.x + xDiff, 0, chunkRenderedArea.y + zDiff));
-            }
+            _chunk.MoveToWorld((Point)newPos);
         }
 
         public void Destroy()
@@ -86,15 +82,13 @@ namespace Assets.Source.Game.Map
             _mapTiles = null;
             _renderedArea = default;
 
-            if (_chunks != null)
+            if (_chunk != null)
             {
-                for (int i = 0; i < _chunks.Length; i++)
-                    _chunks[i].Destroy();
-
-                _chunks = null;
+                Destroy(_chunk.gameObject);
+                _chunk = null;
             }
 
-            GameObject.Destroy(gameObject);
+            Destroy(gameObject);
 
             Instance = null;
             IsMapLoaded = false;
@@ -119,6 +113,9 @@ namespace Assets.Source.Game.Map
             Depth = depth;
             BlockDepth = depth / 8;
 
+            GameObject chunkObj = new GameObject("Map Chunk", typeof(MapChunk));
+            _chunk = chunkObj.GetComponent<MapChunk>();
+
             StartCoroutine(LoadMap());
 
             IEnumerator LoadMap()
@@ -126,7 +123,6 @@ namespace Assets.Source.Game.Map
                 loadingbar.Setup(0, 8, 0, "Loading map");
                 yield return new WaitForEndOfFrame();
 
-                _chunks = new Chunk[3 * 3];
                 _mapTiles = new MapTiles();
                 //_staticMap = new StaticMap();
 
@@ -250,7 +246,7 @@ namespace Assets.Source.Game.Map
                     SetTileCornerHeight(x - 1,  z - 1,  height, 2, false, true);
                     SetTileCornerHeight(x,      z - 1,  height, 1, false, true);
 
-                    UpdateChunks(x, z);
+                    _chunk.RebuildVertices();
                 }
             }
         }
@@ -277,7 +273,7 @@ namespace Assets.Source.Game.Map
                     SetTileCornerHeight(x - 1,  z - 1,  h2 + height, 2, false, true);
                     SetTileCornerHeight(x,      z - 1,  h3 + height, 1, false, true);
 
-                    UpdateChunks(x, z);
+                    _chunk.RebuildVertices();
                 }
             }
         }
@@ -328,7 +324,7 @@ namespace Assets.Source.Game.Map
             SetTileCornerHeight(x - 1, z - 1, height, 2, false, true);
             SetTileCornerHeight(x, z - 1, height, 1, false, true);
 
-            UpdateChunks(x, z);
+            _chunk.RebuildVertices();
         }
 
         /// <summary>
@@ -410,8 +406,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void EnableGrid()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.EnableGrid();
+            _chunk.IsRenderingGrid = true;
         }
 
         /// <summary>
@@ -419,20 +414,17 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void DisableGrid()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.DisableGrid();
+            _chunk.IsRenderingGrid = false;
         }
 
         public void EnableSelectedGrid()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.EnableSelectionRendering();
+            _chunk.IsRenderingSelection = true;
         }
 
         public void DisableSelectedGrid()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.DisableSelectionRendering();
+            _chunk.IsRenderingSelection = false;
         }
 
         /// <summary>
@@ -440,8 +432,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetGridColor(Color color)
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.SetGridColor(color);
+            _chunk.GridColor = color;
         }
 
         /// <summary>
@@ -449,8 +440,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetGridSize(float size)
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.SetGridSize(size);
+            _chunk.GridSize = size;
         }
 
         /// <summary>
@@ -458,15 +448,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public bool IsGridEnabled()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-            {
-                if (_chunks[i] == null)
-                    continue;
-
-                return _chunks[i].IsGridEnabled();
-            }
-
-            return false;
+            return _chunk.IsRenderingGrid;
         }
 
         /// <summary>
@@ -474,15 +456,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public Color GetGridColor()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-            {
-                if (_chunks[i] == null)
-                    continue;
-
-                return _chunks[i].GetGridColor();
-            }
-
-            return default;
+            return _chunk.GridColor;
         }
 
         /// <summary>
@@ -490,15 +464,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public float GetGridSize()
         {
-            for (int i = 0; i < _chunks.Length; i++)
-            {
-                if (_chunks[i] == null)
-                    continue;
-
-                return _chunks[i].GetGridSize();
-            }
-
-            return 0;
+            return _chunk.GridSize;
         }
 
         /// <summary>
@@ -506,17 +472,7 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetSelectedTile(int x, int z)
         {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.SetSelectedTile(x, z);
-        }
-
-        /// <summary>
-        /// Sets the currently selected tile area size <see cref="SelectionRenderer"/>
-        /// </summary>
-        public void SetSelectedAreaSize(int size)
-        {
-            for (int i = 0; i < _chunks.Length; i++)
-                _chunks[i]?.SetSelectionSize(size);
+            _chunk.SelectedTile = new Point(x, z);
         }
 
         public short GetTileId(int x, int z)
@@ -556,7 +512,7 @@ namespace Assets.Source.Game.Map
                 RefreshUVs(x, z, false);
 
             if (updateChunks)
-                UpdateChunks(x, z);
+                _chunk.RebuildVertices();
         }
 
         void RefreshUVs(int x, int z, bool updateChunks = true)
@@ -589,23 +545,7 @@ namespace Assets.Source.Game.Map
             }
 
             if (updateChunks)
-                UpdateChunks(x, z);
-        }
-
-        void UpdateChunks(int x, int z)
-        {
-            if (!InRenderedBounds(x, z))
-                return;
-
-            for (int i = 0; i < _chunks.Length; i++)
-            {
-                Chunk chunk = _chunks[i];
-
-                if (!chunk.IsInBounds(x, z))
-                    continue;
-
-                chunk.Refresh();
-            }
+                _chunk.RebuildVertices();
         }
 
         int PositionToIndex(int x, int z, IndexType indexType)
@@ -722,29 +662,31 @@ namespace Assets.Source.Game.Map
 
         void LoadMapMesh()
         {
-            _renderedArea = new Rect(0, 0, Chunk.MeshSize * 3, Chunk.MeshSize * 3);
+            _chunk.Initialize(Client.Instance.DefaultMaterial, GameTextures.GameTexture);
+            _renderedArea = new Rect(0, 0, _chunk.Size, _chunk.Size);
+            _chunk.Build();
 
-            for (int x = 0; x < 3; x++)
-            {
-                for (int z = 0; z < 3; z++)
-                {
-                    int index = x * 3 + z;
-                    int xRender = x * Chunk.MeshSize;
-                    int zRender = z * Chunk.MeshSize;
+            //for (int x = 0; x < 3; x++)
+            //{
+            //    for (int z = 0; z < 3; z++)
+            //    {
+            //        int index = x * 3 + z;
+            //        int xRender = x * Chunk.MeshSize;
+            //        int zRender = z * Chunk.MeshSize;
 
-                    if (xRender >= Width || zRender >= Depth)
-                        continue;
+            //        if (xRender >= Width || zRender >= Depth)
+            //            continue;
 
-                    GameObject chunkObj = new GameObject($"Chunk {x}/{z}", typeof(Chunk), typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
-                    Chunk chunk = chunkObj.GetComponent<Chunk>();
+            //        GameObject chunkObj = new GameObject($"Chunk {x}/{z}", typeof(Chunk), typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
+            //        Chunk chunk = chunkObj.GetComponent<Chunk>();
 
-                    Rect areaToRender = new Rect(xRender, zRender, Chunk.MeshSize, Chunk.MeshSize);
+            //        Rect areaToRender = new Rect(xRender, zRender, Chunk.MeshSize, Chunk.MeshSize);
 
-                    chunk.Build(areaToRender);
+            //        chunk.Build(areaToRender);
 
-                    _chunks[index] = chunk;
-                }
-            }
+            //        _chunks[index] = chunk;
+            //    }
+            //}
         }
 
         Vector2[] GetTileUVs(short tileId, bool getTexture)

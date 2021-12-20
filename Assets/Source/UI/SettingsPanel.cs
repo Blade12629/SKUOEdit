@@ -21,7 +21,7 @@ namespace Assets.Source.UI
             {
                 SetGridColorValue(GameMap.Instance.GetGridColor());
                 SetGridSizeValue(GameMap.Instance.GetGridSize());
-                SetRenderSizesValues(Chunk.MeshSize * 3, Chunk.MeshSize * 3);
+                SetRenderSizesValues(GameMap.Instance.Chunk.Size, GameMap.Instance.Chunk.Size);
             };
         }
 
