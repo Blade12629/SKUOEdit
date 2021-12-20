@@ -78,6 +78,7 @@ namespace Assets.Source.Game.Map
 
             Size = DefaultMeshSize;
             _vertexCache = new Vertex[Size * Size * 4];
+            _mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             _mesh.SetVertexBufferParams(_vertexCache.Length, VertexLayout.Layout);
         }
 
