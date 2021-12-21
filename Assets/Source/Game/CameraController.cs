@@ -170,7 +170,7 @@ namespace Assets.Source.Game
             {
                 GameMap.Instance.SetSelectedTile((int)hit.point.x, (int)hit.point.z);
 
-                if (hit.collider.gameObject.GetComponent<Chunk>() != null)
+                if (hit.collider.gameObject.GetComponent<MapChunk>() != null)
                 {
                     //GameMap.Instance.UnsetSelectedStatic();
                     GameMap.Instance.EnableSelectedGrid();
