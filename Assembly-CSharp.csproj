@@ -107,7 +107,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\UndoState.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileMul.cs" />
-    <Compile Include="Assets\Source\Tests\UnityThreaderTest.cs" />
     <Compile Include="Assets\Source\UI\TileBrowser.cs" />
     <Compile Include="Assets\Source\UI\SettingsPanel.cs" />
     <Compile Include="Assets\Source\Game\Map\Statics\StaticMap.cs" />
@@ -121,7 +120,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\FindState.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultEncoder.cs" />
     <Compile Include="Assets\Source\Input.cs" />
-    <Compile Include="Assets\Source\Utils.cs" />
     <Compile Include="Assets\Source\Game\Statics\StaticBuilder.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\FileSystemHelper.cs" />
     <Compile Include="Assets\Source\Game\Map\Statics\StaticCache.cs" />
@@ -150,7 +148,6 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\Native.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Extensions.cs" />
     <Compile Include="Assets\Source\Game\Mapping\MappingBrush.cs" />
-    <Compile Include="Assets\Source\TestImageObj.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\TileDataLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\HuesLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\Adler32.cs" />
