@@ -88,10 +88,20 @@ Shader "CustomShaders/TerrainShader"
                 // Selected Tile
                 if (_EnableSelectedRendering > 0)
                 {
-                    float xMin = selx;
-                    float xMax = selx + _SelectedAreaSize;
-                    float zMin = selz;
-                    float zMax = selz + _SelectedAreaSize;
+                    float selectionSizeHalf = _SelectedAreaSize / 2.0;
+                    int iselectionSizeHalf = (int)selectionSizeHalf;
+
+                    float xMin = selx - iselectionSizeHalf;
+                    float xMax = selx + iselectionSizeHalf;
+                    float zMin = selz - iselectionSizeHalf;
+                    float zMax = selz + iselectionSizeHalf;
+
+                    // check if we have an uneven number for our selected area size, if yes we need to either decrease our min or increase our max
+                    if (selectionSizeHalf < iselectionSizeHalf || selectionSizeHalf > iselectionSizeHalf)
+                    {
+                        xMax++;
+                        zMax++;
+                    }
 
                     if (i.worldPos.x >= xMin && i.worldPos.x <= xMax &&
                         i.worldPos.z >= zMin && i.worldPos.z <= zMax &&

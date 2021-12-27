@@ -21,8 +21,23 @@ namespace Assets.Source.Game.Mapping
         public override Vector3[] GetBrushPoints(Vector3 offset)
         {
             Vector3[] result = new Vector3[Size * Size];
+
             int offsetX = (int)offset.x;
             int offsetZ = (int)offset.z;
+
+            if (Size > 1)
+            {
+                float halfSize = Size / 2f;
+                int ihalfSize = (int)halfSize;
+                offsetX -= ihalfSize;
+                offsetZ -= ihalfSize;
+
+                if (halfSize == ihalfSize)
+                {
+                    offsetX++;
+                    offsetZ++;
+                }
+            }
 
             int index = 0;
             for (int x = 0; x < Size; x++)
