@@ -11,6 +11,7 @@ namespace Assets.Source.Game.Map.Statics
     /// <summary>
     /// Simple class which allows to get static entries while only loading each static id once
     /// </summary>
+    [Obsolete("Not Implemented Currently", true)]
     public static class StaticCache
     {
         static Dictionary<uint, StaticCacheEntry> _entries = new Dictionary<uint, StaticCacheEntry>();

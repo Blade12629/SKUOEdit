@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Source.Game.Map.Statics
 {
+    [Obsolete("Not Implemented Currently", true)]
     public class StaticMap
     {
         public int Width { get; private set; }

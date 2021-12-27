@@ -12,6 +12,7 @@ namespace Assets.Source.Game.Map.Statics
     /// A pool which allows to reuse statics
     /// <para>Keeps growing by 100 everytime there is no static left to take</para>
     /// </summary>
+    [Obsolete("Not Implemented Currently", true)]
     public static class StaticPool
     {
         static readonly SimplePool<GameObject> _pool = new SimplePool<GameObject>(25, CreatePoolObject);
