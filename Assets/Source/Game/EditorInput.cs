@@ -14,7 +14,18 @@ namespace Assets.Source.Game
         public static EditorAction CurrentAction { get; set; } = EditorAction.IncreaseTileHeight;
         public static int CurrentHeightValue { get; set; } = 1;
         public static short CurrentTileId { get; set; }
-        public static int CurrentSize { get; set; } = 1;
+        public static int CurrentSize
+        {
+            get => _currentSize;
+            set
+            {
+                _currentSize = Math.Max(1, value);
+                _brush.Size = _currentSize;
+
+                if (_currentSize > 1)
+                    _brush.Size++;
+            }
+        }
         public static bool DisableInput { get; set; }
 
         static List<CachedInputAction> _actions = new List<CachedInputAction>(500);
@@ -25,9 +36,12 @@ namespace Assets.Source.Game
 
         static readonly int _terrainLayerMask = 1 << 0;
 
+        static int _currentSize;
+
         static EditorInput()
         {
             _brush = _defaultBrush;
+            _currentSize = 1;
         }
 
         public static void InitializeUIPart()
