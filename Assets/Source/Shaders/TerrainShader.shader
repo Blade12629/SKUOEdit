@@ -72,6 +72,9 @@ Shader "CustomShaders/TerrainShader"
                 float wxmod = i.worldPos.x - (int)i.worldPos.x;
                 float wzmod = i.worldPos.z - (int)i.worldPos.z;
 
+                int selx = (int)_SelectedPos.x;
+                int selz = (int)_SelectedPos.z;
+
                 // Grid
                 if (_DrawGrid > 0)
                 {
@@ -83,31 +86,26 @@ Shader "CustomShaders/TerrainShader"
                 }
 
                 // Selected Tile
-                if (_EnableSelectedRendering)
+                if (_EnableSelectedRendering > 0)
                 {
-                    float xMin = (int)_SelectedPos.x;
-                    float xMax = (int)_SelectedPos.x + _SelectedAreaSize;
+                    float xMin = selx;
+                    float xMax = selx + _SelectedAreaSize;
+                    float zMin = selz;
+                    float zMax = selz + _SelectedAreaSize;
 
-                    if (xMin <= i.worldPos.x && xMax >= i.worldPos.x)
+                    if (i.worldPos.x >= xMin && i.worldPos.x <= xMax &&
+                        i.worldPos.z >= zMin && i.worldPos.z <= zMax &&
+                        (wxmod < _GridSize || wxmod > 1 - _GridSize ||
+                         wzmod < _GridSize || wzmod > 1 - _GridSize))
                     {
-                        float zMin = (int)_SelectedPos.z;
-                        float zMax = (int)_SelectedPos.z + _SelectedAreaSize;
-
-                        if (zMin <= i.worldPos.z && zMax >= i.worldPos.z &&
-                            (wxmod < _GridSize || wxmod > 1 - _GridSize ||
-                             wzmod < _GridSize || wzmod > 1 - _GridSize))
-                        {
-                            result = 2;
-                        }
+                        result = 2;
                     }
                 }
 
                 switch (result)
                 {
                     default:
-                    case 0:
-                        // sample the texture
-                        return tex2D(_MainTex, i.uv);
+                        break;
 
                     case 1:
                         return _GridColor;
@@ -115,6 +113,9 @@ Shader "CustomShaders/TerrainShader"
                     case 2:
                         return _SelectedColor;
                 }
+
+                // sample the texture
+                return tex2D(_MainTex, i.uv);
             }
         ENDCG
     }

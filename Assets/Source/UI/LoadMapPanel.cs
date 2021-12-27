@@ -23,7 +23,7 @@ namespace Assets.Source.UI
 
             FileBrowser.OpenFile("Load Map", s =>
             {
-                Client.Instance.LoadMap(s, w, d, GenerationOption.Default, null, null);
+                Client.Instance.LoadMap(s, w, d);
             }, null);
 
             gameObject.SetActive(false);

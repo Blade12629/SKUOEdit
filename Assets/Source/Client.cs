@@ -24,23 +24,24 @@ namespace Assets.Source
             Instance = this;
         }
 
-        public void LoadMap(string path, int width, int depth, GenerationOption option, int[] tileHeights, int[] tileIds)
+        public void GenerateMap(GenerationOption option, int width, int depth, int[] tileHeights, int[] tileIds)
+        {
+            _loadingbar.gameObject.SetActive(true);
+            _loadingbar.Text = "Generating Map";
+
+            PrepareMap();
+
+            _map.Generate(option, width, depth, tileHeights, tileIds, _loadingbar);
+        }
+
+        public void LoadMap(string path, int width, int depth)
         {
             _loadingbar.gameObject.SetActive(true);
             _loadingbar.Text = "Loading Map";
 
-            //StaticMap sm = new StaticMap();
-            //sm.LoadMap("Test\\statics3.mul", "Test\\staidx3.mul", width, depth);
-            //sm.SpawnStatics();
+            PrepareMap();
 
-            if (_map != null)
-            {
-                _map.Destroy();
-                _map = null;
-            }
-
-            _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
-            _map.Load(path, width, depth, option, tileHeights, tileIds, _loadingbar);
+            _map.Load(path, width, depth, _loadingbar);
         }
 
         public void SaveMap(string path)
@@ -49,6 +50,17 @@ namespace Assets.Source
                 return;
 
             _map.Save(path);
+        }
+
+        void PrepareMap()
+        {
+            if (_map != null)
+            {
+                _map.Destroy();
+                _map = null;
+            }
+
+            _map = new GameObject("Game Map", typeof(GameMap)).GetComponent<GameMap>();
         }
 
         void Start()

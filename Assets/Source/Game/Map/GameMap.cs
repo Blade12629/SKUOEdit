@@ -53,11 +53,12 @@ namespace Assets.Source.Game.Map
             _firstMapCreation = true;
         }
 
+        /// <summary>
+        /// Moves the rendered map area to a specified position
+        /// </summary>
+        /// <param name="newPos">Position for <see cref="_renderedArea"/> to start</param>
         public void MoveToWorld(Vector3 newPos)
         {
-            float xDiff = newPos.x - _renderedArea.x;
-            float zDiff = newPos.z - _renderedArea.y;
-
             _renderedArea = new Rect(newPos.x, newPos.z, _renderedArea.width, _renderedArea.height);
 
             if (!IsMapLoaded)
@@ -66,6 +67,9 @@ namespace Assets.Source.Game.Map
             _chunk.MoveToWorld((Point)newPos);
         }
 
+        /// <summary>
+        /// Destroys the map including the gameobject which holds this script
+        /// </summary>
         public void Destroy()
         {
             Debug.Log("Destroying GameMap");
@@ -97,120 +101,79 @@ namespace Assets.Source.Game.Map
         }
 
         /// <summary>
-        /// Loads a specific map
+        /// Generates a map
         /// </summary>
-        /// <param name="file">Map file</param>
+        /// <param name="option">Generation option</param>
         /// <param name="width">Map width</param>
         /// <param name="depth">Map depth</param>
-        /// <param name="genOption">Generation option</param>
         /// <param name="tileHeights">Only used with <see cref="GenerationOption.Converted"/></param>
         /// <param name="tileIds">Only used with <see cref="GenerationOption.Converted"/></param>
-        public void Load(string file, int width, int depth, GenerationOption genOption, int[] tileHeights, int[] tileIds, LoadingBar loadingbar)
+        /// <param name="loadingbar">Loadingbar to use</param>
+        public void Generate(GenerationOption option, int width, int depth, int[] tileHeights, int[] tileIds, LoadingBar loadingbar)
         {
-            MapFile = file;
-            Width = width;
-            BlockWidth = width / 8;
-            Depth = depth;
-            BlockDepth = depth / 8;
-
-            GameObject chunkObj = new GameObject("Map Chunk", typeof(MapChunk));
-            _chunk = chunkObj.GetComponent<MapChunk>();
+            SetupDefaults(null, width, depth);
 
             StartCoroutine(LoadMap());
 
             IEnumerator LoadMap()
             {
-                loadingbar.Setup(0, 8, 0, "Loading map");
+                loadingbar.Setup(0, 7, 0, "Loading map");
                 yield return new WaitForEndOfFrame();
 
-                _mapTiles = new MapTiles();
-                //_staticMap = new StaticMap();
+                yield return PrepareMapLoad(loadingbar, width, depth); // loadingbar: 2
 
-                loadingbar.Increment("Initializing UI...");
-                yield return new WaitForEndOfFrame();
-
-                EditorInput.InitializeUIPart(); // loadingbar: 1
-
-                loadingbar.Increment("Initializing minimap...");
-                yield return new WaitForEndOfFrame();
-                Minimap.Instance.Initialize(width, depth); // loadingbar: 2
-
-                //_statics = new Dictionary<Vector2, List<GameObject>>(width * depth);
-
-                //int index = GetMapIndex(MapFile);
-                //string dir = new FileInfo(MapFile).Directory.FullName;
-
-                //StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
-                //StaticsFile = Path.Combine(dir, $"statics{index}.mul");
-
-                //_staticMap.LoadMap(StaticsFile, StaticsIdxFile, width, depth);
-
-                switch (genOption)
+                switch (option)
                 {
-                    case GenerationOption.Default:
-                        if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            loadingbar.Increment("Loading uop map file...");
-                            _mapTiles.Load(MapFile, true, width, depth);
-                        }
-                        else
-                        {
-                            loadingbar.Increment("Loading mul map file...");
-                            _mapTiles.Load(MapFile, false, width, depth);
-                        }
-                        break;
-
                     case GenerationOption.Flatland:
-                        loadingbar.Increment("Generating flatland...");
+                        loadingbar.Increment("Generating flatland..."); // loadingbar: 3
+                        yield return new WaitForEndOfFrame();
                         _mapTiles.GenerateFlatland(width, depth);
                         break;
 
                     case GenerationOption.Converted:
-                        loadingbar.Increment("Converting map...");
+                        loadingbar.Increment("Converting map..."); // loadingbar: 3
+                        yield return new WaitForEndOfFrame();
                         _mapTiles.GenerateConverted(tileHeights, tileIds, width, depth);
                         break;
                 }
 
-                loadingbar.Increment("Loading map vertices...");
+                yield return FinishMapLoad(loadingbar); // loadingbar: 7
+            }
+        }
+
+        /// <summary>
+        /// Loads a specific map
+        /// </summary>
+        /// <param name="file">Map file</param>
+        /// <param name="width">Map width</param>
+        /// <param name="depth">Map depth</param>
+        /// <param name="loadingbar">Loadingbar to use</param>
+        public void Load(string file, int width, int depth, LoadingBar loadingbar)
+        {
+            SetupDefaults(file, width, depth);
+            StartCoroutine(LoadMap());
+
+            IEnumerator LoadMap()
+            {
+                loadingbar.Setup(0, 7, 0, "Loading map");
                 yield return new WaitForEndOfFrame();
 
-                LoadMapVertices(); // loadingbar: 4
+                yield return PrepareMapLoad(loadingbar, width, depth); // loadingbar: 2
 
-                loadingbar.Increment("Loading minimap...");
-                yield return new WaitForEndOfFrame();
-
-                LoadMinimap(); // loadingbar: 5
-
-                loadingbar.Increment("Loading map mesh...");
-                yield return new WaitForEndOfFrame();
-
-                LoadMapMesh(); // loadingbar: 6
-                IsMapLoaded = true;
-
-                //Debug.Log("Spawning Statics");
-                //yield return new WaitForEndOfFrame();
-
-                //_staticMap.SpawnStatics();
-
-                loadingbar.Increment("Finished map generation, initializing defaults...");  // loadingbar: 7
-                yield return new WaitForEndOfFrame();
-
-                if (_firstMapCreation)
+                if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    _firstMapCreation = false;
-
-                    SetGridSize(GameConfig.GridSize);
-                    SetGridColor(GameConfig.GridColor);
-
-                    if (GameConfig.EnableGrid)
-                        EnableGrid();
+                    loadingbar.Increment("Loading uop map file..."); // loadingbar: 3
+                    yield return new WaitForEndOfFrame();
+                    _mapTiles.Load(MapFile, true, width, depth);
+                }
+                else
+                {
+                    loadingbar.Increment("Loading mul map file..."); // loadingbar: 3
+                    yield return new WaitForEndOfFrame();
+                    _mapTiles.Load(MapFile, false, width, depth);
                 }
 
-                OnMapFinishLoading?.Invoke();
-                CameraController.Instance.InitializePosition();
-
-                yield return new WaitForEndOfFrame();
-                loadingbar.gameObject.SetActive(false);
+                yield return FinishMapLoad(loadingbar); // loadingbar: 7
             }
         }
 
@@ -417,11 +380,17 @@ namespace Assets.Source.Game.Map
             _chunk.IsRenderingGrid = false;
         }
 
+        /// <summary>
+        /// Enables rendering the current selection
+        /// </summary>
         public void EnableSelectedGrid()
         {
             _chunk.IsRenderingSelection = true;
         }
 
+        /// <summary>
+        /// Disables rendering the current selection
+        /// </summary>
         public void DisableSelectedGrid()
         {
             _chunk.IsRenderingSelection = false;
@@ -441,6 +410,14 @@ namespace Assets.Source.Game.Map
         public void SetGridSize(float size)
         {
             _chunk.GridSize = size;
+        }
+
+        /// <summary>
+        /// Sets the selection size
+        /// </summary>
+        public void SetSelectionSize(int size)
+        {
+            _chunk.SelectionSize = size;
         }
 
         /// <summary>
@@ -472,9 +449,15 @@ namespace Assets.Source.Game.Map
         /// </summary>
         public void SetSelectedTile(int x, int z)
         {
-            _chunk.SelectedTile = new Point(x, z);
+            _chunk.SelectedTile = new Point(x + (int)_renderedArea.x, z + (int)_renderedArea.y);
         }
 
+        /// <summary>
+        /// Gets the tile id of the specified position
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <returns>tile id or 0 if not found</returns>
         public short GetTileId(int x, int z)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
@@ -718,6 +701,77 @@ namespace Assets.Source.Game.Map
             return _renderedArea.Contains(new Vector2(x, z));
         }
 
+        void SetupDefaults(string mapFile, int width, int depth)
+        {
+            MapFile = mapFile;
+            Width = width;
+            BlockWidth = width / 8;
+            Depth = depth;
+            BlockDepth = depth / 8;
+
+            GameObject chunkObj = new GameObject("Map Chunk", typeof(MapChunk));
+            _chunk = chunkObj.GetComponent<MapChunk>();
+        }
+
+        /// <summary>
+        /// Prepares the map load process (loadingbar count: 2)
+        /// </summary>
+        IEnumerator PrepareMapLoad(LoadingBar loadingbar, int width, int depth)
+        {
+            _mapTiles = new MapTiles();
+
+            loadingbar.Increment("Initializing UI..."); // loadingbar: 1
+            yield return new WaitForEndOfFrame();
+
+            EditorInput.InitializeUIPart(); 
+
+            loadingbar.Increment("Initializing minimap..."); // loadingbar: 2
+            yield return new WaitForEndOfFrame();
+            Minimap.Instance.Initialize(width, depth); 
+        }
+
+        /// <summary>
+        /// Finishes up the map loading process (loadingbar count: 4)
+        /// </summary>
+        IEnumerator FinishMapLoad(LoadingBar loadingbar)
+        {
+            loadingbar.Increment("Loading map vertices...");
+            yield return new WaitForEndOfFrame();
+
+            LoadMapVertices(); // loadingbar: 1
+
+            loadingbar.Increment("Loading minimap...");
+            yield return new WaitForEndOfFrame();
+
+            LoadMinimap(); // loadingbar: 2
+
+            loadingbar.Increment("Loading map mesh...");
+            yield return new WaitForEndOfFrame();
+
+            LoadMapMesh(); // loadingbar: 3
+            IsMapLoaded = true;
+
+            loadingbar.Increment("Finished map generation, initializing defaults...");  // loadingbar: 4
+            yield return new WaitForEndOfFrame();
+
+            if (_firstMapCreation)
+            {
+                _firstMapCreation = false;
+
+                SetGridSize(GameConfig.GridSize);
+                SetGridColor(GameConfig.GridColor);
+
+                if (GameConfig.EnableGrid)
+                    EnableGrid();
+            }
+
+            OnMapFinishLoading?.Invoke();
+            CameraController.Instance.InitializePosition();
+
+            yield return new WaitForEndOfFrame();
+            loadingbar.gameObject.SetActive(false);
+        }
+
         void Update()
         {
             EditorInput.UpdateInput();
@@ -733,7 +787,6 @@ namespace Assets.Source.Game.Map
 
     public enum GenerationOption
     {
-        Default,
         Flatland,
         Converted
     }

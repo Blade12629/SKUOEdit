@@ -41,6 +41,19 @@ namespace Assets.Source.Game.Map
                 _renderer.material.SetFloat("_GridSize", value);
             }
         }
+
+        public int SelectionSize
+        {
+            get => _renderer.material.GetInt("_SelectedAreaSize");
+            set
+            {
+                if (value < 1)
+                    throw new InvalidOperationException("SelectionAreaSize cannot be below 0.0005");
+
+                _renderer.material.SetFloat("_SelectedAreaSize", value);
+            }
+
+        }
         public Point SelectedTile
         {
             get
@@ -50,7 +63,7 @@ namespace Assets.Source.Game.Map
             }
             set
             {
-                _renderer.material.SetVector("_SelectedPos", new Vector4(value.X - Offset.X, value.Z - Offset.Z));
+                _renderer.material.SetVector("_SelectedPos", new Vector4(value.X - Offset.X, 0f, value.Z - Offset.Z));
             }
         }
 
@@ -118,7 +131,7 @@ namespace Assets.Source.Game.Map
 
                 ApplyVertices();
                 ApplyIndices();
-                _mesh.RecalculateBounds();
+                InvalidateMesh();
             }
             catch (Exception ex)
             {
@@ -135,7 +148,7 @@ namespace Assets.Source.Game.Map
             try
             {
                 ApplyVertices();
-                _mesh.RecalculateBounds();
+                InvalidateMesh();
             }
             catch (Exception ex)
             {
@@ -158,24 +171,10 @@ namespace Assets.Source.Game.Map
                    p.Z >= Offset.Z && p.Z < Offset.Z + Size;
         }
 
-        public void SetGridColor(Color color)
+        void InvalidateMesh()
         {
-            _renderer.material.SetColor("_GridColor", color);
-        }
-
-        public void SetGridSize(float size)
-        {
-            _renderer.material.SetFloat("_GridSize", size);
-        }
-
-        public void SetSelectedTile(int x, int z)
-        {
-            _renderer.material.SetVector("_SelectedPos", new Vector4(x, 0, z, 1));
-        }
-
-        public void SetSelectionSize(int size)
-        {
-            _renderer.material.SetInt("_SelectedAreaSize", size);
+            _mesh.RecalculateBounds();
+            _collider.sharedMesh = _mesh;
         }
 
         void ApplyVertices()
