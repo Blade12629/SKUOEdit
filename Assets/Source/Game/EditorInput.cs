@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Assets.Source.Game
 {
+    // TODO: rework editorinput and brushes + optimize speed
     public static class EditorInput
     {
         public static EditorAction CurrentAction { get; set; } = EditorAction.IncreaseTileHeight;
@@ -32,7 +33,7 @@ namespace Assets.Source.Game
         static int _actionIndex = -1;
 
         static MappingBrush _brush;
-        static readonly MappingBrush _defaultBrush = new PlaneBrush();
+        static MappingBrush _defaultBrush => new PlaneBrush();
 
         static readonly int _terrainLayerMask = 1 << 0;
 
@@ -101,6 +102,14 @@ namespace Assets.Source.Game
                 brush = _defaultBrush;
 
             _brush = brush;
+        }
+
+        public static MappingBrush GetBrush()
+        {
+            if (_brush == null)
+                _brush = _defaultBrush;
+
+            return _brush;
         }
 
         static void ExecuteInput(int xStart, int zStart)

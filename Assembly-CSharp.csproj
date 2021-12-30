@@ -76,6 +76,7 @@
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonAttributes.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\Json.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonMapper.cs" />
+    <Compile Include="Assets\Source\Game\Mapping\CircleBrush.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileManager.cs" />
     <Compile Include="Assets\Source\UI\MappingTools.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\LegacyMulFileConverter.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Assets\Source\Textures\GameTextures.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\TexImage.cs" />
+    <Compile Include="Assets\Source\Game\Map\Statics\StaticTileMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ValueStringBuilder.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\CameraControllerStatics.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonBuilder.cs" />
@@ -772,6 +774,9 @@
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.2D.Tilemap.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Tilemap.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
@@ -798,6 +803,9 @@
     </Reference>
     <Reference Include="Unity.MemoryProfiler.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.MemoryProfiler.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>

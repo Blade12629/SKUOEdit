@@ -24,6 +24,9 @@ namespace Assets.Source.UI
         [SerializeField] TileBrowser _tileBrowser;
         [SerializeField] InputField _selectionAreaSize;
 
+        [SerializeField] Outline _planeBrushLine;
+        [SerializeField] Outline _circleBrushLine;
+
         MappingTools() : base()
         {
             Instance = this;
@@ -119,6 +122,28 @@ namespace Assets.Source.UI
             EditorInput.CurrentAction = EditorAction.SetTileId;
             DisableOutlines();
             _tileIdLine.enabled = true;
+        }
+
+        public void SetPlaneBrush()
+        {
+            if (_planeBrushLine.enabled)
+                return;
+
+            _circleBrushLine.enabled = false;
+            _planeBrushLine.enabled = true;
+
+            EditorInput.SetBrush(new Game.Mapping.PlaneBrush(EditorInput.GetBrush().Size));
+        }
+
+        public void SetCircleBrush()
+        {
+            if (_circleBrushLine.enabled)
+                return;
+
+            _planeBrushLine.enabled = false;
+            _circleBrushLine.enabled = true;
+
+            EditorInput.SetBrush(new Game.Mapping.CircleBrush(EditorInput.GetBrush().Size));
         }
 
         void DisableOutlines()

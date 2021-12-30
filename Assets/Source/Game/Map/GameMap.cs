@@ -1,5 +1,6 @@
 ﻿//#define LOG_MISSING_STATIC_IDS
 
+using Assets.Source.Game.Map.Statics;
 using Assets.Source.IO;
 using Assets.Source.Textures;
 using Assets.Source.UI;
@@ -40,6 +41,7 @@ namespace Assets.Source.Game.Map
         bool _toggleGrid;
         bool _firstMapCreation;
 
+        StaticMap _staticMap;
         MapChunk _chunk;
         Rect _renderedArea;
 
@@ -159,7 +161,7 @@ namespace Assets.Source.Game.Map
                 yield return new WaitForEndOfFrame();
 
                 yield return PrepareMapLoad(loadingbar, width, depth); // loadingbar: 2
-
+                
                 if (MapFile.EndsWith("uop", StringComparison.CurrentCultureIgnoreCase))
                 {
                     loadingbar.Increment("Loading uop map file..."); // loadingbar: 3
@@ -172,6 +174,16 @@ namespace Assets.Source.Game.Map
                     yield return new WaitForEndOfFrame();
                     _mapTiles.Load(MapFile, false, width, depth);
                 }
+
+                //int index = GetMapIndex(MapFile);
+                //string dir = new FileInfo(MapFile).Directory.FullName;
+
+                //StaticsIdxFile = Path.Combine(dir, $"staidx{index}.mul");
+                //StaticsFile = Path.Combine(dir, $"statics{index}.mul");
+
+                //_staticMap = new StaticMap();
+                //_staticMap.LoadMap(StaticsFile, StaticsIdxFile, width, depth);
+                //_staticMap.SpawnStatics();
 
                 yield return FinishMapLoad(loadingbar); // loadingbar: 7
             }
@@ -770,6 +782,34 @@ namespace Assets.Source.Game.Map
 
             yield return new WaitForEndOfFrame();
             loadingbar.gameObject.SetActive(false);
+        }
+
+        int GetMapIndex(string fileName)
+        {
+            StringBuilder sb = new StringBuilder(2);
+
+            bool wasNumber = false;
+            for (int i = fileName.Length - 1; i >= 0; i--)
+            {
+                char c = fileName[i];
+
+                if (!char.IsNumber(c))
+                {
+                    if (wasNumber)
+                        break;
+                }
+                else
+                {
+                    wasNumber = true;
+
+                    if (sb.Length == 0)
+                        sb.Append(c);
+                    else
+                        sb.Insert(0, c);
+                }
+            }
+
+            return int.Parse(sb.ToString());
         }
 
         void Update()
