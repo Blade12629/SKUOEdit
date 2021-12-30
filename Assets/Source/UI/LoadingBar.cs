@@ -127,10 +127,10 @@ namespace Assets.Source.UI
             Text = text;
         }
 
-        void Start()
+        void Awake()
         {
             Max = 100;
-            Current = 50;
+            Current = 0;
 
             if (_max != 0 && _current > 0)
                 _refreshVisuals = true;
