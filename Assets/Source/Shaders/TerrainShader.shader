@@ -14,6 +14,7 @@ Shader "CustomShaders/TerrainShader"
         _SelectedAreaSize("SelectedAreaSize", int) = 1
         _SelectedColor("SelectedColor", COLOR) = (1, 0, 0, 1)
         _EnableSelectedRendering("EnableSelectedRendering", int) = 0
+        _RenderCircle("RenderCircle", int) = 0
     }
         SubShader
     {
@@ -54,6 +55,7 @@ Shader "CustomShaders/TerrainShader"
             int _SelectedAreaSize;
             float4 _SelectedColor;
             int _EnableSelectedRendering;
+            int _RenderCircle;
 
             v2f vert(appdata v)
             {
@@ -69,11 +71,14 @@ Shader "CustomShaders/TerrainShader"
             fixed4 frag(v2f i) : SV_Target
             {
                 int result = 0;
-                float wxmod = i.worldPos.x - (int)i.worldPos.x;
-                float wzmod = i.worldPos.z - (int)i.worldPos.z;
-
+                int wx = (int)i.worldPos.x;
+                int wz = (int)i.worldPos.z;
                 int selx = (int)_SelectedPos.x;
                 int selz = (int)_SelectedPos.z;
+
+                float wxmod = i.worldPos.x - wx;
+                float wzmod = i.worldPos.z - wz;
+
 
                 // Grid
                 if (_DrawGrid > 0)
@@ -96,19 +101,32 @@ Shader "CustomShaders/TerrainShader"
                     float zMin = selz - iselectionSizeHalf;
                     float zMax = selz + iselectionSizeHalf;
 
-                    // check if we have an uneven number for our selected area size, if yes we need to either decrease our min or increase our max
-                    if (selectionSizeHalf < iselectionSizeHalf || selectionSizeHalf > iselectionSizeHalf)
+                    if (_RenderCircle == 0)
                     {
-                        xMax++;
-                        zMax++;
-                    }
+                        // check if we have an uneven number for our selected area size, if yes we need to either decrease our min or increase our max
+                        if (selectionSizeHalf < iselectionSizeHalf || selectionSizeHalf > iselectionSizeHalf)
+                        {
+                            xMax++;
+                            zMax++;
+                        }
 
-                    if (i.worldPos.x >= xMin && i.worldPos.x <= xMax &&
-                        i.worldPos.z >= zMin && i.worldPos.z <= zMax &&
-                        (wxmod < _GridSize || wxmod > 1 - _GridSize ||
-                         wzmod < _GridSize || wzmod > 1 - _GridSize))
+                        if (i.worldPos.x >= xMin && i.worldPos.x <= xMax &&
+                            i.worldPos.z >= zMin && i.worldPos.z <= zMax &&
+                            (wxmod < _GridSize || wxmod > 1 - _GridSize ||
+                             wzmod < _GridSize || wzmod > 1 - _GridSize))
+                        {
+                            result = 2;
+                        }
+                    }
+                    else
                     {
-                        result = 2;
+                        if (wxmod < _GridSize || wxmod > 1 - _GridSize ||
+                            wzmod < _GridSize || wzmod > 1 - _GridSize)
+                        {
+                            if ((wx - selx) * (wx - selx) + (wz - selz) * (wz - selz) 
+                                <= iselectionSizeHalf * iselectionSizeHalf)
+                                result = 2;
+                        }
                     }
                 }
 

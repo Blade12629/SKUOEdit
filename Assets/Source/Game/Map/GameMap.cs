@@ -38,6 +38,15 @@ namespace Assets.Source.Game.Map
 
         public MapChunk Chunk => _chunk;
 
+        #region mapchunk settings
+        public int RenderCircle
+        {
+            get => _chunk.RenderCircle;
+            set => _chunk.RenderCircle = value;
+        }
+        #endregion
+
+
         bool _toggleGrid;
         bool _firstMapCreation;
 
@@ -256,7 +265,7 @@ namespace Assets.Source.Game.Map
         /// <summary>
         /// Increases the height of a specific tile
         /// </summary>
-        public void IncreaseTileHeight(int x, int z, int height)
+        public int[] IncreaseTileHeight(int x, int z, int height)
         {
             int h0 = GetTileCornerHeight(x,     z);
             int h1 = GetTileCornerHeight(x,     z + 1);
@@ -267,39 +276,53 @@ namespace Assets.Source.Game.Map
             SetTileCornerHeight(x,      z + 1,  h1 + height);
             SetTileCornerHeight(x + 1,  z + 1,  h2 + height);
             SetTileCornerHeight(x + 1,  z,      h3 + height);
+
+            return new int[]
+            {
+                h0,
+                h1,
+                h2,
+                h3
+            };
         }
 
         /// <summary>
         /// Sets the height of a specific tile
         /// </summary>
-        public void SetTileHeight(int x, int z, int height)
+        public int[] SetTileHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x,      z,      height);
-            SetTileCornerHeight(x,      z + 1,  height);
-            SetTileCornerHeight(x + 1,  z + 1,  height);
-            SetTileCornerHeight(x + 1,  z,      height);
+            return new int[]
+            {
+                SetTileCornerHeight(x,      z,      height),
+                SetTileCornerHeight(x,      z + 1,  height),
+                SetTileCornerHeight(x + 1,  z + 1,  height),
+                SetTileCornerHeight(x + 1,  z,      height)
+            };
         }
 
         /// <summary>
         /// Increases the height of a specific tile corner
         /// </summary>
-        public void IncreaseTileCornerHeight(int x, int z, int height)
+        public int IncreaseTileCornerHeight(int x, int z, int height)
         {
             int h = GetTileCornerHeight(x, z);
             SetTileCornerHeight(x, z, h + height);
+
+            return h;
         }
 
         /// <summary>
         /// Sets the height of a specific point on the map
         /// </summary>
-        public void SetTileCornerHeight(int x, int z, int height)
+        public int SetTileCornerHeight(int x, int z, int height)
         {
-            SetTileCornerHeight(x, z, height, 0, false, true);
+            int oldHeight = SetTileCornerHeight(x, z, height, 0, false, true);
             SetTileCornerHeight(x - 1, z, height, 3, false, true);
             SetTileCornerHeight(x - 1, z - 1, height, 2, false, true);
             SetTileCornerHeight(x, z - 1, height, 1, false, true);
 
             _chunk.RebuildVertices();
+            return oldHeight;
         }
 
         /// <summary>
@@ -321,17 +344,19 @@ namespace Assets.Source.Game.Map
         /// <summary>
         /// Sets the tile id of a specific tile
         /// </summary>
-        public void SetTileId(int x, int z, short id)
+        public short SetTileId(int x, int z, short id)
         {
             int vertexIndex = PositionToIndex(x, z, IndexType.Vertice);
 
             if (vertexIndex < 0 || vertexIndex >= _vertices.Length)
-                return;
+                return 0;
 
             ref Tile tileBL = ref _mapTiles.GetTile(x, z);
+            short oldId = tileBL.TileId;
             tileBL.TileId = id;
 
             RefreshUVs(x, z);
+            return oldId;
         }
 
         /// <summary>
@@ -490,17 +515,18 @@ namespace Assets.Source.Game.Map
             return (x * depth + z) * (int)indexType;
         }
 
-        void SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks, bool refreshUVs)
+        int SetTileCornerHeight(int x, int z, int height, int indexOffset, bool updateChunks, bool refreshUVs)
         {
             int index = PositionToIndex(x, z, IndexType.Vertice);
 
             if (index < 0 || index >= _vertices.Length)
-                return;
+                return 0;
 
             ref Vertex vertex = ref _vertices[index + indexOffset];
             vertex.Y = height * .1f;
 
             ref Tile tile = ref _mapTiles.GetTile(x, z);
+            sbyte oldZ = tile.Z;
             tile.Z = (sbyte)height;
 
             if (refreshUVs)
@@ -508,6 +534,8 @@ namespace Assets.Source.Game.Map
 
             if (updateChunks)
                 _chunk.RebuildVertices();
+
+            return oldZ;
         }
 
         void RefreshUVs(int x, int z, bool updateChunks = true)

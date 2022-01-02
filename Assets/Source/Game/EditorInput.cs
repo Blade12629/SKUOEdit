@@ -330,7 +330,7 @@ namespace Assets.Source.Game
                     break;
             }
 
-            void InvokeTileAction(Action<int, int, int> toExecute)
+            void InvokeTileAction(Func<int, int, int, int[]> toExecute)
             {
                 oldValues?.AddRange(GameMap.Instance.GetTileCornerHeight(x,     z),
                                     GameMap.Instance.GetTileCornerHeight(x,     z + 1),
@@ -346,7 +346,7 @@ namespace Assets.Source.Game
                                     GameMap.Instance.GetTileCornerHeight(x + 1, z));
             }
 
-            void InvokeVertexAction(Action<int, int, int> toExecute)
+            void InvokeVertexAction(Func<int, int, int, int> toExecute)
             {
                 oldValues?.Add(GameMap.Instance.GetTileCornerHeight(x, z));
                 toExecute(x, z, value);

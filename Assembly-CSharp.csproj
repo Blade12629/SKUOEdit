@@ -84,6 +84,7 @@
     <Compile Include="Assets\Source\ClassicUO\Game\Constants.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\RawList.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Collections\Bag.cs" />
+    <Compile Include="Assets\Source\Mapping\MappingTool.cs" />
     <Compile Include="Assets\Source\Game\Map\Statics\StaticPool.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\ITextEditHandler.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\PresetList.cs" />
@@ -116,8 +117,10 @@
     <Compile Include="Assets\Source\Game\Mapping\PlaneBrush.cs" />
     <Compile Include="Assets\Source\IO\MapStatics.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonParser.cs" />
+    <Compile Include="Assets\Source\Common\Geometry.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\PlatformHelper.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\UInt16Converter.cs" />
+    <Compile Include="Assets\Source\Mapping\Brushes\MappingBrush.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\TextEdit.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\StbTextedit\FindState.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\DefaultEncoder.cs" />
@@ -129,8 +132,11 @@
     <Compile Include="Assets\Source\Game\Map\VertexLayout.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\DataReader.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\OnClickEvent.cs" />
+    <Compile Include="Assets\Source\Mapping\Actions\ActionArgs.cs" />
+    <Compile Include="Assets\Source\Mapping\Actions\ActionType.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\MultiLoader.cs" />
     <Compile Include="Assets\Source\Game\LegacyMulConverter\FileType.cs" />
+    <Compile Include="Assets\Source\Mapping\Brushes\UserDefinedBrush.cs" />
     <Compile Include="Assets\Source\UI\DragDropTransform.cs" />
     <Compile Include="Assets\Source\Game\Map\VertexMap.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileLoader.cs" />
@@ -147,6 +153,7 @@
     <Compile Include="Assets\Source\GameConfig.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\PixelPicker.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileIndex.cs" />
+    <Compile Include="Assets\Source\Mapping\Actions\ActionHandler.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Platforms\Native.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\Extensions.cs" />
     <Compile Include="Assets\Source\Game\Mapping\MappingBrush.cs" />
@@ -154,10 +161,12 @@
     <Compile Include="Assets\Source\ClassicUO\IO\Resources\HuesLoader.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib\Adler32.cs" />
     <Compile Include="Assets\Source\IO\ColorStore.cs" />
+    <Compile Include="Assets\Source\Mapping\Brushes\PlaneBrush.cs" />
     <Compile Include="Assets\Source\Textures\GameTextures.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ZLib.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\TexImage.cs" />
     <Compile Include="Assets\Source\Game\Map\Statics\StaticTileMap.cs" />
+    <Compile Include="Assets\Source\Game\Mapping\BaseMappingBrush.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\ValueStringBuilder.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\CameraControllerStatics.cs" />
     <Compile Include="Assets\Source\ClassicUO\Utility\JSON\JsonBuilder.cs" />
@@ -166,13 +175,18 @@
     <Compile Include="Assets\Source\UI\Minimap.cs" />
     <Compile Include="Assets\Source\StaticsBuilder\RowPanel.cs" />
     <Compile Include="Assets\Source\ClassicUO\IO\UOFileUop.cs" />
-    <Compile Include="Assets\Source\Common\Geometry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Source\StaticsBuilder\Shaders\UnlitObjectShader.shader" />
     <None Include="Assets\Source\StaticsBuilder\Shaders\UnlitMapShader.shader" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.Metadata.dll" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.dll" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.Metadata.xml" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.dll" />
     <None Include="Assets\Source\Shaders\StaticShader.shader" />
     <None Include="Assets\Source\Shaders\TerrainShader.shader" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.xml" />
+    <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -408,6 +422,15 @@
     </Reference>
     <Reference Include="System.Drawing">
       <HintPath>Assets\Plugins\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:\reposSSD\Unity\2021.1.22f1\Editor\Data\PlaybackEngines\AppleTVSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

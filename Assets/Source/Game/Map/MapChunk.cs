@@ -42,6 +42,18 @@ namespace Assets.Source.Game.Map
             }
         }
 
+        public int RenderCircle
+        {
+            get => _renderer.material.GetInt("_RenderCircle");
+            set
+            {
+                if (value < 0)
+                    throw new InvalidOperationException("RenderCircle cannot be less than 0");
+
+                _renderer.material.SetInt("_RenderCircle", value);
+            }
+        }
+
         public int SelectionSize
         {
             get => _renderer.material.GetInt("_SelectedAreaSize");

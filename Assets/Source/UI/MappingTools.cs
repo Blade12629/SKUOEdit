@@ -133,6 +133,7 @@ namespace Assets.Source.UI
             _planeBrushLine.enabled = true;
 
             EditorInput.SetBrush(new Game.Mapping.PlaneBrush(EditorInput.GetBrush().Size));
+            Game.Map.GameMap.Instance.RenderCircle = 0;
         }
 
         public void SetCircleBrush()
@@ -144,6 +145,7 @@ namespace Assets.Source.UI
             _circleBrushLine.enabled = true;
 
             EditorInput.SetBrush(new Game.Mapping.CircleBrush(EditorInput.GetBrush().Size));
+            Game.Map.GameMap.Instance.RenderCircle = 1;
         }
 
         void DisableOutlines()
