@@ -1,7 +1,7 @@
 # SKUOEdit
 3D Ultima Online Map Editor made with Unity
 
-Heavy WIP, Partly useable, i don't recommend using it in production yet though
+Heavy WIP, not useable currently
 
 ---
 Feel free to join the discord server if you wanna discuss suggestions or other stuff https://discord.gg/J4WqYrYhYV
