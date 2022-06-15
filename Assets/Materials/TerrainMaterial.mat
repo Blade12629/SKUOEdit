@@ -85,18 +85,19 @@ Material:
     - _DrawGrid: 0
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
-    - _EnableSelectedRendering: 1
+    - _EnableSelectedRendering: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GridSize: 0.05
+    - _GridSize: 0.01
     - _LineSize: 0.15
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _RenderCircle: 0
     - _SelectCell: 0
-    - _SelectedAreaSize: 1
+    - _SelectedAreaSize: 0
     - _SelectedCellX: 0
     - _SelectedCellY: 0
     - _SmoothnessTextureChannel: 0
