@@ -10,6 +10,8 @@ namespace Assets.Source
         public static Core Instance { get; private set; }
         public static Map Map { get; private set; }
         public static Cam Camera { get; private set; }
+        public static Material TerrainMaterial { get; private set; }
+        public static Material StaticMaterial { get; private set; }
 
         [SerializeField] Material _terrainMaterial;
         [SerializeField] Material _staticMaterial;
@@ -24,9 +26,12 @@ namespace Assets.Source
         {
             GameFiles.LoadClientFiles();
 
+            TerrainMaterial = _terrainMaterial;
+            StaticMaterial = _staticMaterial;
+
             Camera = _camera;
             Map = new GameObject("map").AddComponent<Map>();
-            Map.Load(@"D:\reposSSD\SKUOEdit\Test\map3LegacyMUL.uop", true, 2560, 2048, 95, _terrainMaterial, _staticMaterial);
+            Map.Load(@"D:\reposSSD\SKUOEdit\Test\map3LegacyMUL.uop", true, 2560, 2048, 95);
 
             Camera.OnMoved += e => Map.MoveToPosition(e.NewPosition);
         }

@@ -14,16 +14,12 @@ namespace Assets.Source.Game.Map
         public int Width => _tiles.Width;
         public int Height => _tiles.Depth;
 
-        Material _staticMaterial;
-        Material _terrainMaterial;
         UltimaTerrain _terrain;
         MapTiles _tiles;
 
-        public void Load(string path, bool isUop, int width, int height, int renderSize, Material terrainMaterial, Material staticMaterial)
+        public void Load(string path, bool isUop, int width, int height, int renderSize)
         {
             // TODO: statics: texture.height / (float)texture.width
-            _terrainMaterial = terrainMaterial;
-            _staticMaterial = staticMaterial;
 
             GameObject gterrain = new GameObject("terrain");
             _terrain = gterrain.AddComponent<UltimaTerrain>();
@@ -32,7 +28,7 @@ namespace Assets.Source.Game.Map
             _tiles = new MapTiles();
             _tiles.Load(path, isUop, width, height);
 
-            _terrain.Initialize(renderSize, _tiles, terrainMaterial, Art.AtlasTexture);
+            _terrain.Initialize(renderSize, _tiles, Core.TerrainMaterial, Art.AtlasTexture);
             _terrain.SetVertices(Vector2.zero, true);
         }
 

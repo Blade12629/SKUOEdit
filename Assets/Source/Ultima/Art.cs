@@ -10,6 +10,7 @@ namespace Assets.Source.Ultima
     public static class Art
     {
         public static Texture2D AtlasTexture => GameTextures.GameTexture;
+        public static Texture2D AtlasTextureItems => null; // TODO: texture atlas for items
 
         public static Texture2D GetTile(uint id)
         {
@@ -19,6 +20,18 @@ namespace Assets.Source.Ultima
         public static Texture2D GetStatic(uint id)
         {
             return ClassicUO.IO.Resources.ArtLoader.Instance.GetTexture(id);
+        }
+
+        public static Vector2[] GetStaticUVs(uint itemId)
+        {
+            throw new NotImplementedException();
+            //return ItemTextures.GetUVs(itemId); // TODO: build texture atlas
+        }
+
+        public static Vector2 GetStaticSize(uint itemId)
+        {
+            throw new NotImplementedException();
+            // TODO: build static size cache
         }
 
         public static Vector2[] GetTileUVs(int id, bool isTexture)

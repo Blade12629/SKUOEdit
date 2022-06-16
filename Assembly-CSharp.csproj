@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -57,9 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\ClassicUO\IO\DefReader.cs" />
+    <Compile Include="Assets\Source\Game\Map\Items\ItemLookup.cs" />
+    <Compile Include="Assets\Source\Game\Map\Items\ItemMesh.cs" />
     <Compile Include="Assets\Source\VertexLayout.cs" />
     <Compile Include="Assets\ClassicUO\ClientVersion.cs" />
-    <Compile Include="Assets\Source\Game\Map\Items\ItemLookup.cs" />
     <Compile Include="Assets\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
     <Compile Include="Assets\ClassicUO\IO\Resources\AnimDataLoader.cs" />
     <Compile Include="Assets\ClassicUO\IO\UOFilesOverrideMap.cs" />
@@ -98,7 +100,6 @@
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\Enums.cs" />
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\UndoState.cs" />
     <Compile Include="Assets\ClassicUO\IO\UOFileMul.cs" />
-    <Compile Include="Assets\Source\Game\Map\Items\ItemLookupEntry.cs" />
     <Compile Include="Assets\ClassicUO\Client.cs" />
     <Compile Include="Assets\ClassicUO\Utility\JSON\JsonParser.cs" />
     <Compile Include="Assets\Source\Game\Cam.cs" />

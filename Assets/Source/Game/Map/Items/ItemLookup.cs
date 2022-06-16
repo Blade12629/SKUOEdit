@@ -1,84 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Source.Game.Map.Items
 {
-    public class ItemLookup
+    public class ItemLookup : IEquatable<ItemLookup>
     {
-        Dictionary<Vector3, List<ItemLookupEntry>> _entries;
+        public Vector3 Position { get; set; }
+        public uint ItemId { get; set; }
+        public int Index { get; set; }
+        public int Length { get; set; }
 
-        public ItemLookup()
+        public ItemLookup(Vector3 position, uint itemId, int index, int length)
         {
-            _entries = new Dictionary<Vector3, List<ItemLookupEntry>>();
+            Position = position;
+            ItemId = itemId;
+            Index = index;
+            Length = length;
         }
 
-        public List<ItemLookupEntry> this[Vector3 position]
+        public override bool Equals(object obj)
         {
-            get => GetEntries(position);
+            return Equals(obj as ItemLookup);
         }
 
-        public List<ItemLookupEntry> GetEntries(Vector3 position)
+        public bool Equals(ItemLookup other)
         {
-            List<ItemLookupEntry> res;
-            _entries.TryGetValue(position, out res);
-
-            return res;
+            return other != null &&
+                   Position.Equals(other.Position) &&
+                   ItemId == other.ItemId;
         }
 
-        /// <summary>
-        /// Adds a new entry
-        /// </summary>
-        /// <returns>False if entry with <see cref="ItemLookupEntry.ItemId"/> already exists at <paramref name="position"/></returns>
-        public bool AddEntry(Vector3 position, ItemLookupEntry entry)
+        public override int GetHashCode()
         {
-            List<ItemLookupEntry> entries = GetEntries(position);
-
-            if (entries == null)
-                entries = _entries[position] = new List<ItemLookupEntry>();
-
-            if (Find(entry.ItemId, entries) != null)
-                return false;
-
-            entries.Add(entry);
-            return true;
+            int hashCode = 1117739637;
+            hashCode = hashCode * -1521134295 + Position.GetHashCode();
+            hashCode = hashCode * -1521134295 + ItemId.GetHashCode();
+            return hashCode;
         }
 
-        /// <summary>
-        /// Equivalent to calling <see cref="FirstOrNull(uint)"/>
-        /// </summary>
-        public ItemLookupEntry Find(uint itemId)
+        public static bool operator ==(ItemLookup left, ItemLookup right)
         {
-            return FirstOrNull(itemId);
+            return EqualityComparer<ItemLookup>.Default.Equals(left, right);
         }
 
-        /// <summary>
-        /// Searches for the first entry with the specified <paramref name="itemId"/>
-        /// </summary>
-        /// <returns>First entry or null if not found</returns>
-        public ItemLookupEntry FirstOrNull(uint itemId)
+        public static bool operator !=(ItemLookup left, ItemLookup right)
         {
-            foreach (var entries in _entries.Values)
-            {
-                ItemLookupEntry entry = Find(itemId, entries);
-
-                if (entry != null)
-                    return entry;
-            }
-
-            return null;
-        }
-
-        static ItemLookupEntry Find(uint itemId, List<ItemLookupEntry> entries)
-        {
-            for (int i = 0; i < entries.Count; i++)
-            {
-                ItemLookupEntry entry = entries[i];
-
-                if (entry.ItemId == itemId)
-                    return entry;
-            }
-
-            return null;
+            return !(left == right);
         }
     }
 }
