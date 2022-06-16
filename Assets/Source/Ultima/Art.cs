@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Source.Textures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +25,7 @@ namespace Assets.Source.Ultima
 
         public static Vector2[] GetStaticUVs(uint itemId)
         {
-            throw new NotImplementedException();
-            //return ItemTextures.GetUVs(itemId); // TODO: build texture atlas
+            return StaticAtlas.Instance.AddOrGetStatic(itemId);
         }
 
         public static Vector2 GetStaticSize(uint itemId)
@@ -36,23 +36,10 @@ namespace Assets.Source.Ultima
 
         public static Vector2[] GetTileUVs(int id, bool isTexture)
         {
-            Vector2[] uvs = null;
-
             if (isTexture)
-            {
-                ref var landData = ref ClassicUO.IO.Resources.TileDataLoader.Instance.LandData[id];
-
-                if (landData.TexID > 0)
-                    uvs = GameTextures.GetUVsTexture(landData.TexID);
-                else
-                    uvs = GameTextures.AddNoDraw();
-            }
+                return TerrainAtlas.Instance.AddOrGetTileTexture((uint)id);
             else
-            {
-                uvs = GameTextures.GetUVsTile(id);
-            }
-
-            return uvs;
+                return TerrainAtlas.Instance.AddOrGetTile((uint)id);
         }
     }
 }

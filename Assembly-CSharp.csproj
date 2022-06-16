@@ -61,6 +61,8 @@
     <Compile Include="Assets\Source\Game\Map\Items\ItemLookup.cs" />
     <Compile Include="Assets\Source\Game\Map\Items\ItemMesh.cs" />
     <Compile Include="Assets\Source\Textures\AtlasBase.cs" />
+    <Compile Include="Assets\Source\Textures\StaticAtlas.cs" />
+    <Compile Include="Assets\Source\Textures\TerrainAtlas.cs" />
     <Compile Include="Assets\Source\VertexLayout.cs" />
     <Compile Include="Assets\ClassicUO\ClientVersion.cs" />
     <Compile Include="Assets\ClassicUO\Utility\ZLib\ZLibManaged.cs" />
