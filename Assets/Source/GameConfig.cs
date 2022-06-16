@@ -11,6 +11,9 @@ namespace Assets.Source
         public static string TileAtlasUVFile { get; set; } = GetLocalPath("TileAtlas.uv");
         public static string TileAtlasTexFile { get; set; } = GetLocalPath("TileAtlas.tex");
 
+        public static string StaticAtlasUVFile { get; set; } = GetLocalPath("StaticAtlas.uv");
+        public static string StaticAtlasTexFile { get; set; } = GetLocalPath("StaticAtlas.tex");
+
         public static string GameClientFiles { get; set; } = GetLocalPath("ClassicUO");
 
         public static bool EnableGrid { get; set; } = false;
@@ -27,6 +30,9 @@ namespace Assets.Source
             { nameof(TileAtlasUVFile), s => TileAtlasUVFile = s },
             { nameof(TileAtlasTexFile), s => TileAtlasTexFile = s },
 
+            { nameof(StaticAtlasUVFile), s => StaticAtlasUVFile = s },
+            { nameof(StaticAtlasTexFile), s => StaticAtlasTexFile = s },
+
             { nameof(GameClientFiles), s => GameClientFiles = s },
 
             { nameof(EnableGrid), s => EnableGrid = ParseBool(s, EnableGrid) },
@@ -38,6 +44,8 @@ namespace Assets.Source
         {
             { nameof(TileAtlasUVFile), o => (string)o },
             { nameof(TileAtlasTexFile), o => (string)o },
+            { nameof(StaticAtlasUVFile), o => (string)o },
+            { nameof(StaticAtlasTexFile), o => (string)o },
             { nameof(GameClientFiles), o => (string)o },
             { nameof(EnableGrid), o => o.ToString() },
             { nameof(GridSize), o => o.ToString() },

@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Assets.Source.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Assets.Source.Textures
@@ -101,6 +99,61 @@ namespace Assets.Source.Textures
         public void Apply()
         {
             Texture.Apply();
+        }
+
+        public bool Load(string uvpath, string texpath)
+        {
+            throw new NotImplementedException(); // TODO: load process
+        }
+
+        public void Save(string uvpath, string texpath)
+        {
+            Color[] imgData = Texture.GetPixels();
+            int colorSize = sizeof(float) * 4;
+
+            unsafe
+            {
+                fixed (Color* pimgData = imgData)
+                {
+                    using (UnsafeWriter w = new UnsafeWriter(texpath, Texture.width * Texture.height * colorSize))
+                    {
+                        w.Write(pimgData, imgData.Length);
+
+                        if (w.Index != w.Length - 1)
+                            throw new Exception("Something went wrong during the save process");
+                    }
+                }
+            }
+
+            uint[] ids = _uvs.Keys.ToArray();
+            Vector2[][] uvs = _uvs.Values.ToArray();
+
+            int uvSize = sizeof(float) * 2;
+            long size = sizeof(uint) * ids.Length +
+                       uvs.Length * sizeof(int);
+
+            for (int i = 0; i < uvs.Length; i++)
+                size += uvs[i].Length * uvSize;
+
+            unsafe
+            {
+                using (UnsafeWriter w = new UnsafeWriter(uvpath, size))
+                {
+                    fixed (uint* pids = ids)
+                        w.Write(pids, ids.Length);
+
+                    for (int i = 0; i < uvs.Length; i++)
+                    {
+                        w.Write(uvs[i].Length);
+
+                        fixed (Vector2* puvs = uvs[i])
+                            w.Write(puvs, uvs[i].Length);
+                    }
+
+                    if (w.Index != w.Length - 1)
+                        throw new Exception("Something went wrong during the save process");
+                }
+            }
         }
 
         protected virtual void FixUVs(Vector2[] uvs, float widthPerPixel, float heightPerPixel, object param)

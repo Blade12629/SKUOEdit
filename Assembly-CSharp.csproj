@@ -60,6 +60,9 @@
     <Compile Include="Assets\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\Game\Map\Items\ItemLookup.cs" />
     <Compile Include="Assets\Source\Game\Map\Items\ItemMesh.cs" />
+    <Compile Include="Assets\Source\IO\UnsafeReader.cs" />
+    <Compile Include="Assets\Source\IO\UnsafeReaderWriterBase.cs" />
+    <Compile Include="Assets\Source\IO\UnsafeWriter.cs" />
     <Compile Include="Assets\Source\Textures\AtlasBase.cs" />
     <Compile Include="Assets\Source\Textures\StaticAtlas.cs" />
     <Compile Include="Assets\Source\Textures\TerrainAtlas.cs" />

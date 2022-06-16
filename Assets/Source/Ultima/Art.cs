@@ -1,4 +1,5 @@
-﻿using Assets.Source.Textures;
+﻿//using Assets.Source.Textures;
+using Assets.Source.Textures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,25 @@ namespace Assets.Source.Ultima
 {
     public static class Art
     {
-        public static Texture2D AtlasTexture => GameTextures.GameTexture;
-        public static Texture2D AtlasTextureItems => null; // TODO: texture atlas for items
+        public static Texture2D AtlasTexture => TerrainAtlas.Instance.Texture;
+        public static Texture2D AtlasTextureItems => StaticAtlas.Instance.Texture;
+
+        public static void InitializeAtlas(string terrainAtlasUVPath, string terrainAtlasTexPath, 
+                                           string staticAtlasUVPath, string staticAtlasTexPath)
+        {
+            if (!TerrainAtlas.Instance.Load(terrainAtlasUVPath, terrainAtlasTexPath))
+            {
+                for (int i = 0; i < 0x4000; i++)
+                {
+
+                }
+            }
+
+            if (!StaticAtlas.Instance.Load(staticAtlasUVPath, staticAtlasTexPath))
+            {
+                // TODO: static initialization
+            }
+        }
 
         public static Texture2D GetTile(uint id)
         {

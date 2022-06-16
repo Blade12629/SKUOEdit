@@ -23,7 +23,7 @@ namespace Assets.Source.Textures
 
         static TerrainAtlas()
         {
-            Instance = new TerrainAtlas(6000, 6000); // TODO: terrain atlas default width + height
+            Instance = new TerrainAtlas(6000, 6000);
         }
 
         public Vector2[] AddOrGetTile(uint id)

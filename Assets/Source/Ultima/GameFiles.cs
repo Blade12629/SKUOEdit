@@ -11,25 +11,8 @@ namespace Assets.Source.Ultima
             Debug.Log("Loading ClassicUO");
             ClassicUO.Client.Load();
 
-            Debug.Log("Loading TileAtlas");
-            if (System.IO.File.Exists(GameConfig.TileAtlasUVFile) &&
-                System.IO.File.Exists(GameConfig.TileAtlasTexFile))
-            {
-                GameTextures.Import(GameConfig.TileAtlasUVFile, GameConfig.TileAtlasTexFile);
-            }
-            else
-            {
-                GameTextures.Initialize(true);
-                GameTextures.AddNoDraw();
-
-                for (int i = 0; i < 0x4000; i++)
-                {
-                    GameTextures.AddTile(i);
-                    GameTextures.AddTexture(i);
-                }
-            }
-
-            GameTextures.ApplyChanges();
+            Art.InitializeAtlas(GameConfig.TileAtlasUVFile, GameConfig.TileAtlasTexFile,
+                                GameConfig.StaticAtlasUVFile, GameConfig.StaticAtlasTexFile);
 
             Debug.Log("--- Loaded Client Files ---");
         }
