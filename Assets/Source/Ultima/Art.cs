@@ -30,8 +30,8 @@ namespace Assets.Source.Ultima
 
         public static Vector2 GetStaticSize(uint itemId)
         {
-            throw new NotImplementedException();
-            // TODO: build static size cache
+            Texture2D item = GetStatic(itemId);
+            return new Vector2(item.width, item.height);
         }
 
         public static Vector2[] GetTileUVs(int id, bool isTexture)
