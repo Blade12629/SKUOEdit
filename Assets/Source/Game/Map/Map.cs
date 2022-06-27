@@ -1,6 +1,8 @@
 ﻿using Assets.Source.IO;
 using Assets.Source.Ultima;
+using Assets.Source.Game.Map.Items;
 using UnityEngine;
+using Assets.Source.Textures;
 
 namespace Assets.Source.Game.Map
 {
@@ -17,10 +19,11 @@ namespace Assets.Source.Game.Map
         UltimaTerrain _terrain;
         MapTiles _tiles;
 
-        public void Load(string path, bool isUop, int width, int height, int renderSize)
-        {
-            // TODO: statics: texture.height / (float)texture.width
+        ItemMap _items;
+        MapStatics _statics;
 
+        public void Load(string path, string staticPath, string staticIdxPath, bool isUop, int width, int height, int renderSize)
+        {
             GameObject gterrain = new GameObject("terrain");
             _terrain = gterrain.AddComponent<UltimaTerrain>();
             _terrain.transform.SetParent(transform);
@@ -28,8 +31,18 @@ namespace Assets.Source.Game.Map
             _tiles = new MapTiles();
             _tiles.Load(path, isUop, width, height);
 
-            _terrain.Initialize(renderSize, _tiles, Core.TerrainMaterial, Art.AtlasTexture);
+            _terrain.Initialize(renderSize, _tiles, Core.TerrainMaterial, TileAtlas.Instance.Texture);
             _terrain.SetVertices(Vector2.zero, true);
+
+            _statics = new MapStatics();
+            _statics.Load(staticPath, staticIdxPath, width, height);
+
+            GameObject gitems = new GameObject("items");
+            _items = gitems.AddComponent<ItemMap>();
+            _items.transform.SetParent(transform);
+            _items.Initialize(renderSize, Core.StaticMaterial, _statics);
+
+            _items.RefreshItems();
         }
 
         public void MoveToPosition(Vector3 position)

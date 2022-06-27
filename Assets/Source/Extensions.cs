@@ -19,6 +19,16 @@ public static class Extensions
         return result;
     }
 
+    public static T GetOrAdd<T>(this GameObject obj) where T : Component
+    {
+        T comp = obj.GetComponent<T>();
+
+        if (comp == null)
+            return obj.AddComponent<T>();
+
+        return comp;
+    }
+
     public static Color ToColor(this ushort hue)
     {
         float r = ((hue & 0x7c00) >> 10) * (255 / 31);
@@ -73,6 +83,19 @@ public static class Extensions
         w.Write(v.y);
     }
 
+    public static void Write(this BinaryWriter w, Color32 c)
+    {
+        w.Write(c.r);
+        w.Write(c.g);
+        w.Write(c.b);
+        w.Write(c.a);
+    }
+
+    public static Color32 ReadColor32(this BinaryReader r)
+    {
+        return new Color32(r.ReadByte(), r.ReadByte(), r.ReadByte(), r.ReadByte());
+    }
+
     public static Vector3 ReadVector3(this BinaryReader r)
     {
         return new Vector3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
@@ -89,5 +112,23 @@ public static class Extensions
             return;
 
         list.AddRange(values);
+    }
+
+    public static System.Drawing.Bitmap ToBitmap(this Texture2D texture)
+    {
+        System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(texture.width, texture.height);
+        Color32[] texPixels = texture.GetPixels32();
+
+        int index = 0;
+        for (int x = 0; x < texture.width; x++)
+        {
+            for (int y = 0; y < texture.height; y++)
+            {
+                ref Color32 color = ref texPixels[index++];
+                bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(color.a, color.r, color.g, color.b));
+            }
+        }
+
+        return bmp;
     }
 }

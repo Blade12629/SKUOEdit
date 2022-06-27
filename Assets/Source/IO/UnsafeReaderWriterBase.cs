@@ -61,11 +61,6 @@ namespace Assets.Source.IO
         {
             if (!_isDisposed)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
                 _mmva.SafeMemoryMappedViewHandle.ReleasePointer();
                 _mmva.Dispose();
                 _mmf.Dispose();

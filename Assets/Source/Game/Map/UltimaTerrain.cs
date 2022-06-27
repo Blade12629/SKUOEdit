@@ -7,6 +7,7 @@ using UnityEngine;
 using Unity.Collections;
 using Assets.Source.IO;
 using Assets.Source.Ultima;
+using Assets.Source.Textures;
 
 namespace Assets.Source.Game.Map
 {
@@ -126,9 +127,12 @@ namespace Assets.Source.Game.Map
             Vertex[] vertices = new Vertex[_tiles.Width * _tiles.Depth * 4];
             Color[] minimapColors = new Color[_tiles.Width * _tiles.Depth];
 
-            Parallel.For(0, _tiles.Depth, x =>
+
+            for (int x = 0; x < _tiles.Depth; x++)
+            //Parallel.For(0, _tiles.Depth, x =>
             {
-                Parallel.For(0, _tiles.Width, y =>
+                for (int y = 0; y < _tiles.Width; y++)
+                    //Parallel.For(0, _tiles.Width, y =>
                 {
                     ref Tile tileBL = ref _tiles.GetTile(x, y);
 
@@ -166,7 +170,12 @@ namespace Assets.Source.Game.Map
                                       tileBL.Z == hBR;
 
                     int vertexIndex = PositionToIndex(x, y);
-                    Vector2[] uvs = Art.GetTileUVs(tileBL.TileId, !isEvenTile);
+                    Vector2[] uvs;
+
+                    if (isEvenTile)
+                        uvs = TileAtlas.Instance.GetTileUVs((uint)tileBL.TileId);
+                    else
+                        uvs = TileAtlas.Instance.GetTileTextureUVs((uint)tileBL.TileId);
 
                     for (int i = 0; i < 4; i++)
                     {
@@ -208,8 +217,8 @@ namespace Assets.Source.Game.Map
                         vertex.UvX = uv.x;
                         vertex.UvY = uv.y;
                     }
-                });
-            });
+                }/*);*/
+            }/*);*/
 
             _vertexCache = vertices;
         }
@@ -226,13 +235,13 @@ namespace Assets.Source.Game.Map
 
         int[] GetIndices()
         {
-            int[] indices = new int[_size * _size * 6];
+            int[] indices = new int[Size * Size * 6];
 
             int iv = 0;
             int i = 0;
-            for (int x = 0; x < _size; x++)
+            for (int x = 0; x < Size; x++)
             {
-                for (int y = 0; y < _size; y++)
+                for (int z = 0; z < Size; z++)
                 {
                     indices[i++] = iv + 0;
                     indices[i++] = iv + 1;
@@ -245,6 +254,7 @@ namespace Assets.Source.Game.Map
                     iv += 4;
                 }
             }
+
 
             return indices;
         }

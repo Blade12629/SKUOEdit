@@ -8,11 +8,8 @@ namespace Assets.Source
 {
     public static class GameConfig
     {
-        public static string TileAtlasUVFile { get; set; } = GetLocalPath("TileAtlas.uv");
-        public static string TileAtlasTexFile { get; set; } = GetLocalPath("TileAtlas.tex");
-
-        public static string StaticAtlasUVFile { get; set; } = GetLocalPath("StaticAtlas.uv");
-        public static string StaticAtlasTexFile { get; set; } = GetLocalPath("StaticAtlas.tex");
+        public static string TileAtlasFile { get; set; } = GetLocalPath("tiles.atlas");
+        public static string StaticAtlasFile { get; set; } = GetLocalPath("statics.atlas");
 
         public static string GameClientFiles { get; set; } = GetLocalPath("ClassicUO");
 
@@ -27,11 +24,8 @@ namespace Assets.Source
 
         static readonly Dictionary<string, Action<string>> _configInProps = new Dictionary<string, Action<string>>()
         {
-            { nameof(TileAtlasUVFile), s => TileAtlasUVFile = s },
-            { nameof(TileAtlasTexFile), s => TileAtlasTexFile = s },
-
-            { nameof(StaticAtlasUVFile), s => StaticAtlasUVFile = s },
-            { nameof(StaticAtlasTexFile), s => StaticAtlasTexFile = s },
+            { nameof(TileAtlasFile), s => TileAtlasFile = s },
+            { nameof(StaticAtlasFile), s => StaticAtlasFile = s },
 
             { nameof(GameClientFiles), s => GameClientFiles = s },
 
@@ -42,10 +36,8 @@ namespace Assets.Source
 
         static readonly Dictionary<string, Func<object, string>> _configOutProps = new Dictionary<string, Func<object, string>>()
         {
-            { nameof(TileAtlasUVFile), o => (string)o },
-            { nameof(TileAtlasTexFile), o => (string)o },
-            { nameof(StaticAtlasUVFile), o => (string)o },
-            { nameof(StaticAtlasTexFile), o => (string)o },
+            { nameof(TileAtlasFile), o => (string)o },
+            { nameof(StaticAtlasFile), o => (string)o },
             { nameof(GameClientFiles), o => (string)o },
             { nameof(EnableGrid), o => o.ToString() },
             { nameof(GridSize), o => o.ToString() },

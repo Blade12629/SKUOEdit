@@ -1,52 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Source.Game.Map.Items
 {
-    public class ItemLookup : IEquatable<ItemLookup>
+    public class ItemLookup
     {
-        public Vector3 Position { get; set; }
-        public uint ItemId { get; set; }
-        public int Index { get; set; }
-        public int Length { get; set; }
+        Dictionary<Vector3, Item> _items;
+        ItemPool _itemPool;
 
-        public ItemLookup(Vector3 position, uint itemId, int index, int length)
+        public Item this[Vector3 pos]
         {
-            Position = position;
-            ItemId = itemId;
-            Index = index;
-            Length = length;
+            get => GetItem(pos);
         }
 
-        public override bool Equals(object obj)
+        public void Initialize(Material itemMaterial)
         {
-            return Equals(obj as ItemLookup);
+            _items = new Dictionary<Vector3, Item>(64);
+            _itemPool = new ItemPool(itemMaterial);
         }
 
-        public bool Equals(ItemLookup other)
+        /// <summary>
+        /// Searches the item map, this uses O(n) time complexity
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public List<Item> Search(Func<Item, bool> predicate)
         {
-            return other != null &&
-                   Position.Equals(other.Position) &&
-                   ItemId == other.ItemId;
+            List<Item> items = new List<Item>();
+
+            foreach (Item item in _items.Values)
+                if (predicate(item))
+                    items.Add(item);
+
+            return items;
         }
 
-        public override int GetHashCode()
+        public List<Item> ToList()
         {
-            int hashCode = 1117739637;
-            hashCode = hashCode * -1521134295 + Position.GetHashCode();
-            hashCode = hashCode * -1521134295 + ItemId.GetHashCode();
-            return hashCode;
+            return _items.Values.ToList();
         }
 
-        public static bool operator ==(ItemLookup left, ItemLookup right)
+        public bool Update(Vector3 old, Vector3 @new)
         {
-            return EqualityComparer<ItemLookup>.Default.Equals(left, right);
+            if (TryGetItem(old, out Item item) && !ContainsItem(@new))
+            {
+                _items.Remove(old);
+                _items[@new] = item;
+
+                item.transform.position = @new;
+
+                return true;
+            }
+
+            return false;
         }
 
-        public static bool operator !=(ItemLookup left, ItemLookup right)
+        public bool AddItem(Vector3 pos, uint itemId)
         {
-            return !(left == right);
+            if (_items.ContainsKey(pos))
+                return false;
+
+            Item item = _itemPool.Rent();
+            item.ItemId = itemId;
+            item.transform.position = pos;
+            _items[pos] = item;
+
+            return true;
+        }
+
+        public bool TryGetItem(Vector3 pos, out Item item)
+        {
+            item = GetItem(pos);
+            return item != null;
+        }
+
+        public Item GetItem(Vector3 pos)
+        {
+            if (_items.TryGetValue(pos, out Item item))
+                return item;
+
+            return null;
+        }
+
+        public bool ContainsItem(Vector3 pos)
+        {
+            return _items.ContainsKey(pos);
+        }
+
+        public bool RemoveItem(Vector3 pos)
+        {
+            if (TryGetItem(pos, out Item item))
+            {
+                _itemPool.Release(item);
+                _items.Remove(pos);
+                return true;
+            }
+
+            return false;
         }
     }
 }

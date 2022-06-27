@@ -11,9 +11,6 @@ namespace Assets.Source.Ultima
             Debug.Log("Loading ClassicUO");
             ClassicUO.Client.Load();
 
-            Art.InitializeAtlas(GameConfig.TileAtlasUVFile, GameConfig.TileAtlasTexFile,
-                                GameConfig.StaticAtlasUVFile, GameConfig.StaticAtlasTexFile);
-
             Debug.Log("--- Loaded Client Files ---");
         }
 

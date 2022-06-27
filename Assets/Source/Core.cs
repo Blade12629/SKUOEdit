@@ -2,6 +2,7 @@
 using Assets.Source.Ultima;
 using Assets.Source.Game.Map;
 using Assets.Source.Game;
+using Assets.Source.IO;
 
 namespace Assets.Source
 {
@@ -31,7 +32,10 @@ namespace Assets.Source
 
             Camera = _camera;
             Map = new GameObject("map").AddComponent<Map>();
-            Map.Load(@"D:\reposSSD\SKUOEdit\Test\map3LegacyMUL.uop", true, 2560, 2048, 95);
+            Map.Load(@"D:\reposSSD\SKUOEdit\Test\map3LegacyMUL.uop",
+                     @"D:\reposSSD\SKUOEdit\Test\statics3.mul",
+                     @"D:\reposSSD\SKUOEdit\Test\staidx3.mul",
+                     true, 2560, 2048, 95);
 
             Camera.OnMoved += e => Map.MoveToPosition(e.NewPosition);
         }
