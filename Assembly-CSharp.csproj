@@ -83,6 +83,7 @@
     <Compile Include="Assets\Source\IO\MapStatics.cs" />
     <Compile Include="Assets\ClassicUO\Utility\Collections\Bag.cs" />
     <Compile Include="Assets\Source\IO\UnsafeReaderWriterBase.cs" />
+    <Compile Include="Assets\Source\Game\Map\Items\ItemCreator.cs" />
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\ITextEditHandler.cs" />
     <Compile Include="Assets\Source\IO\MapBase.cs" />
     <Compile Include="Assets\ClassicUO\Utility\JSON\DefaultDecoder.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Assets\ClassicUO\Utility\RandomHelper.cs" />
     <Compile Include="Assets\Source\Ultima\UltimaArt.cs" />
     <Compile Include="Assets\Source\Game\Map\UltimaTerrain.cs" />
+    <Compile Include="Assets\Source\Game\Map\Items\Item.cs" />
     <Compile Include="Assets\ClassicUO\Utility\UnsafeMemoryManager.cs" />
     <Compile Include="Assets\ClassicUO\Utility\Collections\ReadOnlyArrayView.cs" />
     <Compile Include="Assets\ClassicUO\Utility\Collections\OrderedDictionary.cs" />
@@ -142,9 +144,9 @@
     <Compile Include="Assets\ClassicUO\Utility\ZLib.cs" />
     <Compile Include="Assets\ClassicUO\Utility\ValueStringBuilder.cs" />
     <Compile Include="Assets\Source\Ultima\GameFiles.cs" />
-    <Compile Include="Assets\Source\Game\Map\Items\Item.cs" />
     <Compile Include="Assets\ClassicUO\Utility\JSON\JsonBuilder.cs" />
     <Compile Include="Assets\ClassicUO\IO\UOFileUop.cs" />
+    <Compile Include="Assets\Source\UI\Special\DisableOnReleaseBuild.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Source\Shaders\UltimaTerrainShader.shader" />

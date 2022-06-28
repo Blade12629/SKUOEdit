@@ -50,6 +50,7 @@ namespace Assets.Source.Game.Map
 
             _tiles = tiles;
             _mesh = _filter.mesh = new Mesh();
+            _mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             _size = size;
             _vertices = new Vertex[size * size * 4];
             _renderer.material = new Material(material);

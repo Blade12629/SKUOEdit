@@ -19,8 +19,8 @@ namespace Assets.Source.Game.Map.Items
             Item item = gobj.AddComponent<Item>();
             item.Initialize(_material);
 
-            if (!item.IsInitialized)
-                throw new OperationCanceledException("Failed to initialize item");
+            gobj.transform.position = new Vector3(-10000f, -10000f, -10000f);
+            gobj.transform.rotation = Quaternion.Euler(60f, 0f, 135f);
 
             return item;
         }

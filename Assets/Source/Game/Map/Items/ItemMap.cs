@@ -63,31 +63,23 @@ namespace Assets.Source.Game.Map.Items
                         // currently we do not support multiple items on the same position
                         // this will change at a later time
                         // TODO: allow multiple items on the same position
-                        if (_lookup.TryGetItem(pos, out Item origItem))
-                        {
-                            System.IO.File.AppendAllText("Test/1111_itemSlotDuplicates.txt", $"Orig id: {origItem.ItemId}, New id: {st.TileId}, Pos: {pos}");
-                            continue;
-                        }
+                        //if (_lookup.TryGetItem(pos, out Item origItem))
+                        //{
+                        //    System.IO.File.AppendAllText("Test/1111_itemSlotDuplicates.txt", $"Orig id: {origItem.ItemId}, New id: {st.TileId}, Pos: {pos}");
+                        //    continue;
+                        //}
 
-                        try
+                        if (items.Count > 0)
                         {
-                            if (items.Count > 0)
-                            {
-                                Item item = items[0];
-                                items.RemoveAt(0);
+                            Item item = items[0];
+                            items.RemoveAt(0);
 
-                                item.ItemId = st.TileId;
-                                _lookup.Update(item.transform.position, pos);
-                            }
-                            else
-                            {
-                                _lookup.AddItem(pos, st.TileId);
-                            }
+                            item.ItemId = st.TileId;
+                            _lookup.Update(item.transform.position, pos);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Debug.Log(ex);
-                            return;
+                            _lookup.AddItem(pos, st.TileId);
                         }
                     }
                 }

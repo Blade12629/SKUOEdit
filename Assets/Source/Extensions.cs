@@ -29,6 +29,11 @@ public static class Extensions
         return comp;
     }
 
+    public static T GetOrAdd<T>(this Component comp) where T : Component
+    {
+        return comp.GetOrAdd<T>();
+    }
+
     public static Color ToColor(this ushort hue)
     {
         float r = ((hue & 0x7c00) >> 10) * (255 / 31);

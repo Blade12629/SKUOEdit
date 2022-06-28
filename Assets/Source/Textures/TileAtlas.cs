@@ -172,11 +172,20 @@ namespace Assets.Source.Textures
             if (!Load(GameConfig.TileAtlasFile))
             {
                 Texture = new Texture2D(width, height);
-                GenerateAtlas();
-                Save(GameConfig.TileAtlasFile, true);
-            }
 
-            ApplyChanges();
+                GenerateAtlas();
+                ApplyChanges();
+
+                Save(GameConfig.TileAtlasFile, true);
+
+                return;
+            }
+            else
+            {
+                ApplyChanges();
+                if (!_uvs.ContainsKey(NODRAW_ID))
+                    AddNoDraw();
+            }
         }
 
         Vector2[] GetUVs(uint id)

@@ -372,8 +372,8 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NugetForUnity">
-      <HintPath>Assets\NuGet\Editor\NugetForUnity.dll</HintPath>
+    <Reference Include="NuGetForUnity">
+      <HintPath>Assets\NuGet\Editor\NuGetForUnity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Dynamic">
       <HintPath>Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.dll</HintPath>
