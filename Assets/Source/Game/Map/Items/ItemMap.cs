@@ -1,9 +1,5 @@
 ﻿using Assets.Source.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Source.Game.Map.Items
@@ -12,20 +8,20 @@ namespace Assets.Source.Game.Map.Items
     {
         int _size;
         Vector3 _position;
-        ItemLookup _lookup;
+        ItemLookup _items;
         MapStatics _statics;
 
         public void Initialize(int size, Material material, MapStatics statics)
         {
             _size = size;
-            _lookup = new ItemLookup();
-            _lookup.Initialize(material);
+            _items = new ItemLookup();
+            _items.Initialize(material);
             _statics = statics;
         }
 
         public void RefreshItems()
         {
-            List<Item> items = _lookup.ToList();
+            _items.Clear();
 
             int bs = (int)Math.Ceiling(_size / 8.0);
             int bx = (int)Math.Ceiling(_position.x / 8.0);
@@ -60,34 +56,10 @@ namespace Assets.Source.Game.Map.Items
 
                         Vector3 pos = new Vector3(wx + st.X, wy + st.Y, -(st.Z * 0.039f));
 
-                        // currently we do not support multiple items on the same position
-                        // this will change at a later time
-                        // TODO: allow multiple items on the same position
-                        //if (_lookup.TryGetItem(pos, out Item origItem))
-                        //{
-                        //    System.IO.File.AppendAllText("Test/1111_itemSlotDuplicates.txt", $"Orig id: {origItem.ItemId}, New id: {st.TileId}, Pos: {pos}");
-                        //    continue;
-                        //}
-
-                        if (items.Count > 0)
-                        {
-                            Item item = items[0];
-                            items.RemoveAt(0);
-
-                            item.ItemId = st.TileId;
-                            _lookup.Update(item.transform.position, pos);
-                        }
-                        else
-                        {
-                            _lookup.AddItem(pos, st.TileId);
-                        }
+                        _items.SpawnItem(pos, st.TileId);
                     }
                 }
             }
-
-            // remove unused items
-            for (int i = 0; i < items.Count; i++)
-                _lookup.RemoveItem(items[i].transform.position);
         }
     }
 }

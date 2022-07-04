@@ -1,106 +1,140 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Source.Geometry;
 
 namespace Assets.Source.Game.Map.Items
 {
     public class ItemLookup
     {
-        Dictionary<Vector3, Item> _items;
-        ItemPool _itemPool;
+        Dictionary<Point2, List<Item>> _items;
+        ItemPool _itemsPool;
 
-        public Item this[Vector3 pos]
+        public void Initialize(Material material)
         {
-            get => GetItem(pos);
+            _items = new Dictionary<Point2, List<Item>>();
+            _itemsPool = new ItemPool(material);
         }
 
-        public void Initialize(Material itemMaterial)
+        public bool SpawnItem(Vector3 position, uint id)
         {
-            _items = new Dictionary<Vector3, Item>(64);
-            _itemPool = new ItemPool(itemMaterial);
+            if (ContainsItem(position, id))
+                return false;
+
+            Item item = _itemsPool.Rent();
+            PrepareItem(item, id, position);
+
+            if (!TryGetItems(position, out List<Item> items))
+                _items[position] = items = new List<Item>();
+
+            items.Add(item);
+            return true;
         }
 
-        /// <summary>
-        /// Searches the item map, this uses O(n) time complexity
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public List<Item> Search(Func<Item, bool> predicate)
+        public bool DeleteItem(Vector3 position, uint id)
         {
-            List<Item> items = new List<Item>();
-
-            foreach (Item item in _items.Values)
-                if (predicate(item))
-                    items.Add(item);
-
-            return items;
-        }
-
-        public List<Item> ToList()
-        {
-            return _items.Values.ToList();
-        }
-
-        public bool Update(Vector3 old, Vector3 @new)
-        {
-            if (TryGetItem(old, out Item item) && !ContainsItem(@new))
+            if (TryGetItems(position, out List<Item> items))
             {
-                _items.Remove(old);
-                _items[@new] = item;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (!items[i].transform.position.Equals(position) || items[i].ItemId != id)
+                        continue;
 
-                item.transform.position = @new;
-
-                return true;
+                    _itemsPool.Release(items[i]);
+                    items.RemoveAt(i);
+                    return true;
+                }
             }
 
             return false;
         }
 
-        public bool AddItem(Vector3 pos, uint itemId)
+        public bool DeleteItems(Vector2 position, Func<Item, bool> predicate)
         {
-            if (_items.ContainsKey(pos))
-                return false;
+            bool anyDeleted = false;
 
-            Item item = _itemPool.Rent();
-            item.ItemId = itemId;
-            item.transform.position = pos;
-            _items[pos] = item;
+            if (TryGetItems(position, out List<Item> items))
+            {
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (!predicate(items[i]))
+                        continue;
 
-            return true;
+                    _itemsPool.Release(items[i]);
+                    items.RemoveAt(i);
+                    i--;
+                    anyDeleted = true;
+                }
+            }
+
+            return anyDeleted;
         }
 
-        public bool TryGetItem(Vector3 pos, out Item item)
+        public bool TryGetItems(Vector2 position, out List<Item> items)
         {
-            item = GetItem(pos);
-            return item != null;
+            items = new List<Item>();
+
+            if (_items.TryGetValue(position, out List<Item> tempItems))
+            {
+                items.AddRange(tempItems);
+                return true;
+            }
+
+            items = null;
+            return false;
         }
 
-        public Item GetItem(Vector3 pos)
+        public List<Item> FindItems(Vector3 position, Func<Item, bool> predicate)
         {
-            if (_items.TryGetValue(pos, out Item item))
-                return item;
+            List<Item> result = new List<Item>();
+
+            if (TryGetItems(position, out List<Item> items))
+                for (int i = 0; i < items.Count; i++)
+                    if (predicate(items[i]))
+                        result.Add(items[i]);
+
+            return result;
+        }
+
+        public Item FindItem(Vector3 position, Func<Item, bool> predicate)
+        {
+            if (TryGetItems(position, out List<Item> items))
+                for (int i = 0; i < items.Count; i++)
+                    if (predicate(items[i]))
+                        return items[i];
 
             return null;
         }
 
-        public bool ContainsItem(Vector3 pos)
+        public bool ContainsItem(Vector3 position, uint id)
         {
-            return _items.ContainsKey(pos);
-        }
-
-        public bool RemoveItem(Vector3 pos)
-        {
-            if (TryGetItem(pos, out Item item))
+            if (TryGetItems(position, out List<Item> items))
             {
-                _itemPool.Release(item);
-                _items.Remove(pos);
-                return true;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (items[i].ItemId != id)
+                        continue;
+
+                    return true;
+                }
             }
 
             return false;
+        }
+
+        public void Clear()
+        {
+            foreach (List<Item> items in _items.Values)
+                for (int i = 0; i < items.Count; i++)
+                    _itemsPool.Release(items[i]);
+
+            _items.Clear();
+        }
+
+        void PrepareItem(Item item, uint id, Vector3 pos)
+        {
+            item.ItemId = id;
+            item.transform.position = pos;
         }
     }
 }
