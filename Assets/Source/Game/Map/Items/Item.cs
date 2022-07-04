@@ -52,8 +52,6 @@ namespace Assets.Source.Game.Map.Items
 
         void SetItemId(uint id)
         {
-            const float TILE_SIZE = 44f;
-
             if (_itemId == id)
                 return;
 
@@ -65,7 +63,7 @@ namespace Assets.Source.Game.Map.Items
 
             Texture2D tex = Ultima.UltimaArt.GetStatic(id);
             _renderer.material.mainTexture = tex;
-            transform.localScale = new Vector3(1, tex.height / TILE_SIZE, 1);
+            transform.localScale = new Vector3(1, tex.height / Constants.TileSize, 1);
 
             _itemId = id;
         }

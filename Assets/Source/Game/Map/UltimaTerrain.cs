@@ -190,28 +190,28 @@ namespace Assets.Source.Game.Map
                                 vertex.X = x;
                                 vertex.Y = y;
 
-                                vertex.Z = -(tileBL.Z * 0.039f);
+                                vertex.Z = -(tileBL.Z * Constants.TileHeightMod);
                                 break;
 
                             case 1:
                                 vertex.X = x;
                                 vertex.Y = y + 1f;
 
-                                vertex.Z = -(hTL * 0.039f);
+                                vertex.Z = -(hTL * Constants.TileHeightMod);
                                 break;
 
                             case 2:
                                 vertex.X = x + 1f;
                                 vertex.Y = y + 1f;
 
-                                vertex.Z = -(hTR * 0.039f);
+                                vertex.Z = -(hTR * Constants.TileHeightMod);
                                 break;
 
                             case 3:
                                 vertex.X = x + 1f;
                                 vertex.Y = y;
 
-                                vertex.Z = -(hBR * 0.039f);
+                                vertex.Z = -(hBR * Constants.TileHeightMod);
                                 break;
                         }
 

@@ -62,6 +62,7 @@
     <Compile Include="Assets\ClassicUO\IO\DefReader.cs" />
     <Compile Include="Assets\Source\Geometry\Point2.cs" />
     <Compile Include="Assets\Source\Geometry\Point3.cs" />
+    <Compile Include="Assets\Source\Constants.cs" />
     <Compile Include="Assets\Source\Utility\ArrayLookupMap\ArrayLookup.cs" />
     <Compile Include="Assets\Source\Utility\ArrayLookupMap\ArrayLookupType.cs" />
     <Compile Include="Assets\Source\VertexLayout.cs" />

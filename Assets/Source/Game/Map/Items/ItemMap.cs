@@ -54,7 +54,7 @@ namespace Assets.Source.Game.Map.Items
                     {
                         ref Static st = ref statics[i];
 
-                        Vector3 pos = new Vector3(wx + st.X, wy + st.Y, -(st.Z * 0.039f));
+                        Vector3 pos = new Vector3(wx + st.X, wy + st.Y, -(st.Z * Constants.TileHeightMod));
 
                         _items.SpawnItem(pos, st.TileId);
                     }

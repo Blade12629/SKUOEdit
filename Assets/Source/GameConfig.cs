@@ -123,6 +123,11 @@ namespace Assets.Source
             return System.IO.Path.Combine(GetLocalPath(), file);
         }
 
+        static string GetLocalPath(string folder, string file)
+        {
+            return System.IO.Path.Combine(GetLocalPath(), folder, file);
+        }
+
         /// <summary>
         /// Gets the local path (i.e. the path where the executable is stored)
         /// </summary>
