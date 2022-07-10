@@ -153,6 +153,8 @@ namespace Assets.Source.IO
 
         public ref Tile GetTile(int x, int z)
         {
+            z = Width - z - 1;
+
             TileBlock block = GetBlock(z, x);
             return ref block.Tiles[((x & 0x7) << 3) + (z & 0x7)];
         }

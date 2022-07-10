@@ -63,7 +63,7 @@ namespace Assets.Source.Game.Map.Items
 
             Texture2D tex = Ultima.UltimaArt.GetStatic(id);
             _renderer.material.mainTexture = tex;
-            transform.localScale = new Vector3(1, tex.height / Constants.TileSize, 1);
+            transform.localScale = new Vector3(1, tex.height / (float)Constants.TileSize, 1);
 
             _itemId = id;
         }

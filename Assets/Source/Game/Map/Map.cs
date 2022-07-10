@@ -42,12 +42,24 @@ namespace Assets.Source.Game.Map
             _items.transform.SetParent(transform);
             _items.Initialize(renderSize, Core.StaticMaterial, _statics);
 
-            _items.RefreshItems();
+            MoveToPosition(new Vector3(0, 0), true);
         }
 
-        public void MoveToPosition(Vector3 position)
+        public void MoveToPosition(Vector3 position, bool repositionCamera)
         {
-            _terrain.SetVertices(position, false);
+            Debug.Log(position);
+            System.Console.WriteLine(position);
+
+            _terrain.SetVertices(position, true);
+            _items.SetPosition(position, true);
+
+            if (repositionCamera)
+            {
+                Vector3 cameraPos = position;
+                cameraPos.y = Height - cameraPos.y - 1;
+
+                Core.Camera.MoveToPosition(cameraPos, false);
+            }
         }
 
         public void Clear()

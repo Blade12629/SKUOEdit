@@ -182,9 +182,10 @@ namespace Assets.Source.Textures
             }
             else
             {
-                ApplyChanges();
                 if (!_uvs.ContainsKey(NODRAW_ID))
                     AddNoDraw();
+
+                ApplyChanges();
             }
         }
 
@@ -252,6 +253,8 @@ namespace Assets.Source.Textures
 
                     for (int j = 0; j < uvs.Length; j++)
                         uvs[j] = r.ReadVector2();
+
+                    _uvs.Add(id, uvs);
                 }
 
                 Color32[] colors = new Color32[r.ReadInt32()];

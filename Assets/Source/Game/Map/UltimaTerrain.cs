@@ -61,6 +61,9 @@ namespace Assets.Source.Game.Map
 
         public void SetVertices(Vector2 position, bool recalculateIndices)
         {
+            if (_lastPos.Equals(position))
+                return;
+
             _lastPos = position;
 
             Parallel.For(0, _size, xCur =>
@@ -141,14 +144,14 @@ namespace Assets.Source.Game.Map
                     sbyte hTR = 0;
                     sbyte hBR = 0;
 
-                    if (y < _tiles.Width - 1)
+                    if (y > 0)
                     {
-                        ref Tile tileTL = ref _tiles.GetTile(x, y + 1);
+                        ref Tile tileTL = ref _tiles.GetTile(x, y - 1);
                         hTL = tileTL.Z;
 
                         if (x < _tiles.Depth - 1)
                         {
-                            ref Tile tileTR = ref _tiles.GetTile(x + 1, y + 1);
+                            ref Tile tileTR = ref _tiles.GetTile(x + 1, y - 1);
                             hTR = tileTR.Z;
                         }
                         else

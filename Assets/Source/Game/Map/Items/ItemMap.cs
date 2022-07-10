@@ -19,21 +19,31 @@ namespace Assets.Source.Game.Map.Items
             _statics = statics;
         }
 
+        public void SetPosition(Vector3 pos, bool refreshItems)
+        {
+            _position = pos;
+
+            if (refreshItems)
+                RefreshItems();
+        }
+
         public void RefreshItems()
         {
             _items.Clear();
 
             int bs = (int)Math.Ceiling(_size / 8.0);
-            int bx = (int)Math.Ceiling(_position.x / 8.0);
-            int by = (int)Math.Ceiling(_position.y / 8.0);
+            int bx = (int)Math.Ceiling((_position.x /*+ _size / 2.0*/) / 8.0);
+            int by = (int)Math.Ceiling((_position.y) / 8.0);
 
             if (bx < 0)
                 bx = 0;
             if (by < 0)
                 by = 0;
 
-            int bxe = Math.Min(bx + bs, _statics.BlockWidth);
-            int bye = Math.Min(by + bs, _statics.BlockDepth);
+            int bxe = Math.Min(bx + bs, _statics.BlockDepth);
+            int bye = Math.Min(by + bs, _statics.BlockWidth);
+
+            Debug.Log($"Pos: {_position}, W: {_statics.Width} H: {_statics.Depth}\nBX: {bx} BXE: {bxe} BY: {by} BYE: {bye}");
 
             for (int blockX = bx; blockX < bxe; blockX++)
             {
@@ -43,7 +53,7 @@ namespace Assets.Source.Game.Map.Items
                 {
                     int wy = blockY * 8;
 
-                    StaticBlock block = _statics.GetStaticBlock(blockX * 8, blockY * 8);
+                    StaticBlock block = _statics.GetStaticBlock(wx, wy);
 
                     if (block == null || block.Statics.Length == 0)
                         continue;
@@ -54,7 +64,7 @@ namespace Assets.Source.Game.Map.Items
                     {
                         ref Static st = ref statics[i];
 
-                        Vector3 pos = new Vector3(wx + st.X, wy + st.Y, -(st.Z * Constants.TileHeightMod));
+                        Vector3 pos = new Vector3(wx + st.Y, wy + st.X, -(st.Z * Constants.TileHeightMod));
 
                         _items.SpawnItem(pos, st.TileId);
                     }

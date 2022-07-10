@@ -37,7 +37,7 @@ namespace Assets.Source
                      @"D:\reposSSD\SKUOEdit\Test\staidx3.mul",
                      true, 2560, 2048, 95);
 
-            Camera.OnMoved += e => Map.MoveToPosition(e.NewPosition);
+            Camera.OnMoved += e => Map.MoveToPosition(e.NewPosition, false);
         }
     }
 }

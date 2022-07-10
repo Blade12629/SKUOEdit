@@ -112,7 +112,7 @@ namespace ClassicUO.IO
                     {
                         int index = reader.ReadInt();
 
-                        if (index < 0 || index >= Constants.MAX_LAND_DATA_INDEX_COUNT + tiledataLoader.StaticData.Length)
+                        if (index < 0 || index >= ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT + tiledataLoader.StaticData.Length)
                         {
                             continue;
                         }
@@ -128,7 +128,7 @@ namespace ClassicUO.IO
                         {
                             int checkIndex = group[i];
 
-                            if (checkIndex < 0 || checkIndex >= Constants.MAX_LAND_DATA_INDEX_COUNT + tiledataLoader.StaticData.Length)
+                            if (checkIndex < 0 || checkIndex >= ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT + tiledataLoader.StaticData.Length)
                             {
                                 continue;
                             }
@@ -144,8 +144,8 @@ namespace ClassicUO.IO
                                 }
                             }
 
-                            if (index < Constants.MAX_LAND_DATA_INDEX_COUNT &&
-                                checkIndex < Constants.MAX_LAND_DATA_INDEX_COUNT &&
+                            if (index < ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT &&
+                                checkIndex < ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT &&
                                 checkIndex < tiledataLoader.LandData.Length &&
                                 index < tiledataLoader.LandData.Length &&
                                 !tiledataLoader.LandData[checkIndex].Equals(default) &&
@@ -156,7 +156,7 @@ namespace ClassicUO.IO
                                 break;
                             }
 
-                            if (index >= Constants.MAX_LAND_DATA_INDEX_COUNT && checkIndex >= Constants.MAX_LAND_DATA_INDEX_COUNT &&
+                            if (index >= ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT && checkIndex >= ClassicUO.Game.Constants.MAX_LAND_DATA_INDEX_COUNT &&
                                 tiledataLoader.StaticData[index].Equals(default) && !tiledataLoader.StaticData[checkIndex].Equals(default))
                             {
                                 tiledataLoader.StaticData[index] = tiledataLoader.StaticData[checkIndex];
