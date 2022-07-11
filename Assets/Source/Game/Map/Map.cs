@@ -1,6 +1,7 @@
 ﻿using Assets.Source.IO;
 using Assets.Source.Ultima;
 using Assets.Source.Game.Map.Items;
+using Assets.Source.Game.Map.Terrain;
 using UnityEngine;
 using Assets.Source.Textures;
 
@@ -10,13 +11,13 @@ namespace Assets.Source.Game.Map
     {
         public int RenderSize
         {
-            get => _terrain.Size;
-            set => _terrain.Size = value;
+            get => _terrain.RenderSize;
         }
+
         public int Width => _tiles.Width;
         public int Height => _tiles.Depth;
 
-        UltimaTerrain _terrain;
+        UOTerrain _terrain;
         MapTiles _tiles;
 
         ItemMap _items;
@@ -24,15 +25,13 @@ namespace Assets.Source.Game.Map
 
         public void Load(string path, string staticPath, string staticIdxPath, bool isUop, int width, int height, int renderSize)
         {
-            GameObject gterrain = new GameObject("terrain");
-            _terrain = gterrain.AddComponent<UltimaTerrain>();
-            _terrain.transform.SetParent(transform);
-
             _tiles = new MapTiles();
             _tiles.Load(path, isUop, width, height);
 
+            GameObject gterrain = new GameObject("terrain");
+            _terrain = gterrain.AddComponent<UOTerrain>();
+            _terrain.transform.SetParent(transform);
             _terrain.Initialize(renderSize, _tiles, Core.TerrainMaterial, TileAtlas.Instance.Texture);
-            _terrain.SetVertices(Vector2.zero, true);
 
             _statics = new MapStatics();
             _statics.Load(staticPath, staticIdxPath, width, height);
@@ -41,25 +40,18 @@ namespace Assets.Source.Game.Map
             _items = gitems.AddComponent<ItemMap>();
             _items.transform.SetParent(transform);
             _items.Initialize(renderSize, Core.StaticMaterial, _statics);
-
-            MoveToPosition(new Vector3(0, 0), true);
         }
 
-        public void MoveToPosition(Vector3 position, bool repositionCamera)
+        /// <summary>
+        /// Do not call this, instead use <see cref="Cam.MoveToPosition(Vector3, bool)"/>
+        /// </summary>
+        public void MoveToPosition(Vector3 position)
         {
             Debug.Log(position);
             System.Console.WriteLine(position);
 
-            _terrain.SetVertices(position, true);
+            _terrain.MoveToWorld(position);
             _items.SetPosition(position, true);
-
-            if (repositionCamera)
-            {
-                Vector3 cameraPos = position;
-                cameraPos.y = Height - cameraPos.y - 1;
-
-                Core.Camera.MoveToPosition(cameraPos, false);
-            }
         }
 
         public void Clear()

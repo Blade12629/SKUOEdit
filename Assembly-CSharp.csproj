@@ -99,7 +99,6 @@
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\TextEditRow.cs" />
     <Compile Include="Assets\ClassicUO\Utility\RandomHelper.cs" />
     <Compile Include="Assets\Source\Ultima\UltimaArt.cs" />
-    <Compile Include="Assets\Source\Game\Map\UltimaTerrain.cs" />
     <Compile Include="Assets\Source\Game\Map\Items\Item.cs" />
     <Compile Include="Assets\ClassicUO\Utility\UnsafeMemoryManager.cs" />
     <Compile Include="Assets\ClassicUO\Utility\Collections\ReadOnlyArrayView.cs" />
@@ -150,6 +149,8 @@
     <Compile Include="Assets\Source\Ultima\GameFiles.cs" />
     <Compile Include="Assets\ClassicUO\Utility\JSON\JsonBuilder.cs" />
     <Compile Include="Assets\ClassicUO\IO\UOFileUop.cs" />
+    <Compile Include="Assets\Source\Game\Map\Terrain\UOTerrainCache.cs" />
+    <Compile Include="Assets\Source\Game\Map\Terrain\UOTerrain.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Source\Shaders\UltimaTerrainShader.shader" />

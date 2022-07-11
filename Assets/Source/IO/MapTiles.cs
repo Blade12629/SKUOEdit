@@ -155,14 +155,14 @@ namespace Assets.Source.IO
         {
             z = Width - z - 1;
 
-            TileBlock block = GetBlock(z, x);
+            TileBlock block = GetBlock(x, z);
             return ref block.Tiles[((x & 0x7) << 3) + (z & 0x7)];
         }
 
         public bool IsInBounds(int x, int z)
         {
             return x >= 0 && z >= 0 &&
-                   x < Depth && z < Width;
+                   x < Width && z < Depth;
         }
 
         public bool IsEvenHeight(int x, int z)

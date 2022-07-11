@@ -93,13 +93,13 @@ namespace Assets.Source.Game
         void ApplyOffset(ref Vector3 v)
         {
             v.x += _offset.x;
-            v.y += _offset.y;
+            v.y -= _offset.y;
         }
 
         void RemoveOffset(ref Vector3 v)
         {
             v.x -= _offset.x;
-            v.y -= _offset.y;
+            v.y += _offset.y;
         }
     }
 

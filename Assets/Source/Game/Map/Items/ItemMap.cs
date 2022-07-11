@@ -43,8 +43,6 @@ namespace Assets.Source.Game.Map.Items
             int bxe = Math.Min(bx + bs, _statics.BlockDepth);
             int bye = Math.Min(by + bs, _statics.BlockWidth);
 
-            Debug.Log($"Pos: {_position}, W: {_statics.Width} H: {_statics.Depth}\nBX: {bx} BXE: {bxe} BY: {by} BYE: {bye}");
-
             for (int blockX = bx; blockX < bxe; blockX++)
             {
                 int wx = blockX * 8;
