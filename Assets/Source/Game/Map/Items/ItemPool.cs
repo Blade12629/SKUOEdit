@@ -20,7 +20,7 @@ namespace Assets.Source.Game.Map.Items
             item.Initialize(_material);
 
             gobj.transform.position = new Vector3(-10000f, -10000f, -10000f);
-            gobj.transform.rotation = Quaternion.Euler(-45f, -45f, 60f);
+            gobj.transform.rotation = Quaternion.Euler(60f, 0f, 135f);
 
             return item;
         }

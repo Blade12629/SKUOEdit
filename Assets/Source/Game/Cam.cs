@@ -14,39 +14,18 @@ namespace Assets.Source.Game
         public bool IsPaused { get; set; }
         public Vector3 Position
         {
-            get => GetPosition();
-            set => MoveToPosition(value, true);
+            get => _position;
+            set
+            {
+                Vector3 diff = value - _position;
+                _position = value;
+
+                OnMoved?.Invoke(new CameraMovedArgs(value, diff));
+            }
         }
 
         [SerializeField] float _speedMultiplier;
-        [SerializeField] Vector2 _offset;
-
-        /// <summary>
-        /// Sets the camera position without invoking <see cref="OnMoved"/>
-        /// </summary>
-        public void MoveToPosition(Vector3 position, bool invokeCameraMoved)
-        {
-            Vector3 srcPos = GetPosition();
-
-            Vector3 destWOffset = position;
-            ApplyOffset(ref destWOffset);
-
-            position.z = srcPos.z;
-            destWOffset.z = srcPos.z;
-
-            transform.position = destWOffset;
-
-            if (invokeCameraMoved)
-                OnMoved?.Invoke(new CameraMovedArgs(position, position - srcPos));
-        }
-
-        public Vector3 GetPosition()
-        {
-            Vector3 pos = transform.position;
-            RemoveOffset(ref pos);
-
-            return pos;
-        }
+        [SerializeField] Vector3 _position;
 
         void Update()
         {
@@ -56,39 +35,26 @@ namespace Assets.Source.Game
             Vector3 dir = new Vector3();
 
             if (Input.GetKey(KeyCode.W))
-            {
-                dir.y++;
-                dir.x--;
-            }
+                dir.y--;
             if (Input.GetKey(KeyCode.S))
-            {
-                dir.y--;
-                dir.x++;
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                dir.x--;
-                dir.y--;
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                dir.x++;
                 dir.y++;
-            }
+            if (Input.GetKey(KeyCode.A))
+                dir.x--;
+            if (Input.GetKey(KeyCode.D))
+                dir.x++;
 
             if (dir.x != 0 || dir.y != 0)
             {
-                //dir.x *= Time.deltaTime;
+                dir.x *= Time.deltaTime;
 
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                {
                     dir.x *= _speedMultiplier;
-                    dir.y *= _speedMultiplier;
-                }
 
-                MoveToPosition(GetPosition() + dir, true);
+                _position += dir;
+                OnMoved?.Invoke(new CameraMovedArgs(_position, dir));
             }
         }
+<<<<<<< HEAD
 
         void ApplyOffset(ref Vector3 v)
         {
@@ -101,6 +67,8 @@ namespace Assets.Source.Game
             v.x -= _offset.x;
             v.y += _offset.y;
         }
+=======
+>>>>>>> parent of bf27347 (.)
     }
 
     public class CameraMovedArgs

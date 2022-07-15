@@ -130,8 +130,6 @@ namespace Assets.Source.IO
 
         public StaticBlock GetStaticBlock(int x, int z)
         {
-            z = Width - z - 1;
-
             return _staticBlocks[(z >> 3) * BlockDepth + (x >> 3)];
         }
 

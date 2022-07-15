@@ -9,19 +9,17 @@ namespace Assets.Source.Utility
 
         Queue<T> _pool;
         int _capacity;
-        int _extendCapacity;
         bool _hasBeenExtended;
 
-        public SimplePool(int extendCapacity)
+        public SimplePool(int startCapacity)
         {
-            _extendCapacity = extendCapacity;
-            _capacity = extendCapacity;
-            _pool = new Queue<T>(extendCapacity);
+            _capacity = startCapacity;
+            _pool = new Queue<T>(startCapacity);
         }
 
         public T Rent()
         {
-            if (Available == 0)
+            if (_pool.Count == 0)
                 ExtendPool();
 
             T obj = _pool.Dequeue();
@@ -44,13 +42,12 @@ namespace Assets.Source.Utility
 
             if (_hasBeenExtended)
             {
-                count = _extendCapacity;
+                count = _capacity / 2;
                 _capacity += count;
             }
             else
             {
                 count = _capacity;
-                _hasBeenExtended = true;
             }
 
             for (int i = 0; i < count; i++)
@@ -58,6 +55,7 @@ namespace Assets.Source.Utility
                 T obj = CreateObject();
                 _pool.Enqueue(obj);
             }
+
         }
 
         protected abstract T CreateObject();

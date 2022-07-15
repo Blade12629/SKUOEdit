@@ -40,6 +40,7 @@ namespace Assets.Source.Game.Map
             _items = gitems.AddComponent<ItemMap>();
             _items.transform.SetParent(transform);
             _items.Initialize(renderSize, Core.StaticMaterial, _statics);
+<<<<<<< HEAD
         }
 
         /// <summary>
@@ -52,6 +53,15 @@ namespace Assets.Source.Game.Map
 
             _terrain.MoveToWorld(position);
             _items.SetPosition(position, true);
+=======
+
+            _items.RefreshItems();
+        }
+
+        public void MoveToPosition(Vector3 position)
+        {
+            _terrain.SetVertices(position, false);
+>>>>>>> parent of bf27347 (.)
         }
 
         public void Clear()
