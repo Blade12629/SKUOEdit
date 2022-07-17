@@ -14,7 +14,10 @@ namespace Assets.Source.Game.Map.Items
         static readonly int[] _indices = new int[]
         {
             0, 1, 2,
-            0, 2, 3
+            0, 2, 3,
+
+            3, 2, 0,
+            2, 1, 0
         };
 
         static readonly Vertex[] _vertices = new Vertex[]
@@ -22,7 +25,7 @@ namespace Assets.Source.Game.Map.Items
             new Vertex(0, 0, 0, 0, 0),
             new Vertex(0, 1, 0, 0, 1),
             new Vertex(1, 1, 0, 1, 1),
-            new Vertex(1, 0, 0, 1, 0)
+            new Vertex(1, 0, 0, 1, 0),
         };
 
         uint _itemId;
@@ -47,11 +50,14 @@ namespace Assets.Source.Game.Map.Items
             _mesh.SetIndices(_indices, MeshTopology.Triangles, 0);
             _mesh.RecalculateBounds();
             _mesh.RecalculateNormals();
+            _mesh.RecalculateTangents();
             _collider.sharedMesh = _mesh;
         }
 
         void SetItemId(uint id)
         {
+            const float TILE_SIZE = 44f;
+
             if (_itemId == id)
                 return;
 
@@ -63,7 +69,7 @@ namespace Assets.Source.Game.Map.Items
 
             Texture2D tex = Ultima.UltimaArt.GetStatic(id);
             _renderer.material.mainTexture = tex;
-            transform.localScale = new Vector3(1, tex.height / Constants.TileSize, 1);
+            transform.localScale = new Vector3(1, tex.height / TILE_SIZE, 1);
 
             _itemId = id;
         }

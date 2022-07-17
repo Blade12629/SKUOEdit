@@ -59,13 +59,13 @@ namespace Assets.Source.Game.Map
             BuildCache();
         }
 
-        public void SetVertices(Vector2 position, bool recalculateIndices)
+        public void SetVertices(Vector3 position, bool recalculateIndices)
         {
             _lastPos = position;
 
             Parallel.For(0, _size, xCur =>
             {
-                int indexSrc = PositionToIndex((int)position.x + xCur, (int)position.y);
+                int indexSrc = PositionToIndex((int)position.x + xCur, (int)position.z);
                 int indexDest = PositionToIndex(xCur, 0, _size);
                 int length = _size * 4;
 
@@ -99,14 +99,20 @@ namespace Assets.Source.Game.Map
                 Array.Copy(_vertexCache, indexSrc, _vertices, indexDest, length);
             });
 
-            if (recalculateIndices)
+            if (_mesh.vertexBufferCount != _vertices.Length)
+            {
                 _mesh.SetVertexBufferParams(_vertices.Length, VertexLayout.Layout);
 
-            using (NativeArray<Vertex> nvertices = new NativeArray<Vertex>(_vertices, Allocator.Temp))
-                _mesh.SetVertexBufferData(_vertices, 0, 0, _vertices.Length);
+                using (NativeArray<Vertex> nvertices = new NativeArray<Vertex>(_vertices, Allocator.Temp))
+                    _mesh.SetVertexBufferData(_vertices, 0, 0, _vertices.Length);
 
-            if (recalculateIndices)
                 _mesh.SetIndices(GetIndices(), MeshTopology.Triangles, 0);
+            }
+            else
+            {
+                using (NativeArray<Vertex> nvertices = new NativeArray<Vertex>(_vertices, Allocator.Temp))
+                    _mesh.SetVertexBufferData(_vertices, 0, 0, _vertices.Length);
+            }
 
             _mesh.RecalculateBounds();
             _mesh.RecalculateNormals();
@@ -188,30 +194,30 @@ namespace Assets.Source.Game.Map
                             default:
                             case 0:
                                 vertex.X = x;
-                                vertex.Y = y;
+                                vertex.Z = y;
 
-                                vertex.Z = -(tileBL.Z * Constants.TileHeightMod);
+                                vertex.Y = tileBL.Z * 0.039f;
                                 break;
 
                             case 1:
                                 vertex.X = x;
-                                vertex.Y = y + 1f;
+                                vertex.Z = y + 1f;
 
-                                vertex.Z = -(hTL * Constants.TileHeightMod);
+                                vertex.Y = hTL * 0.039f;
                                 break;
 
                             case 2:
                                 vertex.X = x + 1f;
-                                vertex.Y = y + 1f;
+                                vertex.Z = y + 1f;
 
-                                vertex.Z = -(hTR * Constants.TileHeightMod);
+                                vertex.Y = hTR * 0.039f;
                                 break;
 
                             case 3:
                                 vertex.X = x + 1f;
-                                vertex.Y = y;
+                                vertex.Z = y;
 
-                                vertex.Z = -(hBR * Constants.TileHeightMod);
+                                vertex.Y = hBR * 0.039f;
                                 break;
                         }
 

@@ -14,18 +14,19 @@ namespace Assets.Source.Game
         public bool IsPaused { get; set; }
         public Vector3 Position
         {
-            get => _position;
+            get => RemoveOffset(transform.position);
             set
             {
-                Vector3 diff = value - _position;
-                _position = value;
+                Vector3 old = Position;
+                Vector3 diff = value - old;
 
+                transform.position = ApplyOffset(value);
                 OnMoved?.Invoke(new CameraMovedArgs(value, diff));
             }
         }
 
         [SerializeField] float _speedMultiplier;
-        [SerializeField] Vector3 _position;
+        [SerializeField] Vector3 _offset;
 
         void Update()
         {
@@ -35,40 +36,51 @@ namespace Assets.Source.Game
             Vector3 dir = new Vector3();
 
             if (Input.GetKey(KeyCode.W))
-                dir.y--;
-            if (Input.GetKey(KeyCode.S))
-                dir.y++;
-            if (Input.GetKey(KeyCode.A))
-                dir.x--;
-            if (Input.GetKey(KeyCode.D))
-                dir.x++;
-
-            if (dir.x != 0 || dir.y != 0)
             {
-                dir.x *= Time.deltaTime;
+                dir.x--;
+                dir.z--;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                dir.x++;
+                dir.z++;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                dir.x++;
+                dir.z--;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                dir.x--;
+                dir.z++;
+            }
 
+            if (dir.x != 0 || dir.z != 0)
+            {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
                     dir.x *= _speedMultiplier;
+                    dir.z *= _speedMultiplier;
+                }
 
-                _position += dir;
-                OnMoved?.Invoke(new CameraMovedArgs(_position, dir));
+                Position += dir;
             }
         }
-<<<<<<< HEAD
 
-        void ApplyOffset(ref Vector3 v)
+        Vector3 ApplyOffset(Vector3 v)
         {
-            v.x += _offset.x;
-            v.y -= _offset.y;
+            return new Vector3(v.x + _offset.x, 
+                               v.y + _offset.y, 
+                               v.z + _offset.z);
         }
 
-        void RemoveOffset(ref Vector3 v)
+        Vector3 RemoveOffset(Vector3 v)
         {
-            v.x -= _offset.x;
-            v.y += _offset.y;
+            return new Vector3(v.x - _offset.x,
+                               v.y - _offset.y,
+                               v.z - _offset.z);
         }
-=======
->>>>>>> parent of bf27347 (.)
     }
 
     public class CameraMovedArgs

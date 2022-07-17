@@ -153,20 +153,14 @@ namespace Assets.Source.IO
 
         public ref Tile GetTile(int x, int z)
         {
-<<<<<<< HEAD
-            z = Width - z - 1;
-
-            TileBlock block = GetBlock(x, z);
-=======
             TileBlock block = GetBlock(z, x);
->>>>>>> parent of bf27347 (.)
             return ref block.Tiles[((x & 0x7) << 3) + (z & 0x7)];
         }
 
         public bool IsInBounds(int x, int z)
         {
             return x >= 0 && z >= 0 &&
-                   x < Width && z < Depth;
+                   x < Depth && z < Width;
         }
 
         public bool IsEvenHeight(int x, int z)
