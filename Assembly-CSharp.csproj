@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{D5483DEB-75C6-DADE-46AF-C44820B5EFB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -111,6 +112,7 @@
     <Compile Include="Assets\ClassicUO\Utility\JSON\JsonParser.cs" />
     <Compile Include="Assets\Source\Game\Cam.cs" />
     <Compile Include="Assets\ClassicUO\Utility\Platforms\PlatformHelper.cs" />
+    <Compile Include="Assets\Source\Game\MapConstants.cs" />
     <Compile Include="Assets\ClassicUO\Utility\UInt16Converter.cs" />
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\TextEdit.cs" />
     <Compile Include="Assets\ClassicUO\Utility\StbTextedit\FindState.cs" />
@@ -149,6 +151,11 @@
     <Compile Include="Assets\Source\Ultima\GameFiles.cs" />
     <Compile Include="Assets\ClassicUO\Utility\JSON\JsonBuilder.cs" />
     <Compile Include="Assets\ClassicUO\IO\UOFileUop.cs" />
+    <Compile Include="Assets\Source\Tests\Texture2DPlane.cs" />
+    <Compile Include="Assets\Src\Content.cs" />
+    <Compile Include="Assets\Src\Rendering\Vertex.cs" />
+    <Compile Include="Assets\Src\Rendering\VertexLayout.cs" />
+    <Compile Include="Assets\Src\World\StaticMesh.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Source\Shaders\UltimaTerrainShader.shader" />
@@ -156,6 +163,7 @@
     <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.dll" />
     <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.Metadata.xml" />
     <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.dll" />
+    <None Include="Assets\Source\Shaders\ItemShader.shader" />
     <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Scripting.xml" />
     <None Include="Assets\Packages\DynamicLanguageRuntime.1.3.0\lib\net45\Microsoft.Dynamic.xml" />
   </ItemGroup>
@@ -929,6 +937,7 @@
       <Name>SimpleFileBrowser.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

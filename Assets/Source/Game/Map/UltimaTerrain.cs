@@ -196,28 +196,28 @@ namespace Assets.Source.Game.Map
                                 vertex.X = x;
                                 vertex.Z = y;
 
-                                vertex.Y = tileBL.Z * 0.039f;
+                                vertex.Y = tileBL.Z * MapConstants.TILE_HEIGHT_MULTIPLIER;
                                 break;
 
                             case 1:
                                 vertex.X = x;
                                 vertex.Z = y + 1f;
 
-                                vertex.Y = hTL * 0.039f;
+                                vertex.Y = hTL * MapConstants.TILE_HEIGHT_MULTIPLIER;
                                 break;
 
                             case 2:
                                 vertex.X = x + 1f;
                                 vertex.Z = y + 1f;
 
-                                vertex.Y = hTR * 0.039f;
+                                vertex.Y = hTR * MapConstants.TILE_HEIGHT_MULTIPLIER;
                                 break;
 
                             case 3:
                                 vertex.X = x + 1f;
                                 vertex.Z = y;
 
-                                vertex.Y = hBR * 0.039f;
+                                vertex.Y = hBR * MapConstants.TILE_HEIGHT_MULTIPLIER;
                                 break;
                         }
 

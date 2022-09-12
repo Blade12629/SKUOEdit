@@ -19,13 +19,22 @@ namespace Assets.Source.Game.Map.Items
             _statics = statics;
         }
 
+        public void MoveToWorld(Vector3 pos)
+        {
+            _position = pos;
+            RefreshItems();
+        }
+
         public void RefreshItems()
         {
             _items.Clear();
 
+            int spawned = 0;
+            int spawnedError = 0;
+
             int bs = (int)Math.Ceiling(_size / 8.0);
             int bx = (int)Math.Ceiling(_position.x / 8.0);
-            int by = (int)Math.Ceiling(_position.y / 8.0);
+            int by = (int)Math.Ceiling(_position.z / 8.0);
 
             if (bx < 0)
                 bx = 0;
@@ -54,9 +63,12 @@ namespace Assets.Source.Game.Map.Items
                     {
                         ref Static st = ref statics[i];
 
-                        Vector3 pos = new Vector3(wx + st.X, st.Z * 0.039f + 0.0001f, wy + st.Y);
+                        Vector3 pos = new Vector3(wx + st.Y + .5f, st.Z * MapConstants.TILE_HEIGHT_MULTIPLIER + MapConstants.TILE_HEIGHT_OFFSET, wy + st.X + 1.5f);
 
-                        _items.SpawnItem(pos, st.TileId);
+                        if (!_items.SpawnItem(pos, st.TileId, st.Z))
+                            spawnedError++;
+                        else
+                            spawned++;
                     }
                 }
             }

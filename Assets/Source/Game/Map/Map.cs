@@ -48,6 +48,7 @@ namespace Assets.Source.Game.Map
         public void MoveToPosition(Vector3 position)
         {
             _terrain.SetVertices(position, false);
+            _items.MoveToWorld(position);
         }
 
         public void Clear()
