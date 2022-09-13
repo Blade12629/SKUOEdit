@@ -7,12 +7,12 @@ namespace Assets.Source.Game.Map.Items
 {
     public class ItemLookup
     {
-        Dictionary<Point2, List<Item>> _items;
+        Dictionary<Point2, List<StaticMesh>> _items;
         ItemPool _itemsPool;
 
         public void Initialize(Material material)
         {
-            _items = new Dictionary<Point2, List<Item>>();
+            _items = new Dictionary<Point2, List<StaticMesh>>();
             _itemsPool = new ItemPool(material);
         }
 
@@ -26,7 +26,7 @@ namespace Assets.Source.Game.Map.Items
             if (ContainsItem(position, id, height))
                 return false;
 
-            Item item = _itemsPool.Rent();
+            StaticMesh item = _itemsPool.Rent();
 
             PrepareItem(item, id, height, position);
             AddItem(position, item);
@@ -34,11 +34,11 @@ namespace Assets.Source.Game.Map.Items
             return true;
         }
 
-        public bool TryGetItems(Vector3 position, out List<Item> items)
+        public bool TryGetItems(Vector3 position, out List<StaticMesh> items)
         {
-            items = new List<Item>();
+            items = new List<StaticMesh>();
 
-            if (_items.TryGetValue(ToVector2(position), out List<Item> tempItems))
+            if (_items.TryGetValue(ToVector2(position), out List<StaticMesh> tempItems))
             {
                 items.AddRange(tempItems);
                 return true;
@@ -50,17 +50,17 @@ namespace Assets.Source.Game.Map.Items
 
         public bool ContainsItem(Vector3 position, uint id)
         {
-            return ContainsItem(position, i => i.ItemId == id && i.transform.position.Equals(position));
+            return ContainsItem(position, i => i.Id == id && i.transform.position.Equals(position));
         }
 
         public bool ContainsItem(Vector3 position, uint id, int height)
         {
-            return ContainsItem(position, i => i.ItemId == id && i.Height == height);
+            return ContainsItem(position, i => i.Id == id && i.Height == height);
         }
 
-        public bool ContainsItem(Vector3 position, Func<Item, bool> predicate)
+        public bool ContainsItem(Vector3 position, Func<StaticMesh, bool> predicate)
         {
-            if (TryGetItems(position, out List<Item> items))
+            if (TryGetItems(position, out List<StaticMesh> items))
             {
                 for (int i = 0; i < items.Count; i++)
                 {
@@ -78,9 +78,9 @@ namespace Assets.Source.Game.Map.Items
         {
             int cleared = 0;
 
-            foreach (KeyValuePair<Point2, List<Item>> pair in _items)
+            foreach (KeyValuePair<Point2, List<StaticMesh>> pair in _items)
             {
-                foreach (Item item in pair.Value)
+                foreach (StaticMesh item in pair.Value)
                 {
                     _itemsPool.Release(item);
                     cleared++;
@@ -90,27 +90,27 @@ namespace Assets.Source.Game.Map.Items
             _items.Clear();
         }
 
-        void PrepareItem(Item item, uint id, int height, Vector3 pos)
+        void PrepareItem(StaticMesh item, uint id, int height, Vector3 pos)
         {
-            item.ItemId = id;
+            item.Id = id;
             item.Height = height;
             item.transform.position = pos;
         }
 
-        void AddItem(Vector3 position, Item item)
+        void AddItem(Vector3 position, StaticMesh item)
         {
-            List<Item> items = AddOrGet(ToVector2(position));
+            List<StaticMesh> items = AddOrGet(ToVector2(position));
             items.Add(item);
         }
 
-        List<Item> AddOrGet(Point2 position)
+        List<StaticMesh> AddOrGet(Point2 position)
         {
-            List<Item> items;
+            List<StaticMesh> items;
 
             if (_items.TryGetValue(position, out items))
                 return items;
 
-            items = new List<Item>();
+            items = new List<StaticMesh>();
             _items.Add(position, items);
 
             return items;

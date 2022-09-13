@@ -4,11 +4,11 @@ using Assets.Source.Utility;
 
 namespace Assets.Source.Game.Map.Items
 {
-    public class ItemPool : SimplePool<Item>
+    public class ItemPool : SimplePool<StaticMesh>
     {
-        static readonly Quaternion _defaultRotation = Quaternion.Euler(-65f, 45.5f, 0.5f);
         static readonly Vector3 _placeholderPos = new Vector3(-10000f, -10000f, -10000f);
-
+        static readonly Quaternion _placeholderRot = Quaternion.Euler(0f, 45f, 0f);
+        static readonly Vector3 _placeholderScale = new Vector3(1.64f, 1.3f, 1f);
         Material _material;
 
         public ItemPool(Material itemMaterial) : base()
@@ -16,29 +16,27 @@ namespace Assets.Source.Game.Map.Items
             _material = itemMaterial;
         }
 
-        protected override Item CreateObject()
+        protected override StaticMesh CreateObject()
         {
-            GameObject gobj = new GameObject();
-            Item item = gobj.AddComponent<Item>();
-            item.Initialize(_material);
+            StaticMesh smesh = StaticMesh.CreateStatic(_material);
+            smesh.transform.rotation = _placeholderRot;
+            smesh.transform.position = _placeholderPos;
+            smesh.transform.localScale = _placeholderScale;
 
-            gobj.transform.position = _placeholderPos;
-            gobj.transform.rotation = _defaultRotation;
-
-            return item;
+            return smesh;
         }
 
-        protected override void OnReleased(Item obj)
+        protected override void OnReleased(StaticMesh obj)
         {
             obj.gameObject.transform.position = _placeholderPos;
         }
 
-        protected override void OnRented(Item obj)
+        protected override void OnRented(StaticMesh obj)
         {
 
         }
 
-        protected override void DestroyObject(Item obj)
+        protected override void DestroyObject(StaticMesh obj)
         {
             GameObject.Destroy(obj.gameObject);
         }

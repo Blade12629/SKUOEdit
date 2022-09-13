@@ -25,6 +25,38 @@ namespace Assets.Source.Game.Map.Items
             RefreshItems();
         }
 
+        public void SpawnTestItems()
+        {
+            for (int x = 5; x < 10; x++)
+            {
+                for (int y = 5; y < 10; y++)
+                {
+                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 1982, 0);
+                }
+            }
+
+            for (int x = 1; x < 5; x++)
+            {
+                for (int y = 1; y < 5; y++)
+                {
+                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 1928, 0);
+                }
+            }
+
+            for (int x = 0; x < 10; x++)
+            {
+                _items.SpawnItem(new Vector3(10.5f, 0, x + .5f), 2171, 0);
+            }
+
+            for (int x = 15; x < 18; x++)
+            {
+                for (int y = 15; y < 18; y++)
+                {
+                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 7855, 0);
+                }
+            }
+        }
+
         public void RefreshItems()
         {
             _items.Clear();

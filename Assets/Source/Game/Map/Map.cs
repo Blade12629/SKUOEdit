@@ -43,6 +43,7 @@ namespace Assets.Source.Game.Map
             _items.Initialize(renderSize, Core.StaticMaterial, _statics);
 
             _items.RefreshItems();
+            //_items.SpawnTestItems();
         }
 
         public void MoveToPosition(Vector3 position)
