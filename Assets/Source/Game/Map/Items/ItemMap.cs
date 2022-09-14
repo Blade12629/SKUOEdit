@@ -31,7 +31,7 @@ namespace Assets.Source.Game.Map.Items
             {
                 for (int y = 5; y < 10; y++)
                 {
-                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 1982, 0);
+                    _items.SpawnItem(new Vector3(y + .5f, x + .5f, 0), 1982, 0);
                 }
             }
 
@@ -39,20 +39,20 @@ namespace Assets.Source.Game.Map.Items
             {
                 for (int y = 1; y < 5; y++)
                 {
-                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 1928, 0);
+                    _items.SpawnItem(new Vector3(y + .5f, x + .5f, 0), 1928, 0);
                 }
             }
 
             for (int x = 0; x < 10; x++)
             {
-                _items.SpawnItem(new Vector3(10.5f, 0, x + .5f), 2171, 0);
+                _items.SpawnItem(new Vector3(10.5f, x + .5f, 0), 2171, 0);
             }
 
             for (int x = 15; x < 18; x++)
             {
                 for (int y = 15; y < 18; y++)
                 {
-                    _items.SpawnItem(new Vector3(y + .5f, 0, x + .5f), 7855, 0);
+                    _items.SpawnItem(new Vector3(y + .5f, x + .5f, 0), 7855, 0);
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace Assets.Source.Game.Map.Items
 
             int bs = (int)Math.Ceiling(_size / 8.0);
             int bx = (int)Math.Ceiling(_position.x / 8.0);
-            int by = (int)Math.Ceiling(_position.z / 8.0);
+            int by = (int)Math.Ceiling(_position.y / 8.0);
 
             if (bx < 0)
                 bx = 0;
@@ -76,11 +76,13 @@ namespace Assets.Source.Game.Map.Items
             int bxe = Math.Min(bx + bs, _statics.BlockWidth);
             int bye = Math.Min(by + bs, _statics.BlockDepth);
 
-            for (int blockX = bx; blockX < bxe; blockX++)
+            for (int blockX = bxe - 1; blockX >= bx; blockX--)
+            //for (int blockX = bx; blockX < bxe; blockX++)
             {
                 int wx = blockX * 8;
 
-                for (int blockY = by; blockY < bye; blockY++)
+                for (int blockY = bye - 1; blockY >= by; blockY--)
+                //for (int blockY = by; blockY < bye; blockY++)
                 {
                     int wy = blockY * 8;
 
@@ -95,7 +97,9 @@ namespace Assets.Source.Game.Map.Items
                     {
                         ref Static st = ref statics[i];
 
-                        Vector3 pos = new Vector3(wx + st.Y + .5f, st.Z * MapConstants.TILE_HEIGHT_MULTIPLIER + MapConstants.TILE_HEIGHT_OFFSET, wy + st.X + 1.5f);
+                        Vector3 pos = new Vector3(wx + st.Y,
+                                                  wy + st.X, 
+                                                  -(st.Z * MapConstants.TILE_HEIGHT_MULTIPLIER + MapConstants.TILE_HEIGHT_OFFSET));
 
                         if (!_items.SpawnItem(pos, st.TileId, st.Z))
                             spawnedError++;

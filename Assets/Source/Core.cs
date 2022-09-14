@@ -32,9 +32,9 @@ namespace Assets.Source
 
             Camera = _camera;
             Map = new GameObject("map").AddComponent<Map>();
-            Map.Load(@"C:\repos\SKUOEdit\Test\map3LegacyMUL.uop",
-                     @"C:\repos\SKUOEdit\Test\statics3.mul",
-                     @"C:\repos\SKUOEdit\Test\staidx3.mul",
+            Map.Load(@"D:\reposSSD\SKUOEdit\Test\map3LegacyMUL.uop",
+                     @"D:\reposSSD\SKUOEdit\Test\statics3.mul",
+                     @"D:\reposSSD\SKUOEdit\Test\staidx3.mul",
                      true, 2560, 2048, 95);
 
             Camera.OnMoved += e => Map.MoveToPosition(e.NewPosition);

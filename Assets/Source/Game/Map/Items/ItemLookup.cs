@@ -118,12 +118,12 @@ namespace Assets.Source.Game.Map.Items
 
         Vector2 ToVector2(Vector3 v)
         {
-            return new Vector2(v.x, v.z);
+            return new Vector2(v.x, v.y);
         }
 
         Vector3 ToVector3(Vector2 v)
         {
-            return new Vector3(v.x, 0f, v.y);
+            return new Vector3(v.x, v.y, 0f);
         }
     }
 }

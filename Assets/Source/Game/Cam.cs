@@ -38,30 +38,30 @@ namespace Assets.Source.Game
             if (Input.GetKey(KeyCode.W))
             {
                 dir.x--;
-                dir.z--;
+                dir.y--;
             }
             if (Input.GetKey(KeyCode.S))
             {
                 dir.x++;
-                dir.z++;
+                dir.y++;
             }
             if (Input.GetKey(KeyCode.A))
             {
                 dir.x++;
-                dir.z--;
+                dir.y--;
             }
             if (Input.GetKey(KeyCode.D))
             {
                 dir.x--;
-                dir.z++;
+                dir.y++;
             }
 
-            if (dir.x != 0 || dir.z != 0)
+            if (dir.x != 0 || dir.y != 0)
             {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
                     dir.x *= _speedMultiplier;
-                    dir.z *= _speedMultiplier;
+                    dir.y *= _speedMultiplier;
                 }
 
                 Position += dir;

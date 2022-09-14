@@ -65,7 +65,7 @@ namespace Assets.Source.Game.Map
 
             Parallel.For(0, _size, xCur =>
             {
-                int indexSrc = PositionToIndex((int)position.x + xCur, (int)position.z);
+                int indexSrc = PositionToIndex((int)position.x + xCur, (int)position.y);
                 int indexDest = PositionToIndex(xCur, 0, _size);
                 int length = _size * 4;
 
@@ -194,30 +194,30 @@ namespace Assets.Source.Game.Map
                             default:
                             case 0:
                                 vertex.X = x;
-                                vertex.Z = y;
+                                vertex.Y = y;
 
-                                vertex.Y = tileBL.Z * MapConstants.TILE_HEIGHT_MULTIPLIER;
+                                vertex.Z = -(tileBL.Z * MapConstants.TILE_HEIGHT_MULTIPLIER);
                                 break;
 
                             case 1:
                                 vertex.X = x;
-                                vertex.Z = y + 1f;
+                                vertex.Y = y + 1f;
 
-                                vertex.Y = hTL * MapConstants.TILE_HEIGHT_MULTIPLIER;
+                                vertex.Z = -(hTL * MapConstants.TILE_HEIGHT_MULTIPLIER);
                                 break;
 
                             case 2:
                                 vertex.X = x + 1f;
-                                vertex.Z = y + 1f;
+                                vertex.Y = y + 1f;
 
-                                vertex.Y = hTR * MapConstants.TILE_HEIGHT_MULTIPLIER;
+                                vertex.Z = -(hTR * MapConstants.TILE_HEIGHT_MULTIPLIER);
                                 break;
 
                             case 3:
                                 vertex.X = x + 1f;
-                                vertex.Z = y;
+                                vertex.Y = y;
 
-                                vertex.Y = hBR * MapConstants.TILE_HEIGHT_MULTIPLIER;
+                                vertex.Z = -(hBR * MapConstants.TILE_HEIGHT_MULTIPLIER);
                                 break;
                         }
 

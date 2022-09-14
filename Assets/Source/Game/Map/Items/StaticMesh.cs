@@ -88,12 +88,15 @@ namespace Assets.Source.Game.Map.Items
 
             _mesh.SetIndices(new int[]
             {
-                2, 1, 0,
-                3, 2, 0
-                //0, 1, 2,
-                //0, 2, 3
+                //2, 1, 0,
+                //3, 2, 0
+                0, 1, 2,
+                0, 2, 3
             }, MeshTopology.Triangles, 0);
             _mesh.RecalculateBounds();
+
+            transform.localScale = new Vector3(1.44f, 1.44f, 1f);
+            transform.rotation = Quaternion.Euler(-0.001f, -0.001f, 135f);
         }
 
         /// <summary>
@@ -107,15 +110,10 @@ namespace Assets.Source.Game.Map.Items
             float scaledHeight = texture.height * _TEXTURE_SCALE;
             float scaledWidth = texture.width * _TEXTURE_SCALE;
 
-            //ApplyVertices(new Vertex(0, 0, 0, 0, 0),
-            //              new Vertex(0, scaledHeight, 0, 0, 1),
-            //              new Vertex(scaledWidth, scaledHeight, 0, 1, 1),
-            //              new Vertex(scaledWidth, 0, 0, 1, 0));
-
-            ApplyVertices(new Vertex(0, 0, 0,                       1, 0),
-                          new Vertex(0, scaledHeight, 0,            1, 1),
-                          new Vertex(scaledWidth, scaledHeight, 0,  0, 1),
-                          new Vertex(scaledWidth, 0, 0,             0, 0));
+            ApplyVertices(new Vertex(0, 0, 0,                       0, 0),
+                          new Vertex(0, scaledHeight, 0,            0, 1),
+                          new Vertex(scaledWidth, scaledHeight, 0,  1, 1),
+                          new Vertex(scaledWidth, 0, 0,             1, 0));
 
             _renderer.material.mainTexture = texture;
 
@@ -123,7 +121,7 @@ namespace Assets.Source.Game.Map.Items
                 _mesh.RecalculateBounds();
 
             // we need to set this again, otherwise the collider won't notice the changes
-            _collider.sharedMesh = _mesh;
+            //_collider.sharedMesh = _mesh; // TODO: fix collider
             _id = id;
         }
 
